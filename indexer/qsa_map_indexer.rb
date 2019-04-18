@@ -38,8 +38,23 @@ class QSAMAPIndexer < PeriodicIndexer
     record_has_children('archival_object')
 
     add_document_prepare_hook {|doc, record|
-      puts "DOING!"
+      if doc['primary_type'] == 'agent_corporate_entity'
+        doc['id'] = "agent_corporate_entity:#{doc['id'].split('/')[-1]}"
+        doc['aspace_id'] = doc['id'].split('/')[-1]
+        doc['display_string'] = doc['title']
+        doc['keywords'] = doc['title']
+        doc['record_type'] = 'agent_corporate_entity'
+      end
     }
+
+#     {
+#       "id" => "agent_corporate_entity:#{row[:id]}",
+#       "aspace_id" => row[:id].to_s,
+#       "display_string" => row[:sort_name],
+#       "keywords" => row[:sort_name],
+#       "record_type" => "agent_corporate_entity",
+#     }
+
 
   end
 
@@ -50,6 +65,7 @@ class QSAMAPIndexer < PeriodicIndexer
     stage_unpublished_for_deletion(record['record']['uri']) unless published
 
     !published
+    false
   end
 
 
@@ -59,20 +75,16 @@ class QSAMAPIndexer < PeriodicIndexer
     stage_unpublished_for_deletion(doc['id']) unless published
 
     !published
+    false
   end
 
 
   def index_round_complete(repository)
-
     # Delete any unpublished records and decendents
-    delete_records(@unpublished_records, :parent_id_field => 'parent_id')
+#    delete_records(@unpublished_records, :parent_id_field => 'parent_id')
     @unpublished_records.clear()
-
-    checkpoints.each do |repository, type, start|
-      @state.set_last_mtime(repository.id, type, start)
-    end
-
   end
+
 
   def stage_unpublished_for_deletion(doc_id)
     @unpublished_records.add(doc_id)
