@@ -1,4 +1,17 @@
-load File.join(File.dirname(__FILE__), '..', '..', '..', 'indexer', 'app', 'lib', 'periodic_indexer.rb')
+require 'fileutils'
+
+begin
+  load File.join(File.dirname(__FILE__), '..', '..', '..', 'indexer', 'app', 'lib', 'periodic_indexer.rb')
+rescue LoadError
+  # Running a dist?
+  if ENV['ASPACE_LAUNCHER_BASE']
+    FileUtils.cp(File.join(ENV['ASPACE_LAUNCHER_BASE'], 'wars/indexer.war'),
+                 File.join(ENV['ASPACE_LAUNCHER_BASE'], 'wars/indexer.jar'))
+
+    require(File.absolute_path(File.join(ENV['ASPACE_LAUNCHER_BASE'], 'wars/indexer.jar')))
+    $LOAD_PATH << 'uri:classloader:/WEB-INF/app/lib/'
+    require 'periodic_indexer'
+end
 
 
 class QSAMAPIndexer < PeriodicIndexer
@@ -36,6 +49,17 @@ class QSAMAPIndexer < PeriodicIndexer
 
     record_has_children('resource')
     record_has_children('archival_object')
+
+    # FIXME: Working around the fact that series system plugin hasn't loaded here.
+    add_document_prepare_hook do |doc, record|
+      if record['record'].has_key?('responsible_agency')
+        doc['responsible_agency_u_sstr'] = record['record']['responsible_agency']['ref']
+      end
+
+      if record['record'].has_key?('other_responsible_agencies')
+        doc['other_responsible_agencies_u_sstr'] = record['record']['other_responsible_agencies'].map{|r| r['ref']}
+      end
+    end
 
     add_document_prepare_hook {|doc, record|
       if doc['primary_type'] == 'agent_corporate_entity'
