@@ -11,6 +11,7 @@ rescue LoadError
     require(File.absolute_path(File.join(ENV['ASPACE_LAUNCHER_BASE'], 'wars/indexer.jar')))
     $LOAD_PATH << 'uri:classloader:/WEB-INF/app/lib/'
     require 'periodic_indexer'
+  end
 end
 
 
