@@ -1,0 +1,6 @@
+<%= javascript_include_tag "#{AppConfig[:frontend_proxy_prefix]}assets/transfers.js" %>
+
+<script type="text/template" id="MAPTransferBrowseActions">
+  <li class="divider"></li>
+  <li><%= link_to I18n.t("transfer_proposal._plural"), :controller => :transfer_proposals, :action => :index %></li>
+</script>

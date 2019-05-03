@@ -1,0 +1,33 @@
+en:
+  transfer_proposal:
+    _frontend:
+      section:
+        basic_information: Basic Information
+        series: Series
+    _plural: Transfer Proposals
+    _singular: Transfer Proposal
+    accrual_details: Accrual Details
+    agency: Agency
+    agency_location_display_string: Agency Location Display String
+    composition: Composition
+    composition_types:
+      digital: Digital
+      physical: Physical
+      hybrid: Hybrid
+    creating_agency: Creating Agency
+    date_range: Date Range
+    disposal_class: Disposal Class
+    estimated_quantity: Estimated Quantity
+    function: Function
+    mandate: Mandate
+    status: Status
+    system_of_arrangement: System Of Arrangement
+    system_of_arrangement_types:
+      single_number: Single Number
+      annual_single_number: Annual Single Number
+      multiple_number: Multiple Number
+      chronological: Chronological
+      alphabetical: Alphabetical
+      unknown: Unknown
+      other: Other
+    title: Title

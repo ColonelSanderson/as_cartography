@@ -1,0 +1,75 @@
+<%= setup_context :object => @transfer_proposal, :title => @transfer_proposal.title %>
+
+<div class="row">
+  <div class="col-md-3">
+    <%= render_aspace_partial :partial => "sidebar" %>
+  </div>
+  <div class="col-md-9">
+    <%= render_aspace_partial :partial => "toolbar" %>
+    <div class="record-pane">
+      <%= readonly_context :transfer_proposal, @transfer_proposal do |readonly| %>
+        <h2><%= @transfer_proposal.title %>  <span class="label label-info"><%= I18n.t("transfer_proposal._singular") %></span></h2>
+
+        <%= render_aspace_partial :partial => "shared/flash_messages" %>
+
+        <% define_template "transfer_proposal", jsonmodel_definition(:transfer_proposal) do |form, transfer_proposal| %>
+          <section id="basic_information">
+            <h3><%= I18n.t("transfer_proposal._frontend.section.basic_information") %></h3>
+
+            <%= render_plugin_partials("top_of_basic_information_transfer_proposal",
+                                       :form => form,
+                                       :record => @transfer_proposal) %>
+
+            <div class="form-group">
+              <div class="control-label col-sm-2"><%= I18n.t("transfer_proposal.agency") %></div>
+              <div class="token-list">
+                <%= render_token(:object => @transfer_proposal['agency']['_resolved'],
+                                 :label => @transfer_proposal['agency']['_resolved']['title'],
+                                 :type => @transfer_proposal['agency']['_resolved']['jsonmodel_type'],
+                                 :uri => @transfer_proposal['agency']['ref'],
+                                 :placement => "top") %>
+              </div>
+            </div>
+
+            <%= form.label_and_textfield "agency_location_display_string" %>
+
+            <%= form.label_and_textfield "title" %>
+            <%= form.label_and_textfield "estimated_quantity" %>
+            <%= form.label_and_textfield "status" %>
+
+            <% unless ASUtils.wrap(@transfer_proposal['series']).empty? %>
+              <section id="transfer_proposal_series_">
+                <h3><%= I18n.t("transfer_proposal._frontend.section.series") %></h3>
+                <% ASUtils.wrap(@transfer_proposal['series']).each do |series| %>
+                  <section>
+                    <h4><%= series['title'] %></h4>
+                    <% form.push("series", series) do |form| %>
+                      <%= form.label_and_textfield "disposal_class" %>
+                      <%= form.label_and_textfield "date_range" %>
+                      <%= form.label_and_textfield "accrual_details" %>
+                      <%= form.label_and_textfield "creating_agency" %>
+                      <%= form.label_and_textfield "mandate" %>
+                      <%= form.label_and_textfield "function" %>
+                      <%= form.label_with_field "system_of_arrangement", I18n.t("transfer_proposal.system_of_arrangement_types.#{series['system_of_arrangement']}") %>
+                      <%=
+                      form.label_with_field "composition",
+                       ASUtils.wrap(series['composition'])
+                       .map {|composition| I18n.t("transfer_proposal.composition_types.#{composition}")}
+                       .join("; ")
+                      %>
+                    <% end %>
+                  </section>
+                <% end %>
+              </section>
+
+              <%= display_audit_info(@transfer_proposal) %>
+            <% end %>
+        <% end %>
+
+        <%= readonly.emit_template "transfer_proposal" %>
+
+        <%= show_plugins_for(@transfer_proposal, readonly) %>
+      <% end %>
+    </div>
+  </div>
+</div>

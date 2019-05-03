@@ -1,0 +1,7 @@
+<%= render(:layout => '/shared/sidebar',
+           :locals => {
+               :record_type => 'transfer_proposal',
+               :record => @transfer_proposal,
+           }) do |sidebar| %>
+    <%= sidebar.render_for_view_only(:subrecord_type => 'series', :property => 'series') %>
+<% end %>
