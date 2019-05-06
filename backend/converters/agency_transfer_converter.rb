@@ -149,12 +149,12 @@ class AgencyTransferConverter < Converter
   private
 
   def series_uri_for(id)
-    @series_uris[id] ||= (Resource[:qsa_id => id] || raise "No Series for #{id}!!").uri
+    @series_uris[id] ||= (Resource[:qsa_id => id] or raise "No Series for #{id}!!").uri
   end
 
 
   def agency_uri_for(id)
-    @agency_uris[id] ||= (AgentCorporateEntity[:qsa_id => id] || raise "No Agency for #{id}!!").uri
+    @agency_uris[id] ||= (AgentCorporateEntity[:qsa_id => id] or raise "No Agency for #{id}!!").uri
   end
 
 
@@ -186,7 +186,7 @@ class AgencyTransferConverter < Converter
       :physical_representations => [],
       :digital_representations => [],
       :series_system_agent_relationships => [],
-      :series_system_transfer_relationships] => [
+      :series_system_transfer_relationships => [
         {
           :start_date => item[:start_date],
           :jsonmodel_type => 'series_system_transfer_record_containment_relationship',
