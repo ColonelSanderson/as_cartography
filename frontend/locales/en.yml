@@ -46,6 +46,7 @@ en:
       section:
         basic_information: Basic Information
         files: Attached Files
+        conversation: Conversation
     _plural: Transfers
     _singular: Transfer
     agency: Agency

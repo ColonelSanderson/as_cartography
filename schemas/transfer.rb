@@ -40,6 +40,8 @@
 
       "status" => {"type" => "string"},
 
+      "handle_id" => {"type" => "string", "readonly" => "true"},
+
       "transfer_proposal" => {
         "readonly" => "true",
         "type" => "object",

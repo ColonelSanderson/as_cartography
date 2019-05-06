@@ -34,9 +34,18 @@ class Transfer < Sequel::Model
 
     MAPDB.open do |mapdb|
       agency_locations =
-        mapdb[:agency_location].filter(:agency_id => objs.map(&:agency_id)).map {|row| [row[:agency_id], row[:name]]}.to_h
+        mapdb[:agency_location]
+          .filter(:agency_id => objs.map(&:agency_id))
+          .map {|row| [row[:agency_id], row[:name]]}
+          .to_h
 
-        transfer_files =
+      transfer_handles =
+        mapdb[:handle]
+          .filter(:transfer_id => objs.map(&:id))
+          .map {|row| [row[:transfer_id], row[:id]]}
+          .to_h
+
+      transfer_files =
         mapdb[:transfer_file]
           .join(:handle,
                 Sequel.qualify(:handle, :id) => Sequel.qualify(:transfer_file, :handle_id))
@@ -47,6 +56,7 @@ class Transfer < Sequel::Model
       jsons.zip(objs).each do |json, obj|
         json['agency'] = {'ref' => JSONModel(:agent_corporate_entity).uri_for(obj.agency_id)}
         json['agency_location_display_string'] = agency_locations.fetch(obj.agency_location_id, nil)
+        json['handle_id'] = transfer_handles.fetch(obj.id, nil)
 
         if obj.transfer_proposal_id
           json['transfer_proposal'] = {'ref' => JSONModel(:transfer_proposal).uri_for(obj.transfer_proposal_id)}

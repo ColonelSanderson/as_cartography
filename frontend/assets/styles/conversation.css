@@ -1,0 +1,23 @@
+.conversation_message {
+    padding: 1em;
+    background-color: white;
+    margin: 1em 0 1em 0;
+    box-shadow: 0 0 3px 1px #ccc;
+}
+
+.conversation_message_text {
+    white-space: pre-wrap;
+}
+
+.conversation_message_input textarea {
+    display: block;
+    height: 5em;
+    width: 100%;
+    margin-bottom: 1em;
+    margin-top: 0.25em;
+}
+
+.conversation_message_info {
+    color: #888;
+    margin-top: 1em;
+}

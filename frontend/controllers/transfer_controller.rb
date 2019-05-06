@@ -1,7 +1,7 @@
 class TransfersController < ApplicationController
 
   # TODO: review access controls for these endpoints
-  set_access_control  "view_repository" => [:index, :show, :approve]
+  set_access_control  "view_repository" => [:index, :show, :approve, :conversation, :conversation_send]
 
 
   def index
@@ -34,6 +34,20 @@ class TransfersController < ApplicationController
   def show
     @transfer = JSONModel(:transfer).find(params[:id], find_opts.merge('resolve[]' => ['agency', 'transfer_proposal']))
   end
+
+  def conversation
+    render :json => JSONModel::HTTP.get_json("/transfer_conversation",
+                                             :handle_id => params[:handle_id])
+  end
+
+  def conversation_send
+    response = JSONModel::HTTP.post_form("/transfer_conversation",
+                                         :handle_id => params[:handle_id],
+                                         :message => params[:message])
+
+    render :json => ASUtils.json_parse(response.body), :status => response.code
+  end
+
 
   def current_record
     @transfer
