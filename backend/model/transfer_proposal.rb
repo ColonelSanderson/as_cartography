@@ -40,9 +40,9 @@ class TransferProposal < Sequel::Model
 
       proposal_files =
         mapdb[:transfer_file]
-          .join(:transfer_identifier,
-                Sequel.qualify(:transfer_identifier, :id) => Sequel.qualify(:transfer_file, :transfer_id))
-          .filter(Sequel.qualify(:transfer_identifier, :transfer_proposal_id) => objs.map(&:id))
+          .join(:handle,
+                Sequel.qualify(:handle, :id) => Sequel.qualify(:transfer_file, :handle_id))
+          .filter(Sequel.qualify(:handle, :transfer_proposal_id) => objs.map(&:id))
           .all
           .group_by {|row| row[:transfer_proposal_id]}
 
