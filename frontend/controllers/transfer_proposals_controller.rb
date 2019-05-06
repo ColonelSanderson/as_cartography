@@ -18,7 +18,7 @@ class TransferProposalsController < ApplicationController
 
 
   def show
-    @transfer_proposal = JSONModel(:transfer_proposal).find(params[:id], find_opts.merge('resolve[]' => ['agency']))
+    @transfer_proposal = JSONModel(:transfer_proposal).find(params[:id], find_opts.merge('resolve[]' => ['agency', 'transfer']))
   end
 
 

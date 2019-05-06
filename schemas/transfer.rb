@@ -3,7 +3,7 @@
     "$schema" => "http://www.archivesspace.org/archivesspace.json",
     "version" => 1,
     "type" => "object",
-    "uri" => "/transfer_proposals",
+    "uri" => "/transfers",
     "properties" => {
       "uri" => {"type" => "string"},
 
@@ -23,24 +23,6 @@
         }
       },
 
-      "series" => {
-        "type" => "array",
-        "items" => {
-          "type" => "object",
-          "properties" => {
-            "title" => {"type" => "string"},
-            "disposal_class" => {"type" => "string"},
-            "date_range" => {"type" => "string"},
-            "accrual_details" => {"type" => "string"},
-            "creating_agency" => {"type" => "string"},
-            "mandate" => {"type" => "string"},
-            "function" => {"type" => "string"},
-            "system_of_arrangement" => {"type" => "string"},
-            "composition" => {"type" => "array", "items" => {"type" => "string"}},
-          }
-        }
-      },
-
       "files" => {
         "type" => "array",
         "items" => {
@@ -54,19 +36,17 @@
         }
       },
 
-
       "agency_location_display_string" => {"type" => "string"},
 
-      "estimated_quantity" => {"type" => "string"},
       "status" => {"type" => "string"},
 
-      "transfer" => {
+      "transfer_proposal" => {
         "readonly" => "true",
         "type" => "object",
         "subtype" => "ref",
         "properties" => {
           "ref" => {
-            "type" => [{"type" => "JSONModel(:transfer) uri"}],
+            "type" => [{"type" => "JSONModel(:transfer_proposal) uri"}],
           },
           "_resolved" => {
             "type" => "object",

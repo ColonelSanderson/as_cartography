@@ -1,6 +1,19 @@
 <div class="record-toolbar">
     <div class="btn-group btn-toolbar pull-right">
-        <button class="btn btn-danger btn-lg"><i class="fa fa-heart"></i><i class="fa fa-heart"></i><i class="fa fa-heart"></i> <b>APPROVE PROPOSAL</b> <i class="fa fa-heart"></i><i class="fa fa-heart"></i><i class="fa fa-heart"></i></button>
+        <%= form_tag({:controller => "transfers",
+                      :action => "approve"},
+                     :method => "post") do %>
+            <%= hidden_field_tag "proposal_id", @transfer_proposal.id %>
+            <button class="btn btn-danger navbar-btn btn-default">
+                <i class="fa fa-heart"></i>
+                <i class="fa fa-heart"></i>
+                <i class="fa fa-heart"></i>
+                APPROVE PROPOSAL
+                <i class="fa fa-heart"></i>
+                <i class="fa fa-heart"></i>
+                <i class="fa fa-heart"></i>
+            </button>
+        <% end %>
     </div>
     <div class="clearfix"></div>
 </div>

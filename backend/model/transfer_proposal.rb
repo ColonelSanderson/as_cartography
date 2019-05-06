@@ -1,29 +1,10 @@
 class TransferProposal < Sequel::Model
-  include MAPModel
-  map_table :transfer_proposal
-
   include ASModel
   corresponds_to JSONModel(:transfer_proposal)
-
   set_model_scope :global
 
-  def [](key)
-    if key == :create_time
-      # MAP uses ms since epoch, but we want a Ruby timestamp.  Map it!
-      epoch_time = super
-      Time.at(epoch_time / 1000)
-    elsif key == :user_mtime
-      self[:create_time]
-    elsif key == :created_by
-      value = super
-      "MAP user: #{value}"
-    elsif key == :last_modified_by
-      self.created_by
-    else
-      super
-    end
-  end
-
+  include MAPModel
+  map_table :transfer_proposal
 
   def self.sequel_to_jsonmodel(objs, opts = {})
     jsons = super
@@ -46,6 +27,12 @@ class TransferProposal < Sequel::Model
           .all
           .group_by {|row| row[:transfer_proposal_id]}
 
+      transfer_ids =
+        mapdb[:transfer]
+          .filter(:transfer_proposal_id => objs.map(&:id))
+          .all
+          .group_by {|row| row[:transfer_proposal_id]}
+
       jsons.zip(objs).each do |json, obj|
         json['agency'] = {'ref' => JSONModel(:agent_corporate_entity).uri_for(obj.agency_id)}
         json['agency_location_display_string'] = agency_locations.fetch(obj.agency_location_id, nil)
@@ -65,6 +52,10 @@ class TransferProposal < Sequel::Model
             }
           }
         }
+
+        if transfer_ids.fetch(obj.id, nil)
+          json['transfer'] = {'ref' => JSONModel(:transfer).uri_for(transfer_ids.fetch(obj.id)[0][:id])}
+        end
 
         json['files'] = proposal_files.fetch(obj.id, []).map {|file|
           {

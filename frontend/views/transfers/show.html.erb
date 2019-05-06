@@ -1,0 +1,101 @@
+<%= setup_context :object => @transfer, :title => @transfer.title %>
+
+<div class="row">
+  <div class="col-md-3">
+    <%= render_aspace_partial :partial => "sidebar" %>
+  </div>
+  <div class="col-md-9">
+    <%= render_aspace_partial :partial => "toolbar" %>
+    <div class="record-pane">
+      <%= readonly_context :transfer, @transfer do |readonly| %>
+        <h2><%= @transfer.title %>  <span class="label label-info"><%= I18n.t("transfer._singular") %></span></h2>
+
+        <%= render_aspace_partial :partial => "shared/flash_messages" %>
+
+        <% define_template "transfer", jsonmodel_definition(:transfer) do |form, transfer| %>
+          <section id="basic_information">
+            <h3><%= I18n.t("transfer._frontend.section.basic_information") %></h3>
+
+            <%= render_plugin_partials("top_of_basic_information_transfer",
+                                       :form => form,
+                                       :record => @transfer) %>
+
+            <div class="form-group">
+              <div class="control-label col-sm-2"><%= I18n.t("transfer.agency") %></div>
+              <div class="token-list">
+                <%= render_token(:object => @transfer['agency']['_resolved'],
+                                 :label => @transfer['agency']['_resolved']['title'],
+                                 :type => @transfer['agency']['_resolved']['jsonmodel_type'],
+                                 :uri => @transfer['agency']['ref'],
+                                 :placement => "top") %>
+              </div>
+            </div>
+
+            <%= form.label_and_textfield "agency_location_display_string" %>
+
+            <%= form.label_and_textfield "title" %>
+            <%= form.label_and_textfield "status" %>
+
+            <div class="form-group">
+              <div class="control-label col-sm-2"><%= I18n.t("transfer_proposal._singular") %></div>
+              <div class="token-list">
+                <%= render_token(:object => @transfer['transfer_proposal']['_resolved'],
+                                 :label => @transfer['transfer_proposal']['_resolved']['title'],
+                                 :type => @transfer['transfer_proposal']['_resolved']['jsonmodel_type'],
+                                 :uri => @transfer['transfer_proposal']['ref'],
+                                 :placement => "top") %>
+              </div>
+            </div>
+
+
+            <% unless ASUtils.wrap(@transfer['files']).empty? %>
+              <section id="transfer_files_">
+                <h3><%= I18n.t("transfer._frontend.section.files") %></h3>
+                <table class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th><%= I18n.t("transfer.files.filename") %></th>
+                      <th><%= I18n.t("transfer.files.mime_type") %></th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% ASUtils.wrap(@transfer['files']).each do |file| %>
+                      <tr>
+                        <td><%= file.fetch('filename') %></td>
+                        <td><%= file.fetch('mime_type') %></td>
+                        <td class="table-record-actions">
+                          <div class="btn-group">
+                            <%=
+                            link_to(I18n.t("transfer.files.view"),
+                                    {
+                                      :controller => :transfer_files,
+                                      :action => :show,
+                                      :key => file.fetch('key'),
+                                      :filename => file.fetch('filename'),
+                                      :mime_type => file.fetch('mime_type'),
+                                    },
+                                    {
+                                      :class => "btn btn-primary"
+                                    })
+                            %>
+                          </div>
+                        </td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </section>
+            <% end %>
+
+            <%= display_audit_info(@transfer) %>
+        <% end %>
+
+        <%= readonly.emit_template "transfer" %>
+
+        <%= show_plugins_for(@transfer, readonly) %>
+      <% end %>
+
+    </div>
+  </div>
+</div>

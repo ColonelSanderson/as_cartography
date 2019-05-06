@@ -37,6 +37,20 @@
             <%= form.label_and_textfield "estimated_quantity" %>
             <%= form.label_and_textfield "status" %>
 
+            <% if @transfer_proposal['transfer'] %>
+              <div class="form-group">
+                <div class="control-label col-sm-2"><%= I18n.t("transfer._singular") %></div>
+                <div class="token-list">
+                  <%= render_token(:object => @transfer_proposal['transfer']['_resolved'],
+                                   :label => @transfer_proposal['transfer']['_resolved']['title'],
+                                   :type => @transfer_proposal['transfer']['_resolved']['jsonmodel_type'],
+                                   :uri => @transfer_proposal['transfer']['ref'],
+                                   :placement => "top") %>
+                </div>
+              </div>
+            <% end %>
+
+
             <% unless ASUtils.wrap(@transfer_proposal['files']).empty? %>
               <section id="transfer_proposal_files_">
                 <h3><%= I18n.t("transfer_proposal._frontend.section.files") %></h3>
@@ -95,9 +109,9 @@
                       <% end %>
                       <%=
                       form.label_with_field "composition",
-                       ASUtils.wrap(series['composition'])
-                       .map {|composition| I18n.t("transfer_proposal.composition_types.#{composition}")}
-                       .join("; ")
+                         ASUtils.wrap(series['composition'])
+                         .map {|composition| I18n.t("transfer_proposal.composition_types.#{composition}")}
+                         .join("; ")
                       %>
                     <% end %>
                   </section>

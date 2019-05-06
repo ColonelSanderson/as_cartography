@@ -22,4 +22,17 @@ class ArchivesSpaceService < Sinatra::Base
     json_response(resolve_references(json, params[:resolve]))
   end
 
+  Endpoint.post('/transfer_proposals/:id/approve')
+    .description("Create a new transfer from a given proposal")
+    .params(["id", :id])
+    .permissions([])
+    .returns([200, "(:transfer)"]) \
+  do
+    MAPDB.transaction do
+      obj = Transfer.create_from_proposal(params[:id])
+
+      json_response(Transfer.to_jsonmodel(obj))
+    end
+  end
+
 end

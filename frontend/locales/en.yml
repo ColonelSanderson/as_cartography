@@ -5,6 +5,10 @@ en:
         basic_information: Basic Information
         series: Series
         files: Attached Files
+      errors:
+        approval_failed: Failed to approve transfer
+      messages:
+        approve_succeeded: New transfer created
     _plural: Transfer Proposals
     _singular: Transfer Proposal
     accrual_details: Accrual Details
@@ -31,6 +35,22 @@ en:
       alphabetical: Alphabetical
       unknown: Unknown
       other: Other
+    title: Title
+    files:
+      filename: File name
+      mime_type: File type
+      view: View this file
+
+  transfer:
+    _frontend:
+      section:
+        basic_information: Basic Information
+        files: Attached Files
+    _plural: Transfers
+    _singular: Transfer
+    agency: Agency
+    agency_location_display_string: Agency Location Display String
+    status: Status
     title: Title
     files:
       filename: File name
