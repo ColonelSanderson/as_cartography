@@ -38,9 +38,18 @@ class TransferProposal < Sequel::Model
           .all
           .group_by {|row| row[:transfer_proposal_id]}
 
+      proposal_files =
+        mapdb[:transfer_file]
+          .join(:transfer_identifier,
+                Sequel.qualify(:transfer_identifier, :id) => Sequel.qualify(:transfer_file, :transfer_id))
+          .filter(Sequel.qualify(:transfer_identifier, :transfer_proposal_id) => objs.map(&:id))
+          .all
+          .group_by {|row| row[:transfer_proposal_id]}
+
       jsons.zip(objs).each do |json, obj|
         json['agency'] = {'ref' => JSONModel(:agent_corporate_entity).uri_for(obj.agency_id)}
         json['agency_location_display_string'] = agency_locations.fetch(obj.agency_location_id, nil)
+
         json['series'] = proposal_series.fetch(obj.id, []).map {|series_row|
           {
             'title' => series_row[:series_title],
@@ -54,6 +63,15 @@ class TransferProposal < Sequel::Model
             'composition' => ['digital', 'hybrid', 'physical'].select {|composition|
               series_row[:"composition_#{composition}"] == 1
             }
+          }
+        }
+
+        json['files'] = proposal_files.fetch(obj.id, []).map {|file|
+          {
+            'key' => file[:key],
+            'filename' => file[:filename],
+            'role' => file[:role],
+            'mime_type' => file[:mime_type],
           }
         }
       end

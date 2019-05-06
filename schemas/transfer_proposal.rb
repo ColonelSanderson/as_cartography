@@ -41,6 +41,20 @@
         }
       },
 
+      "files" => {
+        "type" => "array",
+        "items" => {
+          "type" => "object",
+          "properties" => {
+            "key" => {"type" => "string"},
+            "filename" => {"type" => "string"},
+            "role" => {"type" => "string"},
+            "mime_type" => {"type" => "string"},
+          }
+        }
+      },
+
+
       "agency_location_display_string" => {"type" => "string"},
 
       "estimated_quantity" => {"type" => "string"},

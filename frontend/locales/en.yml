@@ -4,6 +4,7 @@ en:
       section:
         basic_information: Basic Information
         series: Series
+        files: Attached Files
     _plural: Transfer Proposals
     _singular: Transfer Proposal
     accrual_details: Accrual Details
@@ -31,3 +32,7 @@ en:
       unknown: Unknown
       other: Other
     title: Title
+    files:
+      filename: File name
+      mime_type: File type
+      view: View this file

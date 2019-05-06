@@ -37,6 +37,46 @@
             <%= form.label_and_textfield "estimated_quantity" %>
             <%= form.label_and_textfield "status" %>
 
+            <% unless ASUtils.wrap(@transfer_proposal['files']).empty? %>
+              <section id="transfer_proposal_files_">
+                <h3><%= I18n.t("transfer_proposal._frontend.section.files") %></h3>
+                <table class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th><%= I18n.t("transfer_proposal.files.filename") %></th>
+                      <th><%= I18n.t("transfer_proposal.files.mime_type") %></th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% ASUtils.wrap(@transfer_proposal['files']).each do |file| %>
+                      <tr>
+                        <td><%= file.fetch('filename') %></td>
+                        <td><%= file.fetch('mime_type') %></td>
+                        <td class="table-record-actions">
+                          <div class="btn-group">
+                            <%=
+                            link_to(I18n.t("transfer_proposal.files.view"),
+                                    {
+                                      :controller => :transfer_files,
+                                      :action => :show,
+                                      :key => file.fetch('key'),
+                                      :filename => file.fetch('filename'),
+                                      :mime_type => file.fetch('mime_type'),
+                                    },
+                                    {
+                                      :class => "btn btn-primary"
+                                    })
+                            %>
+                          </div>
+                        </td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </section>
+            <% end %>
+
             <% unless ASUtils.wrap(@transfer_proposal['series']).empty? %>
               <section id="transfer_proposal_series_">
                 <h3><%= I18n.t("transfer_proposal._frontend.section.series") %></h3>
