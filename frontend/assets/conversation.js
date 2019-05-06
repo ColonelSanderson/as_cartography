@@ -20,6 +20,12 @@ function ConversationWidget(opts) {
 
     this.bindEvents();
     this.fetch();
+
+    var self = this;
+
+    this.refreshTimer = setInterval(function () {
+        self.fetch();
+    }, 10000);
 }
 
 ConversationWidget.prototype.bindEvents = function() {
