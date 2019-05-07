@@ -61,6 +61,7 @@
                     <tr>
                       <th><%= I18n.t("transfer_proposal.files.filename") %></th>
                       <th><%= I18n.t("transfer_proposal.files.mime_type") %></th>
+                      <th><%= I18n.t("transfer_proposal.files.role") %></th>
                       <th></th>
                     </tr>
                   </thead>
@@ -69,6 +70,7 @@
                       <tr>
                         <td><%= file.fetch('filename') %></td>
                         <td><%= file.fetch('mime_type') %></td>
+                        <td><%= file.fetch('role') %></td>
                         <td class="table-record-actions">
                           <div class="btn-group">
                             <%=

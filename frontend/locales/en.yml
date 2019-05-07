@@ -40,6 +40,7 @@ en:
       filename: File name
       mime_type: File type
       view: View this file
+      role: Role
 
   transfer:
     _frontend:
@@ -64,3 +65,4 @@ en:
       filename: File Name
       mime_type: File Type
       view: View This File
+      role: Role
