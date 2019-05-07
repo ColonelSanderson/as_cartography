@@ -27,7 +27,8 @@
                                  :label => @transfer_proposal['agency']['_resolved']['title'],
                                  :type => @transfer_proposal['agency']['_resolved']['jsonmodel_type'],
                                  :uri => @transfer_proposal['agency']['ref'],
-                                 :placement => "top") %>
+                                 :placement => "top",
+                                 :inside_linker_browse => true) %>
               </div>
             </div>
 
@@ -45,7 +46,8 @@
                                    :label => @transfer_proposal['transfer']['_resolved']['title'],
                                    :type => @transfer_proposal['transfer']['_resolved']['jsonmodel_type'],
                                    :uri => @transfer_proposal['transfer']['ref'],
-                                   :placement => "top") %>
+                                   :placement => "top",
+                                   :inside_linker_browse => true) %>
                 </div>
               </div>
             <% end %>

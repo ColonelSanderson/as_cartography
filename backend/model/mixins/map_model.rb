@@ -38,9 +38,11 @@ module MAPModel
     def last_modified_by=(user)
       self.created_by = user
     end
+
     def user_mtime=(value)
       self.create_time = (value.to_f * 1000).to_i
     end
+
     def system_mtime=(value)
       self.create_time = (value.to_f * 1000).to_i
     end

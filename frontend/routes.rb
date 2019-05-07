@@ -4,6 +4,8 @@ ArchivesSpace::Application.routes.draw do
   resources :transfer_files
 
   match 'transfers/approve' => 'transfers#approve', :via => [:post]
+  match 'transfers/:id' => 'transfers#update', :via => [:post]
+
   match 'transfer_conversation' => 'transfers#conversation', :via => [:get]
   match 'transfer_conversation_send' => 'transfers#conversation_send', :via => [:post]
 end

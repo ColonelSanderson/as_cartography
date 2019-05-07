@@ -1,0 +1,24 @@
+<%= setup_context(:object => @transfer, :title => @transfer.title) %>
+
+<%= form_for @transfer, :as => "transfer", :url => {:action => :update}, :html => {:class => 'form-horizontal aspace-record-form', :id => "transfer_form"}.merge(update_monitor_params(@transfer)) do |f| %>
+    <%= form_context :transfer, @transfer do |form| %>
+        <div class="row">
+            <div class="col-md-3">
+                <%= render_aspace_partial :partial => "sidebar" %>
+            </div>
+
+            <div class="col-md-9">
+                <%= render_aspace_partial :partial => "transfers/toolbar" %>
+                <div class="record-pane">
+                    <%= link_to_help :topic => "transfer" %>
+                    <%= render_aspace_partial :partial => "transfers/form", :locals => {:form => form} %>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary"><%= I18n.t("transfer._frontend.action.save") %></button>
+                        <%= link_to I18n.t("actions.cancel"), :back, :class => "btn btn-cancel btn-default" %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% end %>
+<% end %>

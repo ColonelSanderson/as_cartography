@@ -1,0 +1,18 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="record-toolbar">
+            <% if !['edit', 'update'].include?(controller.action_name) %>
+                <div class="btn-group pull-left">
+                    <%= link_to I18n.t("actions.edit"), {:controller => :transfers, :action => :edit, :id => @transfer.id}, :class => "btn btn-sm btn-primary" %>
+                </div>
+            <% end %>
+
+            <% if ['edit', 'update'].include?(controller.action_name) %>
+                <div class="pull-left revert-changes">
+                    <%= link_to I18n.t("actions.revert"), {:controller => :transfers, :action => :edit, :id => @transfer.id}, :class => "btn btn-sm btn-default" %>
+                    <%= I18n.t("actions.toolbar_disabled_message") %>
+                </div>
+            <% end %>
+        </div>
+    </div>
+</div>

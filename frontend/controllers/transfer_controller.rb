@@ -1,7 +1,7 @@
 class TransfersController < ApplicationController
 
   # TODO: review access controls for these endpoints
-  set_access_control  "view_repository" => [:index, :show, :approve, :conversation, :conversation_send]
+  set_access_control  "view_repository" => [:index, :show, :edit, :update, :approve, :conversation, :conversation_send]
 
 
   def index
@@ -16,6 +16,32 @@ class TransfersController < ApplicationController
       }
     end
   end
+
+  def edit
+    @transfer = JSONModel(:transfer).find(params[:id], find_opts.merge('resolve[]' => ['agency', 'transfer_proposal']))
+  end
+
+  def update
+    updated = JSONModel(:transfer).find(params[:id], find_opts.merge('resolve[]' => ['agency', 'transfer_proposal']))
+
+    [:title, :date_scheduled, :date_received, :quantity_received].each do |prop|
+      updated[prop] = params[:transfer][prop]
+    end
+
+    params[:transfer] = updated
+
+    handle_crud(:instance => :transfer,
+                :model => JSONModel(:transfer),
+                :obj => JSONModel(:transfer).find(params[:id], find_opts.merge('resolve[]' => ['agency', 'transfer_proposal'])),
+                :on_invalid => ->(){
+                  return render action: "edit"
+                },
+                :on_valid => ->(id){
+                  flash[:success] = I18n.t("transfer._frontend.messages.updated", JSONModelI18nWrapper.new(:transfer => @transfer))
+                  redirect_to :controller => :transfers, :action => :edit, :id => id
+                })
+  end
+
 
   def approve
     response = JSONModel::HTTP.post_form(JSONModel(:transfer_proposal).uri_for("#{params[:proposal_id]}/approve"))

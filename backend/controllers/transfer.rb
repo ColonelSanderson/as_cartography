@@ -10,6 +10,17 @@ class ArchivesSpaceService < Sinatra::Base
     handle_listing(Transfer, params)
   end
 
+  Endpoint.post('/transfers/:id')
+    .description("Update a Transfer")
+    .params(["id", :id],
+            ["transfer", JSONModel(:transfer), "The updated record", :body => true])
+    .permissions([])
+    .returns([200, :updated]) \
+  do
+    handle_update(Transfer, params[:id], params[:transfer])
+  end
+
+
   Endpoint.get('/transfers/:id')
     .description("Get a transfer by ID")
     .params(["id", :id],

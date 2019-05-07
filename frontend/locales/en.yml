@@ -13,7 +13,7 @@ en:
     _singular: Transfer Proposal
     accrual_details: Accrual Details
     agency: Agency
-    agency_location_display_string: Agency Location Display String
+    agency_location_display_string: Agency Location
     composition: Composition
     composition_types:
       digital: Digital
@@ -43,17 +43,24 @@ en:
 
   transfer:
     _frontend:
+      action:
+        save: Save Transfer
       section:
         basic_information: Basic Information
         files: Attached Files
         conversation: Conversation
+      messages:
+        updated: Transfer updated
     _plural: Transfers
     _singular: Transfer
     agency: Agency
-    agency_location_display_string: Agency Location Display String
+    agency_location_display_string: Agency Location
     status: Status
     title: Title
+    date_scheduled: Date Scheduled
+    date_received: Date Received
+    quantity_received: Quantity Received
     files:
-      filename: File name
-      mime_type: File type
-      view: View this file
+      filename: File Name
+      mime_type: File Type
+      view: View This File

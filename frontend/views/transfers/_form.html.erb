@@ -1,0 +1,51 @@
+<h2><%= @transfer.title %>  <span class="label label-info"><%= I18n.t("transfer._singular") %></span></h2>
+
+<%= render_aspace_partial :partial => "shared/flash_messages" %>
+
+<% define_template "transfer", jsonmodel_definition(:transfer) do |form, transfer| %>
+    <%= readonly_context :transfer, @transfer do |readonly| %>
+        <section id="basic_information">
+            <h3><%= I18n.t("transfer._frontend.section.basic_information") %></h3>
+
+            <%= render_plugin_partials("top_of_basic_information_transfer",
+                                       :form => form,
+                                       :record => @transfer) %>
+
+            <div class="form-group">
+                <div class="control-label col-sm-2"><%= I18n.t("transfer.agency") %></div>
+                <div class="token-list">
+                    <%= render_token(:object => @transfer['agency']['_resolved'],
+                                     :label => @transfer['agency']['_resolved']['title'],
+                                     :type => @transfer['agency']['_resolved']['jsonmodel_type'],
+                                     :uri => @transfer['agency']['ref'],
+                                     :placement => "top") %>
+                </div>
+            </div>
+
+            <%= readonly.label_and_textfield "agency_location_display_string" %>
+
+            <%= form.label_and_textfield "title" %>
+
+            <%= form.label_and_date "date_scheduled" %>
+            <%= form.label_and_date "date_received" %>
+            <%= form.label_and_textfield "quantity_received" %>
+
+            <%= readonly.label_and_textfield "status" %>
+
+            <div class="form-group">
+                <div class="control-label col-sm-2"><%= I18n.t("transfer_proposal._singular") %></div>
+                <div class="token-list">
+                    <%= render_token(:object => @transfer['transfer_proposal']['_resolved'],
+                                     :label => @transfer['transfer_proposal']['_resolved']['title'],
+                                     :type => @transfer['transfer_proposal']['_resolved']['jsonmodel_type'],
+                                     :uri => @transfer['transfer_proposal']['ref'],
+                                     :placement => "top",
+                                     :inside_linker_browse => true) %>
+                </div>
+            </div>
+        </section>
+    <% end %>
+<% end %>
+
+<%= form.emit_template "transfer" %>
+
