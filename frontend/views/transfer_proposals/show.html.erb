@@ -122,6 +122,11 @@
                 <% end %>
               </section>
 
+              <section id="conversation" class="conversation">
+                <h3><%= I18n.t("transfer._frontend.section.conversation") %></h3>
+                <div id="conversation-widget"></div>
+              </section>
+
               <%= display_audit_info(@transfer_proposal) %>
             <% end %>
         <% end %>
@@ -133,3 +138,11 @@
     </div>
   </div>
 </div>
+
+
+<script>
+ new ConversationWidget({
+   el: '#conversation-widget',
+   handle_id: '<%= @transfer_proposal.handle_id %>'
+ });
+</script>

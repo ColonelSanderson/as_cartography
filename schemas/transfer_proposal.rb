@@ -60,6 +60,8 @@
       "estimated_quantity" => {"type" => "string"},
       "status" => {"type" => "string"},
 
+      "handle_id" => {"type" => "string", "readonly" => "true"},
+
       "transfer" => {
         "readonly" => "true",
         "type" => "object",

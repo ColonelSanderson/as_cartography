@@ -39,6 +39,12 @@ class TransferProposal < Sequel::Model
           .map {|row| [row[:id], row[:aspace_agency_id]]}
           .to_h
 
+      transfer_handles =
+        mapdb[:handle]
+          .filter(:transfer_proposal_id => objs.map(&:id))
+          .map {|row| [row[:transfer_proposal_id], row[:id]]}
+          .to_h
+
       jsons.zip(objs).each do |json, obj|
         json['agency'] = {'ref' => JSONModel(:agent_corporate_entity).uri_for(aspace_agents.fetch(obj.agency_id))}
         json['agency_location_display_string'] = agency_locations.fetch(obj.agency_location_id, nil)
@@ -58,6 +64,10 @@ class TransferProposal < Sequel::Model
             }
           }
         }
+
+        json['handle_id'] = transfer_handles.fetch(obj.id, nil)
+        json['handle_id'] = json['handle_id'].to_s if json['handle_id']
+
 
         if transfer_ids.fetch(obj.id, nil)
           json['transfer'] = {'ref' => JSONModel(:transfer).uri_for(transfer_ids.fetch(obj.id)[0][:id])}
