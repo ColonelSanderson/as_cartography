@@ -55,9 +55,9 @@ class AgencyTransferConverter < Converter
 
 
 
-  def self.instance_for(type, input_file)
+  def self.instance_for(type, input_file, opts = {})
     if type == "agency_transfer"
-      self.new(input_file)
+      self.new(input_file, opts)
     else
       nil
     end
@@ -79,7 +79,7 @@ class AgencyTransferConverter < Converter
   end
 
 
-  def initialize(input_file)
+  def initialize(input_file, opts = {})
     super
     @batch = ASpaceImport::RecordBatch.new
     @input_file = input_file
@@ -88,8 +88,7 @@ class AgencyTransferConverter < Converter
     @items = []
     @representations = []
 
-    # FIXME: how to pass this in?
-    @transfer_uri = 'moo'
+    @transfer_uri = opts['transfer_uri'] or raise "No Transfer URI!!"
 
     @series_uris = {}
     @agency_uris = {}
@@ -148,6 +147,11 @@ class AgencyTransferConverter < Converter
 
   private
 
+  def row_values(row)
+    (0...row.size).map {|i| row[i] ? row[i].to_s.strip : ''}
+  end
+
+
   def series_uri_for(id)
     @series_uris[id] ||= (Resource[:qsa_id => id] or raise "No Series for #{id}!!").uri
   end
@@ -158,8 +162,9 @@ class AgencyTransferConverter < Converter
   end
 
 
-  def row_values(row)
-    (0...row.size).map {|i| row[i] ? row[i].to_s.strip : ''}
+  def format_sensitivity_label(label)
+    # FIXME: might have to map back to enum value from translation ... sigh
+    label
   end
 
 
@@ -183,6 +188,7 @@ class AgencyTransferConverter < Converter
       :resource => {
         :ref => series_uri_for(item[:series_id])
       },
+      :sensitivity_label => format_sensitivity_label(item[:sensitivity_label]),
       :physical_representations => [],
       :digital_representations => [],
       :series_system_agent_relationships => [],
@@ -208,17 +214,17 @@ class AgencyTransferConverter < Converter
       rep_key = rep[:representation_type].downcase.start_with?('p') ? :physical_representations : :digital_representations
 
       rep_hash = {
-        :title => rep[:title],
+        :title => rep[:title].empty? ? item[:title] : rep[:title],
         :access_category => rep[:restricted_access_period],
         :format => rep[:format],
         :contained_within => rep[:contained_within],
       }
 
-      record_hash[rep_key] << rep_hash
+      item_hash[rep_key] << rep_hash
     end
 
     unless item[:responsible_agency].empty?
-      record_hash[:series_system_agent_relationships] << {
+      item_hash[:series_system_agent_relationships] << {
         :start_date => item[:start_date],
         :jsonmodel_type => 'series_system_agent_record_ownership_relationship',
         :relator => 'is_controlled_by',
@@ -227,7 +233,7 @@ class AgencyTransferConverter < Converter
     end
 
     unless item[:creating_agency].empty?
-      record_hash[:series_system_agent_relationships] << {
+      item_hash[:series_system_agent_relationships] << {
         :start_date => item[:start_date],
         :jsonmodel_type => 'series_system_agent_record_creation_relationship',
         :relator => 'established_by',
@@ -235,11 +241,7 @@ class AgencyTransferConverter < Converter
       }
     end
 
-    unless item[:sensitivity_label].empty?
-
-    end
-
-    record_hash
+    item_hash
   end
 
 end
