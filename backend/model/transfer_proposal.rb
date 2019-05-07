@@ -6,6 +6,13 @@ class TransferProposal < Sequel::Model
   include MAPModel
   map_table :transfer_proposal
 
+  CANCELLED_BY_QSA_STATUS = 'CANCELLED_BY_QSA'
+
+  def cancel!
+    self.status = CANCELLED_BY_QSA_STATUS
+    self.save
+  end
+
   def self.sequel_to_jsonmodel(objs, opts = {})
     jsons = super
 

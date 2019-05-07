@@ -9,6 +9,15 @@ en:
         approval_failed: Failed to approve transfer
       messages:
         approve_succeeded: New transfer created
+        cancel_succeeded: Transfer cancelled
+        confirm_approve_title: Approving Transfer Proposal
+        confirm_approve_message: Are you sure you want to approve this transfer proposal?
+        confirm_cancel_title: Cancelling Transfer Proposal
+        confirm_cancel_message: Are you sure you want cancel this transfer proposal?
+      confirmation_button: Approve This Proposal
+      cancel_button: Cancel This Proposal
+      back_button: Back
+
     _plural: Transfer Proposals
     _singular: Transfer Proposal
     accrual_details: Accrual Details

@@ -1,6 +1,6 @@
 class TransferProposalsController < ApplicationController
 
-  set_access_control  "view_repository" => [:index, :show]
+  set_access_control  "view_repository" => [:index, :show, :approve, :cancel]
 
 
   def index
@@ -14,6 +14,33 @@ class TransferProposalsController < ApplicationController
         csv_response( uri, search_params )
       }
     end
+  end
+
+
+  def approve
+    response = JSONModel::HTTP.post_form(JSONModel(:transfer_proposal).uri_for("#{params[:proposal_id]}/approve"))
+
+    if response.code == '200'
+      flash[:info] = I18n.t('transfer_proposal._frontend.messages.approve_succeeded')
+      transfer = JSONModel(:transfer).from_hash(ASUtils.json_parse(response.body))
+      resolver = Resolver.new(transfer.uri)
+      redirect_to(resolver.view_uri)
+    else
+      flash[:error] = I18n.t('transfer_proposal._frontend.errors.approval_failed')
+    end
+  end
+
+
+  def cancel
+    response = JSONModel::HTTP.post_form(JSONModel(:transfer_proposal).uri_for("#{params[:proposal_id]}/cancel"))
+
+    if response.code == '200'
+      flash[:info] = I18n.t('transfer_proposal._frontend.messages.cancel_succeeded')
+    else
+      flash[:error] = I18n.t('transfer_proposal._frontend.errors.cancel_failed')
+    end
+
+    redirect_to(:controller => :transfer_proposals, :action => :show, :id => params[:proposal_id])
   end
 
 

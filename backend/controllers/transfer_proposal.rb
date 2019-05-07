@@ -35,4 +35,17 @@ class ArchivesSpaceService < Sinatra::Base
     end
   end
 
+  Endpoint.post('/transfer_proposals/:id/cancel')
+    .description("Cancel a given proposal")
+    .params(["id", :id])
+    .permissions([])
+    .returns([200, "(:transfer)"]) \
+  do
+    MAPDB.transaction do
+      TransferProposal[params[:id]].cancel!
+
+      json_response('status' => 'cancelled')
+    end
+  end
+
 end

@@ -1,9 +1,10 @@
-<div class="record-toolbar">
-  <% unless @transfer_proposal['transfer'] %>
+<div class="record-toolbar transfers-toolbar">
+  <% unless @transfer_proposal['transfer'] || ['CANCELLED_BY_AGENCY', 'CANCELLED_BY_QSA'].include?(@transfer_proposal['status']) %>
     <div class="btn-group btn-toolbar pull-right">
-      <%= form_tag({:controller => "transfers",
+      <%= form_tag({:controller => "transfer_proposals",
                     :action => "approve"},
-                   :method => "post") do %>
+                   :method => "post",
+                   :id => "approve_transfer_proposal") do %>
         <%= hidden_field_tag "proposal_id", @transfer_proposal.id %>
         <button class="btn btn-danger navbar-btn btn-default">
           <i class="fa fa-heart"></i>
@@ -15,7 +16,46 @@
           <i class="fa fa-heart"></i>
         </button>
       <% end %>
+
+      <%= form_tag({:controller => "transfer_proposals",
+                    :action => "cancel"},
+                   :method => "post",
+                   :id => "cancel_transfer_proposal") do %>
+        <%= hidden_field_tag "proposal_id", @transfer_proposal.id %>
+        <button class="btn btn-cancel navbar-btn btn-default">
+          <i class="fa fa-skull-crossbones"></i>
+          <i class="fa fa-skull-crossbones"></i>
+          <i class="fa fa-skull-crossbones"></i>
+          CANCEL PROPOSAL
+          <i class="fa fa-skull-crossbones"></i>
+          <i class="fa fa-skull-crossbones"></i>
+          <i class="fa fa-skull-crossbones"></i>
+        </button>
+      <% end %>
+
     </div>
   <% end %>
   <div class="clearfix"></div>
 </div>
+
+<div id="transfer_confirm_approval_template"
+     data-title="<%= I18n.t("transfer_proposal._frontend.messages.confirm_approve_title") %>"><!--
+   <div class="modal-body">
+      <p><%= I18n.t('transfer_proposal._frontend.messages.confirm_approve_message') %></p>
+   </div>
+   <div class="modal-footer">
+      <button class="btn btn-primary confirmButton"><%= I18n.t('transfer_proposal._frontend.confirmation_button') %></button>
+      <button class="btn btn-cancel btn-default" data-dismiss="modal"><%= I18n.t "transfer_proposal._frontend.back_button" %></button>
+   </div>
+--></div>
+
+<div id="transfer_confirm_cancel_template"
+     data-title="<%= I18n.t("transfer_proposal._frontend.messages.confirm_cancel_title") %>"><!--
+   <div class="modal-body">
+      <p><%= I18n.t('transfer_proposal._frontend.messages.confirm_cancel_message') %></p>
+   </div>
+   <div class="modal-footer">
+      <button class="btn btn-primary confirmButton"><%= I18n.t('transfer_proposal._frontend.cancel_button') %></button>
+      <button class="btn btn-cancel btn-default" data-dismiss="modal"><%= I18n.t "transfer_proposal._frontend.back_button" %></button>
+   </div>
+--></div>

@@ -3,7 +3,8 @@ ArchivesSpace::Application.routes.draw do
   resources :transfers
   resources :transfer_files
 
-  match 'transfers/approve' => 'transfers#approve', :via => [:post]
+  match 'transfer_proposals/approve' => 'transfer_proposals#approve', :via => [:post]
+  match 'transfer_proposals/cancel' => 'transfer_proposals#cancel', :via => [:post]
   match 'transfers/:id' => 'transfers#update', :via => [:post]
 
   match 'transfer_conversation' => 'transfers#conversation', :via => [:get]

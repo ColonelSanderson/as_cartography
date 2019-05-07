@@ -1,7 +1,7 @@
 class TransfersController < ApplicationController
 
   # TODO: review access controls for these endpoints
-  set_access_control  "view_repository" => [:index, :show, :edit, :update, :approve, :conversation, :conversation_send]
+  set_access_control  "view_repository" => [:index, :show, :edit, :update, :conversation, :conversation_send]
 
 
   def index
@@ -40,21 +40,6 @@ class TransfersController < ApplicationController
                   flash[:success] = I18n.t("transfer._frontend.messages.updated", JSONModelI18nWrapper.new(:transfer => @transfer))
                   redirect_to :controller => :transfers, :action => :edit, :id => id
                 })
-  end
-
-
-  def approve
-    response = JSONModel::HTTP.post_form(JSONModel(:transfer_proposal).uri_for("#{params[:proposal_id]}/approve"))
-
-    if response.code == '200'
-      flash[:info] = I18n.t('transfer_proposal._frontend.messages.approve_succeeded')
-      transfer = JSONModel(:transfer).from_hash(ASUtils.json_parse(response.body))
-      resolver = Resolver.new(transfer.uri)
-      redirect_to(resolver.view_uri)
-    else
-      # TODO: test this
-      flash[:error] = I18n.t('transfer_proposal._frontend.errors.approval_failed')
-    end
   end
 
   def show
