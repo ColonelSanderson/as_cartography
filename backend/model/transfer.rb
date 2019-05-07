@@ -3,6 +3,7 @@ class Transfer < Sequel::Model
   STATUS_APPROVED = 'APPROVED'
 
   CHECKLIST_APPROVED = 'TRANSFER_PROPOSAL_APPROVED'
+  TRANSFER_PROCESS_INITIATED = 'TRANSFER_PROCESS_INITIATED'
 
   include ASModel
   corresponds_to JSONModel(:transfer)
@@ -20,11 +21,15 @@ class Transfer < Sequel::Model
                           :title => proposal.title,
                           :created_by => RequestContext.get(:current_username),
                           :create_time => java.lang.System.currentTimeMillis,
-                          :status => STATUS_APPROVED,
+                          :status => TRANSFER_PROCESS_INITIATED,
                           :checklist_status => CHECKLIST_APPROVED,
                           :transfer_proposal_id => proposal_id)
 
     self.db[:handle].insert(:transfer_id => created.id)
+
+    self.db[:transfer_proposal]
+      .filter(:id => proposal_id)
+      .update(:status => STATUS_APPROVED)
 
     created
   end
@@ -57,6 +62,8 @@ class Transfer < Sequel::Model
         json['agency'] = {'ref' => JSONModel(:agent_corporate_entity).uri_for(obj.agency_id)}
         json['agency_location_display_string'] = agency_locations.fetch(obj.agency_location_id, nil)
         json['handle_id'] = transfer_handles.fetch(obj.id, nil)
+
+        json['handle_id'] = json['handle_id'].to_s if json['handle_id']
 
         if obj.transfer_proposal_id
           json['transfer_proposal'] = {'ref' => JSONModel(:transfer_proposal).uri_for(obj.transfer_proposal_id)}
