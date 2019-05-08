@@ -52,12 +52,11 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <% Array(@transfer['files']).each do |file, idx| %>
-                                            <% form.push("files[#{idx}]") do |form| %>
-
-                                                <tr>
-                                                    <td><%= file.fetch('filename') %></td>
-                                                    <td><%= file.fetch('mime_type') %></td>
+                                        <% Array(@transfer['files']).each_with_index do |file, idx| %>
+                                            <% form.push("files[]") do |form| %>
+                                                <tr id="<%= "file_#{idx}" %>">
+                                                    <td class="file-filename"><%= file.fetch('filename') %></td>
+                                                    <td class="file-mime-type"><%= file.fetch('mime_type') %></td>
                                                     <td>
                                                         <%= form.hidden_input('key', file.fetch('key')) %>
                                                         <%= form.select('role', form.possible_options_for(['files', 'role']), :field_opts => {:default => file.fetch('role')}) %>
@@ -77,6 +76,13 @@
                                                                         :class => "btn btn-primary"
                                                                     })
                                                             %>
+                                                            <button class="transfer_replace_file btn btn-warning"
+                                                                    data-key="<%= file.fetch('key') %>"
+                                                                    data-filename="<%= file.fetch('filename') %>"
+                                                                    data-row-id="<%= "file_#{idx}" %>"
+                                                                    data-role="<%= file.fetch('role') %>">
+                                                                <%= I18n.t("transfer.files.replace") %>
+                                                            </button>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -100,3 +106,68 @@
         </div>
     <% end %>
 <% end %>
+
+
+<div id="transfer_replace_file"
+     data-title="<%= I18n.t("transfer._frontend.messages.replace_file_title") %>"><!--
+    <%= form_tag({:controller => "transfers",
+                  :action => "replace_file"},
+                 :method => "post",
+                 :id => "replace_file_form",
+                 :authenticity_token => true) do %>
+        <div class="modal-body">
+            <div style="display: none;" class="alert alert-danger please-retry-error">File upload failed.  Please retry.</div>
+
+            <p><%= I18n.t('transfer._frontend.messages.replace_file_message',
+                          filename: "${filename}",
+                          role: "${role}") %></p>
+
+            <input type="hidden" name="key" value="${key}">
+
+            <div class="form-group">
+                <input type="file" name="replacement_file" required>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="submit"><%= I18n.t("transfer._frontend.action.replace_file") %></button>
+            <button class="btn btn-cancel btn-default" data-dismiss="modal"><%= I18n.t "transfer._frontend.back_button" %></button>
+        </div>
+    <% end %>
+
+    <script>
+     $('#replace_file_form').on('submit', function (e) {
+         e.preventDefault();
+
+         var rowId = "${rowId}";
+
+         var form = this;
+         var data = new FormData(form);
+         var url = form.action;
+
+         $('#replace_file_form').find('.please-retry-error').hide();
+
+         $.ajax({
+             type: "POST",
+             url: url,
+             data: data,
+             processData: false,
+             contentType: false,
+             success: function (data) {
+                 // Replace the original table with our updated values
+                 var row = $('#' + rowId);
+                 row.find('.file-filename').text(data.filename);
+                 row.find('.file-mime-type').text(data.mime_type);
+
+                 // Close the modal
+                 $('#replace_file_form').find('.btn-cancel').click();
+             },
+             error: function () {
+                 $('#replace_file_form').find('.please-retry-error').show();
+             }
+         });
+
+         return false;
+     });
+    </script>
+--></div>
+

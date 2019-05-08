@@ -58,14 +58,19 @@ en:
   transfer:
     _frontend:
       action:
+        replace_file: Replace file
         save: Save Transfer
+        import: Import transfer metadata
       section:
         basic_information: Basic Information
         files: Attached Files
         conversation: Conversation
         checklist: Transfer Checklist
       messages:
+        replace_file_title: "Replacing file"
+        replace_file_message: "Please choose a replacement for %{filename} (%{role}) using the button below."
         updated: Transfer updated
+      back_button: Back
     _plural: Transfers
     _singular: Transfer
     agency: Agency
@@ -87,10 +92,8 @@ en:
       filename: File Name
       mime_type: File Type
       view: View This File
+      replace: Replace This File
       role: Role
-
-    actions:
-      import: Import transfer metadata
 
   transfer_checklist:
     _plural: Transfer Checklist

@@ -1,7 +1,7 @@
 class TransfersController < ApplicationController
 
   # TODO: review access controls for these endpoints
-  set_access_control  "view_repository" => [:index, :show, :edit, :update, :conversation, :conversation_send]
+  set_access_control  "view_repository" => [:index, :show, :edit, :update, :conversation, :conversation_send, :replace_file]
 
 
   def index
@@ -78,6 +78,26 @@ class TransfersController < ApplicationController
     render :json => ASUtils.json_parse(response.body), :status => response.code
   end
 
+  def replace_file
+    response = JSONModel::HTTP.post_form("/transfer_files/replace",
+                                         {
+                                           :key => params[:key],
+                                           :filename => params[:replacement_file].original_filename,
+                                           :replacement_file => UploadIO.new(params[:replacement_file].tempfile,
+                                                                             params[:replacement_file].content_type,
+                                                                             params[:replacement_file].original_filename),
+                                         },
+                                         :multipart_form_data)
+
+    raise unless response.code == '200'
+
+    render :json => {
+             "status" => "success",
+             "filename" => params[:replacement_file].original_filename,
+             "mime_type" => params[:replacement_file].content_type,
+           },
+           :status => '200'
+  end
 
   def current_record
     @transfer

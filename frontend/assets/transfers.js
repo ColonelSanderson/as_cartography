@@ -2,7 +2,11 @@ function Transfers() {
     var self = this;
 
     this.setupNavigation();
+    this.setupApprovalConfirmation();
+    this.setupTransferReplaceFile();
+};
 
+Transfers.prototype.setupApprovalConfirmation = function() {
     $(document).on('submit', '.transfers-toolbar form', function () {
         var form = $(this);
 
@@ -16,6 +20,26 @@ function Transfers() {
             self.showConfirmation(form, template);
             return false;
         }
+    });
+};
+
+Transfers.prototype.setupTransferReplaceFile = function() {
+    $(document).on('click', '.transfer_replace_file', function () {
+        var button = $(this);
+
+        AS.openCustomModal("confirmReplaceModal",
+                           $('#transfer_replace_file').data("title"),
+                           AS.renderTemplate('transfer_replace_file', {
+                               key: button.data('key'),
+                               filename: button.data('filename'),
+                               role: button.data('role'),
+                               rowId: button.data('row-id'),
+                           }),
+                           null,
+                           {},
+                           button);
+
+        return false;
     });
 };
 
