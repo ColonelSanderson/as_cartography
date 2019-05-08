@@ -89,5 +89,8 @@ en:
       view: View This File
       role: Role
 
+    actions:
+      import: Import transfer metadata
+
   transfer_checklist:
     _plural: Transfer Checklist

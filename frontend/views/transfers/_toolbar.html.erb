@@ -1,9 +1,12 @@
 <div class="row">
     <div class="col-md-12">
-        <div class="record-toolbar">
+        <div class="record-toolbar transfer_toolbar">
             <% if !['edit', 'update'].include?(controller.action_name) %>
                 <div class="btn-group pull-left">
                     <%= link_to I18n.t("actions.edit"), {:controller => :transfers, :action => :edit, :id => @transfer.id}, :class => "btn btn-sm btn-primary" %>
+                </div>
+                <div class="btn-group pull-right">
+                    <%= link_to I18n.t("transfer.actions.import"), "javascript:alert('bang!');", :class => "btn btn-sm btn-warning" %>
                 </div>
             <% end %>
 

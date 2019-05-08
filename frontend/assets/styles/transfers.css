@@ -10,3 +10,7 @@
 .transfer_checklist_item {
     margin-left: 0.5em;
 }
+
+.transfer_toolbar {
+    overflow: hidden;
+}
