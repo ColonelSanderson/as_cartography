@@ -22,12 +22,15 @@ class TransfersController < ApplicationController
   end
 
   def update
+    # Fetch the current version
     updated = JSONModel(:transfer).find(params[:id], find_opts.merge('resolve[]' => ['agency', 'transfer_proposal']))
 
+    # Apply metadata changes
     [:title, :date_scheduled, :date_received, :quantity_received, :lock_version].each do |prop|
       updated[prop] = params[:transfer][prop]
     end
 
+    # Apply checklist updates
     [
       :checklist_metadata_received,
       :checklist_rap_received,
@@ -37,13 +40,20 @@ class TransfersController < ApplicationController
       updated[prop] = (params[:transfer][prop] == "true")
     end
 
+    # Apply file role updates
+    file_roles = params[:transfer][:files].group_by {|file| file['key']}
+    Array(updated['files']).each do |file|
+      new_role = file_roles.fetch(file['key'], [file['role']])[0]['role']
+      file['role'] = new_role
+    end
+
     params[:transfer] = updated
 
     handle_crud(:instance => :transfer,
                 :model => JSONModel(:transfer),
                 :obj => JSONModel(:transfer).find(params[:id], find_opts.merge('resolve[]' => ['agency', 'transfer_proposal'])),
                 :on_invalid => ->(){
-                  return render action: "edit"
+                  render action: "edit"
                 },
                 :on_valid => ->(id){
                   flash[:success] = I18n.t("transfer._frontend.messages.updated", JSONModelI18nWrapper.new(:transfer => @transfer))

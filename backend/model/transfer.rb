@@ -81,7 +81,29 @@ class Transfer < Sequel::Model
 
     json[:status] = status
 
+    # Update the file table to reflect the latest types
+    json[:files].each do |file|
+      self.db[:transfer_file].filter(:key => file['key']).update(:role => file['role'])
+    end
+
     super
+  end
+
+  def validate
+    handle_id = self.db[:handle].filter(:transfer_id => self.id).first[:id]
+    csv_count = self.db[:transfer_file].filter(:handle_id => handle_id, :role => "CSV").count
+
+    if csv_count > 1
+      errors.add(:files, "There can only be one file with a CSV role")
+    end
+
+    if self.checklist_metadata_approved == 1 && self.checklist_metadata_received == 0
+      errors.add(:checklist, "Cannot check metadata approved until metadata received has been checked")
+    end
+
+    if self.checklist_metadata_received == 1 && csv_count == 0
+      errors.add(:checklist, "Cannot check metadata received until a CSV file has been attached")
+    end
   end
 
   def self.sequel_to_jsonmodel(objs, opts = {})
@@ -105,6 +127,7 @@ class Transfer < Sequel::Model
           .join(:handle,
                 Sequel.qualify(:handle, :id) => Sequel.qualify(:transfer_file, :handle_id))
           .filter(Sequel.qualify(:handle, :transfer_id) => objs.map(&:id))
+          .order(Sequel.qualify(:transfer_file, :id))
           .all
           .group_by {|row| row[:transfer_id]}
 

@@ -30,7 +30,7 @@
           "properties" => {
             "key" => {"type" => "string"},
             "filename" => {"type" => "string"},
-            "role" => {"type" => "string"},
+            "role" => {"type" => "string", "dynamic_enum" => "transfer_file_role"},
             "mime_type" => {"type" => "string"},
           }
         }
