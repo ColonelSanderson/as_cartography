@@ -105,16 +105,16 @@ class AgencyTransferConverter < Converter
       while(row = rows.shift)
         values = row_values(row)
 
-        next if values.compact.empty?
+        next if values.select{|v| !v.empty?}.compact.empty?
 
         values_map = Hash[@@columns.zip(values)]
 
-        if values_map[:sequence_ref]
-          # a representation
-          @representations << values_map
-        else
+        if values_map[:sequence_ref].empty?
           # an item
           @items << values_map
+        else
+          # a representation
+          @representations << values_map
         end
       end
 
@@ -169,7 +169,6 @@ class AgencyTransferConverter < Converter
 
 
   def format_item(item)
-
     item_hash = {
       :uri => "/repositories/12345/archival_objects/import_#{SecureRandom.hex}",
       :disposal_class => item[:disposal_class],
@@ -186,7 +185,7 @@ class AgencyTransferConverter < Converter
                  }
                 ],
       :resource => {
-        :ref => series_uri_for(item[:series_id])
+        :ref => series_uri_for(item[:series])
       },
       :sensitivity_label => format_sensitivity_label(item[:sensitivity_label]),
       :physical_representations => [],
@@ -195,7 +194,7 @@ class AgencyTransferConverter < Converter
       :series_system_transfer_relationships => [
         {
           :start_date => item[:start_date],
-          :jsonmodel_type => 'series_system_transfer_record_containment_relationship',
+          :jsonmodel_type => 'series_system_record_transfer_containment_relationship',
           :relator => 'is_contained_within',
           :ref => @transfer_uri,
         }
@@ -216,8 +215,10 @@ class AgencyTransferConverter < Converter
       rep_hash = {
         :title => rep[:title].empty? ? item[:title] : rep[:title],
         :access_category => rep[:restricted_access_period],
-        :format => rep[:format],
+        :format => rep[:format].empty? ? item[:format] : rep[:format],
         :contained_within => rep[:contained_within],
+        :current_location => 'TFR',
+        :normal_location => 'TFR',
       }
 
       item_hash[rep_key] << rep_hash
@@ -241,7 +242,7 @@ class AgencyTransferConverter < Converter
       }
     end
 
-    item_hash
+    JSONModel::JSONModel(:archival_object).from_hash(item_hash)
   end
 
 end
