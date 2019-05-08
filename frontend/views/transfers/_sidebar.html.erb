@@ -3,6 +3,7 @@
                :record_type => 'transfer',
                :record => @transfer,
            }) do |sidebar| %>
+    <%= sidebar.render_for_view_only(:subrecord_type => 'transfer_checklist', :property => :none) %>
     <%= sidebar.render_for_view_only(:subrecord_type => 'files', :property => 'files') %>
     <%= sidebar.render_for_view_only(:subrecord_type => 'conversation', :property => :none) %>
 <% end %>

@@ -9,6 +9,40 @@
     <div class="record-pane">
       <%= readonly_context :transfer, @transfer do |readonly| %>
         <%= render_aspace_partial :partial => "transfers/form", :locals => {:form => readonly} %>
+
+        <section id="transfer_checklist">
+          <h3><%= I18n.t("transfer._frontend.section.checklist") %></h3>
+          <div class="transfer_checklist_item">
+            <input type="checkbox" id="checklist_transfer_proposal_approved" disabled <% if @transfer.checklist_transfer_proposal_approved %>checked<% end %>>
+            <label class="form-check-label" for="checklist_transfer_proposal_approved"><%= I18n.t("transfer.checklist.transfer_proposal_approved") %></label>
+          </div>
+
+          <div class="transfer_checklist_item">
+            <input type="checkbox" disabled  id="checklist_metadata_received" <% if @transfer.checklist_metadata_received %>checked<% end %>>
+            <label class="form-check-label" for="checklist_metadata_received"><%= I18n.t("transfer.checklist.metadata_received") %></label>
+          </div>
+
+          <div class="transfer_checklist_item">
+            <input type="checkbox" disabled  id="checklist_rap_received" <% if @transfer.checklist_rap_received %>checked<% end %>>
+            <label class="form-check-label" for="checklist_rap_received"><%= I18n.t("transfer.checklist.rap_received") %></label>
+          </div>
+
+          <div class="transfer_checklist_item">
+            <input type="checkbox" disabled  id="checklist_metadata_approved" <% if @transfer.checklist_metadata_approved %>checked<% end %>>
+            <label class="form-check-label" for="checklist_metadata_approved"><%= I18n.t("transfer.checklist.metadata_approved") %></label>
+          </div>
+
+          <div class="transfer_checklist_item">
+            <input type="checkbox" disabled  id="checklist_transfer_received" <% if @transfer.checklist_transfer_received %>checked<% end %>>
+            <label class="form-check-label" for="checklist_transfer_received"><%= I18n.t("transfer.checklist.transfer_received") %></label>
+          </div>
+
+          <div class="transfer_checklist_item">
+            <input type="checkbox" disabled  id="checklist_metadata_imported" <% if @transfer.checklist_metadata_imported %>checked<% end %>>
+            <label class="form-check-label" for="checklist_metadata_imported"><%= I18n.t("transfer.checklist.metadata_imported") %></label>
+          </div>
+        </section>
+
         <% unless ASUtils.wrap(@transfer['files']).empty? %>
           <section id="transfer_files_">
             <h3><%= I18n.t("transfer._frontend.section.files") %></h3>
@@ -51,11 +85,11 @@
           </section>
         <% end %>
 
-
         <section id="conversation" class="conversation">
           <h3><%= I18n.t("transfer._frontend.section.conversation") %></h3>
           <div id="conversation-widget"></div>
         </section>
+
 
         <%= display_audit_info(@transfer) %>
         <%= show_plugins_for(@transfer, readonly) %>

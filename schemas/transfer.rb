@@ -40,6 +40,13 @@
 
       "status" => {"type" => "string"},
 
+      "checklist_transfer_proposal_approved" => {"type" => "boolean"},
+      "checklist_metadata_received" => {"type" => "boolean"},
+      "checklist_rap_received" => {"type" => "boolean"},
+      "checklist_metadata_approved" => {"type" => "boolean"},
+      "checklist_transfer_received" => {"type" => "boolean"},
+      "checklist_metadata_imported" => {"type" => "boolean"},
+
       "handle_id" => {"type" => "string", "readonly" => "true"},
 
       "date_scheduled" => {"type" => "string"},

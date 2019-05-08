@@ -13,6 +13,25 @@
                     <%= link_to_help :topic => "transfer" %>
                     <%= render_aspace_partial :partial => "transfers/form", :locals => {:form => form} %>
 
+                    <section id="transfer_checklist" class="subrecord-form transfer-checklist">
+                        <h3><%= I18n.t("transfer._frontend.section.checklist") %></h3>
+                        <div class="transfer_checklist_item">
+                            <input type="checkbox" id="checklist_metadata_received" name="transfer[checklist_metadata_received]" value="true" <% if @transfer.checklist_metadata_received %>checked<% end %>>
+                            <label class="form-check-label" for="checklist_metadata_received"><%= I18n.t("transfer.checklist.metadata_received") %></label>
+                        </div>
+
+                        <div class="transfer_checklist_item">
+                            <input type="checkbox" id="checklist_rap_received" name="transfer[checklist_rap_received]" value="true" <% if @transfer.checklist_rap_received %>checked<% end %>>
+                            <label class="form-check-label" for="checklist_rap_received"><%= I18n.t("transfer.checklist.rap_received") %></label>
+                        </div>
+
+                        <div class="transfer_checklist_item">
+                            <input type="checkbox" id="checklist_transfer_received" name="transfer[checklist_transfer_received]" value="true" <% if @transfer.checklist_transfer_received %>checked<% end %>>
+                            <label class="form-check-label" for="checklist_transfer_received"><%= I18n.t("transfer.checklist.transfer_received") %></label>
+                        </div>
+                    </section>
+
+
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary"><%= I18n.t("transfer._frontend.action.save") %></button>
                         <%= link_to I18n.t("actions.cancel"), :back, :class => "btn btn-cancel btn-default" %>

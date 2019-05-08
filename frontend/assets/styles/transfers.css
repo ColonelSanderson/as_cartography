@@ -1,3 +1,12 @@
 .record-toolbar.transfers-toolbar form {
     display: inline-block;
 }
+
+.transfer_checklist_item label {
+    text-align: left;
+    width: 15em;
+}
+
+.transfer_checklist_item {
+    margin-left: 0.5em;
+}

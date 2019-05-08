@@ -24,8 +24,12 @@ class TransfersController < ApplicationController
   def update
     updated = JSONModel(:transfer).find(params[:id], find_opts.merge('resolve[]' => ['agency', 'transfer_proposal']))
 
-    [:title, :date_scheduled, :date_received, :quantity_received].each do |prop|
+    [:title, :date_scheduled, :date_received, :quantity_received, :lock_version].each do |prop|
       updated[prop] = params[:transfer][prop]
+    end
+
+    [:checklist_metadata_received, :checklist_rap_received, :checklist_transfer_received].each do |prop|
+      updated[prop] = (params[:transfer][prop] == "true")
     end
 
     params[:transfer] = updated

@@ -2,7 +2,6 @@ class Transfer < Sequel::Model
 
   STATUS_APPROVED = 'APPROVED'
 
-  CHECKLIST_APPROVED = 'TRANSFER_PROPOSAL_APPROVED'
   TRANSFER_PROCESS_INITIATED = 'TRANSFER_PROCESS_INITIATED'
 
   include ASModel
@@ -22,7 +21,7 @@ class Transfer < Sequel::Model
                           :created_by => RequestContext.get(:current_username),
                           :create_time => java.lang.System.currentTimeMillis,
                           :status => TRANSFER_PROCESS_INITIATED,
-                          :checklist_status => CHECKLIST_APPROVED,
+                          :checklist_transfer_proposal_approved => 1,
                           :transfer_proposal_id => proposal_id)
 
     self.db[:handle].insert(:transfer_id => created.id)

@@ -59,6 +59,7 @@ en:
         basic_information: Basic Information
         files: Attached Files
         conversation: Conversation
+        checklist: Transfer Checklist
       messages:
         updated: Transfer updated
     _plural: Transfers
@@ -70,8 +71,19 @@ en:
     date_scheduled: Date Scheduled
     date_received: Date Received
     quantity_received: Quantity Received
+    checklist:
+      transfer_proposal_approved: Transfer Proposal Approved
+      metadata_received: Metadata Received
+      rap_received: RAP Notice Received/Exempt
+      metadata_approved: Metadata Approved
+      transfer_received: Transfer Received
+      metadata_imported: Metadata Imported
+
     files:
       filename: File Name
       mime_type: File Type
       view: View This File
       role: Role
+
+  transfer_checklist:
+    _plural: Transfer Checklist
