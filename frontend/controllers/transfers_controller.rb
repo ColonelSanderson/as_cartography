@@ -28,7 +28,12 @@ class TransfersController < ApplicationController
       updated[prop] = params[:transfer][prop]
     end
 
-    [:checklist_metadata_received, :checklist_rap_received, :checklist_transfer_received].each do |prop|
+    [
+      :checklist_metadata_received,
+      :checklist_rap_received,
+      :checklist_metadata_approved,
+      :checklist_transfer_received,
+    ].each do |prop|
       updated[prop] = (params[:transfer][prop] == "true")
     end
 
@@ -42,7 +47,7 @@ class TransfersController < ApplicationController
                 },
                 :on_valid => ->(id){
                   flash[:success] = I18n.t("transfer._frontend.messages.updated", JSONModelI18nWrapper.new(:transfer => @transfer))
-                  redirect_to :controller => :transfers, :action => :edit, :id => id
+                  redirect_to :controller => :transfers, :action => :show, :id => id
                 })
   end
 

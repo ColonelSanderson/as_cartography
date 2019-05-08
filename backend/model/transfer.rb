@@ -3,6 +3,10 @@ class Transfer < Sequel::Model
   STATUS_APPROVED = 'APPROVED'
 
   TRANSFER_PROCESS_INITIATED = 'TRANSFER_PROCESS_INITIATED'
+  TRANSFER_PROCESS_PENDING = 'TRANSFER_PROCESS_PENDING'
+  TRANSFER_PROCESS_IN_PROGRESS = 'TRANSFER_PROCESS_IN_PROGRESS'
+  TRANSFER_PROCESS_COMPLETE = 'TRANSFER_PROCESS_COMPLETE'
+
 
   include ASModel
   corresponds_to JSONModel(:transfer)
@@ -31,6 +35,53 @@ class Transfer < Sequel::Model
       .update(:status => STATUS_APPROVED)
 
     created
+  end
+
+  def update_from_json(json, opts = {}, apply_nested_records = true)
+    # The status of a transfer is determined by its checklist.  Make sure the
+    # status is up-to-date prior to save.
+
+    checklist_items = [
+      :checklist_transfer_proposal_approved,
+      :checklist_metadata_received,
+      :checklist_rap_received,
+      :checklist_metadata_approved,
+      :checklist_transfer_received,
+      :checklist_metadata_imported,
+    ]
+
+    corresponding_status = [
+      TRANSFER_PROCESS_INITIATED,
+      TRANSFER_PROCESS_INITIATED,
+      TRANSFER_PROCESS_PENDING,
+      TRANSFER_PROCESS_PENDING,
+      TRANSFER_PROCESS_IN_PROGRESS,
+      TRANSFER_PROCESS_COMPLETE,
+    ]
+
+    # Our status is determined by how many consecutive checklist items are
+    # marked off.  For example, mark off the first three checklist items and you
+    # get a "pending" status.
+
+    first_uncompleted_checklist_idx = checklist_items.index {|checklist_item| !json[checklist_item]}
+
+    status = if first_uncompleted_checklist_idx
+               if first_uncompleted_checklist_idx == 0
+                 # This shouldn't happen because we set the transfer to approved
+                 # as a part of creating the transfer, but I'm nothing if not
+                 # paranoid.
+                 TRANSFER_PROCESS_INITIATED
+               else
+                 corresponding_status.fetch(first_uncompleted_checklist_idx - 1)
+               end
+             else
+               # If all checklist items are complete, you're done!
+               TRANSFER_PROCESS_IN_COMPLETE
+             end
+
+    json[:status] = status
+
+    super
   end
 
   def self.sequel_to_jsonmodel(objs, opts = {})

@@ -26,6 +26,11 @@
                         </div>
 
                         <div class="transfer_checklist_item">
+                            <input type="checkbox" id="checklist_metadata_approved" name="transfer[checklist_metadata_approved]" value="true" <% if @transfer.checklist_metadata_approved %>checked<% end %>>
+                            <label class="form-check-label" for="checklist_metadata_approved"><%= I18n.t("transfer.checklist.metadata_approved") %></label>
+                        </div>
+
+                        <div class="transfer_checklist_item">
                             <input type="checkbox" id="checklist_transfer_received" name="transfer[checklist_transfer_received]" value="true" <% if @transfer.checklist_transfer_received %>checked<% end %>>
                             <label class="form-check-label" for="checklist_transfer_received"><%= I18n.t("transfer.checklist.transfer_received") %></label>
                         </div>
