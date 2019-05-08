@@ -60,7 +60,7 @@
                                                     <td><%= file.fetch('mime_type') %></td>
                                                     <td>
                                                         <%= form.hidden_input('key', file.fetch('key')) %>
-                                                        <%= form.label_and_select('role', form.possible_options_for(['files', 'role']), :field_opts => {:default => file.fetch('role')}) %>
+                                                        <%= form.select('role', form.possible_options_for(['files', 'role']), :field_opts => {:default => file.fetch('role')}) %>
                                                     </td>
                                                     <td class="table-record-actions">
                                                         <div class="btn-group">
