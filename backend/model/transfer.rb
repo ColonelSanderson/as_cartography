@@ -26,7 +26,8 @@ class Transfer < Sequel::Model
                           :create_time => java.lang.System.currentTimeMillis,
                           :status => TRANSFER_PROCESS_INITIATED,
                           :checklist_transfer_proposal_approved => 1,
-                          :transfer_proposal_id => proposal_id)
+                          :transfer_proposal_id => proposal_id,
+                          :system_mtime => Time.now)
 
     self.db[:handle].insert(:transfer_id => created.id)
 

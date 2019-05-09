@@ -44,6 +44,7 @@ module MAPModel
     end
 
     def system_mtime=(value)
+      self[:system_mtime] = value
       self.create_time = (value.to_f * 1000).to_i
     end
   end
