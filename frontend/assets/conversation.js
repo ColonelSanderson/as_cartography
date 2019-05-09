@@ -35,14 +35,22 @@ ConversationWidget.prototype.bindEvents = function() {
         self.sendFailureElt.hide();
 
         var textbox = self.inputElt.find('textarea');
-        self.sendMessage(textbox.val(),
-                         function success() {
-                             textbox.val('');
-                             self.fetch();
-                         },
-                         function failure()  {
-                             self.sendFailureElt.show();
-                         });
+        var message = textbox.val();
+
+        if (message) {
+            message = message.trim();
+        }
+
+        if (message) {
+            self.sendMessage(message,
+                             function success() {
+                                 textbox.val('');
+                                 self.fetch();
+                             },
+                             function failure()  {
+                                 self.sendFailureElt.show();
+                             });
+        }
     });
 };
 
