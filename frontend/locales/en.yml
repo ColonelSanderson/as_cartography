@@ -70,6 +70,8 @@ en:
         replace_file_title: "Replacing file"
         replace_file_message: "Please choose a replacement for %{filename} (%{role}) using the button below."
         updated: Transfer updated
+        import_success: "The transfer metadata was successfully submitted for import: <a href='/jobs/%{job}'>Job</a>"
+        import_fail: "The transfer metadata could not be submitted for import: %{error}"
       back_button: Back
     _plural: Transfers
     _singular: Transfer

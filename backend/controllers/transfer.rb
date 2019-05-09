@@ -33,6 +33,49 @@ class ArchivesSpaceService < Sinatra::Base
     json_response(resolve_references(json, params[:resolve]))
   end
 
+  Endpoint.post('/transfers/:id/import')
+    .description("Import a transfer's CSV")
+    .permissions([])
+    .params(["id", String],
+            ["repo_id", :repo_id])
+    .returns([200, "(:ok)"]) \
+  do
+    csv = Transfer[params[:id]].csv
+
+    tempfile = ASUtils.tempfile(csv[:filename])
+
+    begin
+      tempfile.write(csv[:data])
+    ensure
+      tempfile.close
+    end
+
+    job_hash = {
+      "job_type" => "import_job",
+      "jsonmodel_type" => "job",
+      "job_params" => "",
+      "job" => {
+        "jsonmodel_type" => "import_job",
+        "filenames" => [ csv[:filename] ],
+        "import_type" => "agency_transfer",
+        "opts" => {
+          "transfer_uri" => "/repositories/2/accessions/1"
+        }
+      }
+    }
+
+    RequestContext.open(:repo_id => params[:repo_id]) do
+      job = Job.create_from_json(JSONModel(:job).from_hash(job_hash), :user => current_user)
+
+      job.add_file(tempfile)
+
+      JobRunner.for(job)
+
+      json_response(:status => "submitted", :job => job.id)
+    end
+
+  end
+
   Endpoint.get('/transfer_conversation')
     .description("A little more conversation...")
     .permissions([])
@@ -60,5 +103,4 @@ class ArchivesSpaceService < Sinatra::Base
 
     json_response(:status => "Created")
   end
-
 end

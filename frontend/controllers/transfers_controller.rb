@@ -1,7 +1,9 @@
 class TransfersController < ApplicationController
 
+  include ApplicationHelper
+
   # TODO: review access controls for these endpoints
-  set_access_control  "view_repository" => [:index, :show, :edit, :update, :conversation, :conversation_send, :replace_file]
+  set_access_control  "view_repository" => [:index, :show, :edit, :update, :conversation, :conversation_send, :replace_file, :import]
 
 
   def index
@@ -97,6 +99,20 @@ class TransfersController < ApplicationController
              "mime_type" => params[:replacement_file].content_type,
            },
            :status => '200'
+  end
+
+  def import
+    response = JSONModel::HTTP.post_form("/transfers/#{params[:id]}/import", {:repo_id => current_repo['uri'].split('/').last})
+
+    json = ASUtils.json_parse(response.body)
+
+    if response.code == '200'
+      flash[:success] = I18n.t("transfer._frontend.messages.import_success", :job => json['job'])
+    else
+      flash[:error] = I18n.t("transfer._frontend.messages.import_fail", :error => json['error'])
+    end
+
+    redirect_to :controller => :transfers, :action => :show, :id => params[:id]
   end
 
   def current_record

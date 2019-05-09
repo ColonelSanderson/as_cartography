@@ -6,7 +6,14 @@
                     <%= link_to I18n.t("actions.edit"), {:controller => :transfers, :action => :edit, :id => @transfer.id}, :class => "btn btn-sm btn-primary" %>
                 </div>
                 <div class="btn-group pull-right">
-                    <%= link_to I18n.t("transfer._frontend.action.import"), "javascript:alert('bang!');", :class => "btn btn-sm btn-warning" %>
+                  <%= form_tag({:controller => "transfers",
+                        :action => "import"},
+                        :method => "post",
+                        :id => @transfer.id) do %>
+                    <button class="btn btn-sm btn-warning">
+                      <%= I18n.t("transfer._frontend.action.import") %>
+                    </button>
+                  <% end %>
                 </div>
             <% end %>
 

@@ -164,6 +164,16 @@ class Transfer < Sequel::Model
   end
 
 
-
+  def csv
+    MAPDB.open do |mapdb|
+      mapdb[:transfer_file]
+        .join(:handle, Sequel.qualify(:handle, :id) => Sequel.qualify(:transfer_file, :handle_id))
+        .filter(Sequel.qualify(:handle, :transfer_id) => self.id)
+        .filter(Sequel.qualify(:transfer_file, :role) => 'CSV')
+        .join(:file, Sequel.qualify(:file, :key) => Sequel.qualify(:transfer_file, :key))
+        .select(Sequel.as(Sequel.qualify(:file, :blob), :data), Sequel.as(Sequel.qualify(:transfer_file, :filename), :filename))
+        .first
+    end
+  end
 
 end

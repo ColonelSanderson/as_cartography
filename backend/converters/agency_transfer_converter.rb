@@ -85,10 +85,15 @@ class AgencyTransferConverter < Converter
     @input_file = input_file
     @records = []
 
+    # let's not be special, opt keys might come in as strings or symbols - woteva
+    opts = opts.map{|k,v| [k.intern, v]}.to_h
+
+    @file_data_provided = !!opts.fetch(:file_data_provided, false)
+
     @items = []
     @representations = []
 
-    @transfer_uri = opts['transfer_uri'] or raise "No Transfer URI!!"
+    @transfer_uri = opts[:transfer_uri] or raise "No Transfer URI!!"
 
     @series_uris = {}
     @agency_uris = {}
@@ -96,7 +101,7 @@ class AgencyTransferConverter < Converter
 
 
   def run
-    rows = CSV.read(@input_file)
+    rows = @file_data_provided ? CSV.parse(@input_file) : CSV.read(@input_file)
 
     # drop column headers
     rows.shift
