@@ -93,7 +93,7 @@ class AgencyTransferConverter < Converter
     @items = []
     @representations = []
 
-    @transfer_uri = opts[:transfer_uri] or raise "No Transfer URI!!"
+    @transfer_id = opts[:transfer_id] or raise "No Transfer ID!!"
 
     @series_uris = {}
     @agency_uris = {}
@@ -189,21 +189,12 @@ class AgencyTransferConverter < Converter
                    :date_type => 'inclusive',
                  }
                 ],
-      :resource => {
-        :ref => series_uri_for(item[:series])
-      },
+      :resource => { :ref => series_uri_for(item[:series]) },
+      :transfer => { :ref => "/transfers/#{@transfer_id}" },
       :sensitivity_label => format_sensitivity_label(item[:sensitivity_label]),
       :physical_representations => [],
       :digital_representations => [],
       :series_system_agent_relationships => [],
-      :series_system_transfer_relationships => [
-        {
-          :start_date => item[:start_date],
-          :jsonmodel_type => 'series_system_record_transfer_containment_relationship',
-          :relator => 'is_contained_within',
-          :ref => @transfer_uri,
-        }
-      ]
     }
 
     # grab this item's representations

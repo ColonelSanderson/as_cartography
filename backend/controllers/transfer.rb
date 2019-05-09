@@ -59,7 +59,7 @@ class ArchivesSpaceService < Sinatra::Base
         "filenames" => [ csv[:filename] ],
         "import_type" => "agency_transfer",
         "opts" => {
-          "transfer_uri" => "/repositories/2/accessions/1"
+          "transfer_id" => params[:id]
         }
       }
     }
