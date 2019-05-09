@@ -41,7 +41,7 @@ class TransfersController < ApplicationController
     end
 
     # Apply file role updates
-    file_roles = params[:transfer][:files].group_by {|file| file['key']}
+    file_roles = Array(params[:transfer][:files]).group_by {|file| file['key']}
     Array(updated['files']).each do |file|
       new_role = file_roles.fetch(file['key'], [file['role']])[0]['role']
       file['role'] = new_role
