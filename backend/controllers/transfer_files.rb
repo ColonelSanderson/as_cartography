@@ -39,7 +39,7 @@ class ArchivesSpaceService < Sinatra::Base
           csv_validator = MapValidator.new
           csv_validator.run_validations(csv_file, csv_validator.sample_validations)
           csv_validator.notifications.notification_list.each do |notification|
-            errors << "[#{notification.type}](#{notification.source}): #{notification.message}"
+            errors << "#{notification.type} - #{notification.message}"
           end
 
           json_response({'valid' => errors.empty?, 'errors' => errors})
