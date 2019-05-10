@@ -1,7 +1,5 @@
 ArchivesSpace::Application.routes.draw do
-  resources :transfer_proposals
-  resources :transfers
-  resources :transfer_files
+  match 'transfer_files/validate' => 'transfer_files#validate', :via => [:get]
 
   match 'transfer_proposals/approve' => 'transfer_proposals#approve', :via => [:post]
   match 'transfer_proposals/cancel' => 'transfer_proposals#cancel', :via => [:post]
@@ -11,4 +9,9 @@ ArchivesSpace::Application.routes.draw do
 
   match 'transfer_conversation' => 'transfers#conversation', :via => [:get]
   match 'transfer_conversation_send' => 'transfers#conversation_send', :via => [:post]
+
+
+  resources :transfer_proposals
+  resources :transfers
+  resources :transfer_files
 end

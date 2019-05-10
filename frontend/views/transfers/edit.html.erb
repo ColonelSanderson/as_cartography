@@ -57,9 +57,9 @@
                                                 <tr id="<%= "file_#{idx}" %>">
                                                     <td class="file-filename"><%= file.fetch('filename') %></td>
                                                     <td class="file-mime-type"><%= file.fetch('mime_type') %></td>
-                                                    <td>
+                                                    <td class="file-role-cell">
                                                         <%= form.hidden_input('key', file.fetch('key')) %>
-                                                        <%= form.select('role', form.possible_options_for(['files', 'role']), {:default => file.fetch('role')}) %>
+                                                        <%= form.select('role', form.possible_options_for(['files', 'role']), {:class => "file-role", :default => file.fetch('role')}) %>
                                                     </td>
                                                     <td class="table-record-actions">
                                                         <div class="btn-group">
@@ -76,7 +76,8 @@
                                                                         :class => "btn btn-primary"
                                                                     })
                                                             %>
-                                                            <button class="transfer_replace_file btn btn-warning"
+                                                            <%= render_aspace_partial :partial => "transfers/validate_button", :locals => {file: file} %>
+                                                            <button class="transfer_replace_file btn btn-danger"
                                                                     data-key="<%= file.fetch('key') %>"
                                                                     data-filename="<%= file.fetch('filename') %>"
                                                                     data-row-id="<%= "file_#{idx}" %>"
@@ -134,6 +135,7 @@
         </div>
     <% end %>
 
+    <%# This is inline because we need trimpath to fill out ${rowId} below. %>
     <script>
      $('#replace_file_form').on('submit', function (e) {
          e.preventDefault();
@@ -160,6 +162,7 @@
 
                  // Close the modal
                  $('#replace_file_form').find('.btn-cancel').click();
+                 window.transfers.resetValidateButtons();
              },
              error: function () {
                  $('#replace_file_form').find('.please-retry-error').show();
@@ -168,6 +171,11 @@
 
          return false;
      });
-    </script>
+</script>
+
 --></div>
 
+
+
+
+<%= render_aspace_partial :partial => "transfers/validation_template" %>

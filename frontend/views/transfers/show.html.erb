@@ -60,9 +60,13 @@
                   <tr>
                     <td><%= file.fetch('filename') %></td>
                     <td><%= file.fetch('mime_type') %></td>
-                    <td><%= file.fetch('role') %></td>
+                    <td class="file-role-cell">
+                      <input type="hidden" class="file-role" value="<%= file.fetch('role') %>">
+                      <%= file.fetch('role') %>
+                    </td>
                     <td class="table-record-actions">
                       <div class="btn-group">
+                        <%= render_aspace_partial :partial => "transfers/validate_button", :locals => {file: file} %>
                         <%=
                         link_to(I18n.t("transfer.files.view"),
                                 {
@@ -105,3 +109,5 @@
    handle_id: '<%= @transfer.handle_id %>'
  });
 </script>
+
+<%= render_aspace_partial :partial => "transfers/validation_template" %>

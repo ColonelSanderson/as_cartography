@@ -61,6 +61,7 @@ en:
         replace_file: Replace file
         save: Save Transfer
         import: Import transfer metadata
+        validate: Validate Metadata
       section:
         basic_information: Basic Information
         files: Attached Files
@@ -72,6 +73,9 @@ en:
         updated: Transfer updated
         import_success: "The transfer metadata was successfully submitted for import: <a href='/jobs/%{job}'>Job</a>"
         import_fail: "The transfer metadata could not be submitted for import: %{error}"
+        metadata_valid: Valid
+        metadata_errors: Show Errors
+        metadata_errors_title: Metadata validation errors
       back_button: Back
     _plural: Transfers
     _singular: Transfer

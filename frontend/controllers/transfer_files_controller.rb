@@ -1,6 +1,6 @@
 class TransferFilesController < ApplicationController
 
-  set_access_control  "view_repository" => [:show]
+  set_access_control  "view_repository" => [:show, :validate]
 
 
   def show
@@ -17,6 +17,10 @@ class TransferFilesController < ApplicationController
         end
       end
     end
+  end
+
+  def validate
+    render :json => JSONModel::HTTP.get_json("/transfer_files/validate", :key => params[:key])
   end
 
 end
