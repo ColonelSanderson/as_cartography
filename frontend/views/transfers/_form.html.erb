@@ -36,7 +36,7 @@
                 <div class="control-label col-sm-2"><%= I18n.t("transfer_proposal._singular") %></div>
                 <div class="token-list">
                     <%= render_token(:object => @transfer['transfer_proposal']['_resolved'],
-                                     :label => @transfer['transfer_proposal']['_resolved']['title'],
+                                     :label => CGI::escapeHTML(@transfer['transfer_proposal']['_resolved']['title']),
                                      :type => @transfer['transfer_proposal']['_resolved']['jsonmodel_type'],
                                      :uri => @transfer['transfer_proposal']['ref'],
                                      :placement => "top",

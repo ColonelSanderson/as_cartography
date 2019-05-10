@@ -24,7 +24,7 @@
               <div class="control-label col-sm-2"><%= I18n.t("transfer_proposal.agency") %></div>
               <div class="token-list">
                 <%= render_token(:object => @transfer_proposal['agency']['_resolved'],
-                                 :label => @transfer_proposal['agency']['_resolved']['title'],
+                                 :label => CGI::escapeHTML(@transfer_proposal['agency']['_resolved']['title']),
                                  :type => @transfer_proposal['agency']['_resolved']['jsonmodel_type'],
                                  :uri => @transfer_proposal['agency']['ref'],
                                  :placement => "top",
@@ -43,7 +43,7 @@
                 <div class="control-label col-sm-2"><%= I18n.t("transfer._singular") %></div>
                 <div class="token-list">
                   <%= render_token(:object => @transfer_proposal['transfer']['_resolved'],
-                                   :label => @transfer_proposal['transfer']['_resolved']['title'],
+                                   :label => CGI::escapeHTML(@transfer_proposal['transfer']['_resolved']['title']),
                                    :type => @transfer_proposal['transfer']['_resolved']['jsonmodel_type'],
                                    :uri => @transfer_proposal['transfer']['ref'],
                                    :placement => "top",
