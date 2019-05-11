@@ -5,6 +5,7 @@ class TransfersController < ApplicationController
   # TODO: review access controls for these endpoints
   set_access_control  "view_repository" => [:index, :show, :edit, :update, :conversation, :conversation_send, :replace_file, :import]
 
+  RESOLVES = ['agency', 'transfer_proposal', 'import_job']
 
   def index
     respond_to do |format|
@@ -20,12 +21,12 @@ class TransfersController < ApplicationController
   end
 
   def edit
-    @transfer = JSONModel(:transfer).find(params[:id], find_opts.merge('resolve[]' => ['agency', 'transfer_proposal']))
+    @transfer = JSONModel(:transfer).find(params[:id], find_opts.merge('resolve[]' => RESOLVES))
   end
 
   def update
     # Fetch the current version
-    updated = JSONModel(:transfer).find(params[:id], find_opts.merge('resolve[]' => ['agency', 'transfer_proposal']))
+    updated = JSONModel(:transfer).find(params[:id], find_opts.merge('resolve[]' => RESOLVES))
 
     # Apply metadata changes
     [:title, :date_scheduled, :date_received, :quantity_received, :lock_version].each do |prop|
@@ -53,7 +54,7 @@ class TransfersController < ApplicationController
 
     handle_crud(:instance => :transfer,
                 :model => JSONModel(:transfer),
-                :obj => JSONModel(:transfer).find(params[:id], find_opts.merge('resolve[]' => ['agency', 'transfer_proposal'])),
+                :obj => JSONModel(:transfer).find(params[:id], find_opts.merge('resolve[]' => RESOLVES)),
                 :on_invalid => ->(){
                   render action: "edit"
                 },
@@ -64,7 +65,7 @@ class TransfersController < ApplicationController
   end
 
   def show
-    @transfer = JSONModel(:transfer).find(params[:id], find_opts.merge('resolve[]' => ['agency', 'transfer_proposal']))
+    @transfer = JSONModel(:transfer).find(params[:id], find_opts.merge('resolve[]' => RESOLVES))
   end
 
   def conversation

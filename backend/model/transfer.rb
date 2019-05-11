@@ -149,6 +149,10 @@ class Transfer < Sequel::Model
           json['transfer_proposal'] = {'ref' => JSONModel(:transfer_proposal).uri_for(obj.transfer_proposal_id)}
         end
 
+        if obj.import_job_uri
+          json['import_job'] = {'ref' => obj.import_job_uri}
+        end
+
         json['files'] = transfer_files.fetch(obj.id, []).map {|file|
           {
             'key' => file[:key],

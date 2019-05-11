@@ -40,7 +40,8 @@ class ArchivesSpaceService < Sinatra::Base
             ["repo_id", :repo_id])
     .returns([200, "(:ok)"]) \
   do
-    csv = Transfer[params[:id]].csv
+    transfer = Transfer[params[:id]]
+    csv = transfer.csv
 
     tempfile = ASUtils.tempfile(csv[:filename])
 
@@ -71,7 +72,10 @@ class ArchivesSpaceService < Sinatra::Base
 
       JobRunner.for(job)
 
-      json_response(:status => "submitted", :job => job.id)
+      transfer.import_job_uri = job.uri
+      transfer.save
+
+      json_response(:status => "submitted", :job => job.uri)
     end
 
   end

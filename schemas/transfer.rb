@@ -67,6 +67,21 @@
           }
         }
       },
+
+      "import_job" => {
+        "readonly" => "true",
+        "type" => "object",
+        "subtype" => "ref",
+        "properties" => {
+          "ref" => {
+            "type" => [{"type" => "JSONModel(:job) uri"}],
+          },
+          "_resolved" => {
+            "type" => "object",
+            "readonly" => "true"
+          }
+        }
+      },
     },
   }
 }

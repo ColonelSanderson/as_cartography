@@ -43,6 +43,20 @@
                                      :inside_linker_browse => true) %>
                 </div>
             </div>
+
+            <% if @transfer['import_job'] %>
+              <div class="form-group">
+                  <div class="control-label col-sm-2"><%= I18n.t("transfer.import_job") %></div>
+                  <div class="token-list">
+                      <%= render_token(:object => @transfer['import_job']['_resolved'],
+                                       :label => I18n.t("transfer.submitted") + ' ' + @transfer['import_job']['_resolved']['time_submitted'],
+                                       :type => @transfer['import_job']['_resolved']['jsonmodel_type'],
+                                       :uri => @transfer['import_job']['ref'],
+                                       :placement => "top") %>
+                  </div>
+              </div>
+            <% end %>
+
         </section>
     <% end %>
 <% end %>

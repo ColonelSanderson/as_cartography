@@ -71,7 +71,7 @@ en:
         replace_file_title: "Replacing file"
         replace_file_message: "Please choose a replacement for %{filename} (%{role}) using the button below."
         updated: Transfer updated
-        import_success: "The transfer metadata was successfully submitted for import: <a href='/jobs/%{job}'>Job</a>"
+        import_success: "The transfer metadata was successfully submitted for import."
         import_fail: "The transfer metadata could not be submitted for import: %{error}"
         metadata_valid: Valid
         metadata_errors: Show Errors
@@ -86,6 +86,8 @@ en:
     date_scheduled: Date Scheduled
     date_received: Date Received
     quantity_received: Quantity Received
+    import_job: Import Job
+    submitted: Submitted
     checklist:
       transfer_proposal_approved: Transfer Proposal Approved
       metadata_received: Metadata Received
