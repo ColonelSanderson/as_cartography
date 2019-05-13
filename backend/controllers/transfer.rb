@@ -73,6 +73,23 @@ class ArchivesSpaceService < Sinatra::Base
       transfer.import_job_uri = job.uri
       transfer.save
 
+      # bankrupcy declared!
+      Thread.new do
+        RequestContext.open(:repo_id => params[:repo_id]) do
+          # give the insert transaction time to commit
+          sleep 2
+          j = Job[job.id]
+          while !['completed', 'failed', 'canceled'].include?(j.status)
+            sleep 2
+            j.refresh
+          end
+          if j.status == 'completed'
+            transfer.checklist_metadata_imported = 1
+            transfer.save
+          end
+        end
+      end
+
       json_response(:status => "submitted", :job => job.uri)
     end
 
