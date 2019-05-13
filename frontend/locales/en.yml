@@ -125,3 +125,9 @@ en:
 
   conversation:
     _plural: Comments/Discussion
+
+
+  conversation_widget:
+    type_your_message: Type your message
+    send_message: Send message
+    could_not_send: Your message could not be sent. Please retry!

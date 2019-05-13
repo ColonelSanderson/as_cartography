@@ -103,11 +103,6 @@
 </div>
 
 
-<script>
- new ConversationWidget({
-   el: '#conversation-widget',
-   handle_id: '<%= @transfer.handle_id %>'
- });
-</script>
+<%= render_aspace_partial :partial => "shared/conversation_widget", :locals => { handle_id: @transfer.handle_id } %>
 
 <%= render_aspace_partial :partial => "transfers/validation_template" %>

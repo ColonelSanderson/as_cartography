@@ -1,18 +1,18 @@
-// FIXME: i18n
-
 function ConversationWidget(opts) {
     this.elt = $(opts.el);
     this.handle_id = opts.handle_id;
 
+    this.i18n = opts.i18n;
+
     this.messagesElt = $('<div class="conversation_messages" />');
 
     this.inputElt = $('<div class="conversation_message_input">' +
-                      '<label class="label label-primary" for="conversation_message_textarea">Type your message below</label>' +
+                      '<label class="label label-primary" for="conversation_message_textarea">' + this.i18n.type_your_message + '</label>' +
                       '<textarea name="conversation_message_textarea" id="conversation_message_textarea"></textarea>' +
-                      '<button class="btn btn-primary conversation_message_send">Send message</button>' +
+                      '<button class="btn btn-primary conversation_message_send">' + this.i18n.send_message + '</button>' +
                       '</div>');
 
-    this.sendFailureElt = $('<div style="display: none;" class="conversation_message_send_failed">Your message could not be sent. Please retry!</div>');
+    this.sendFailureElt = $('<div style="display: none;" class="conversation_message_send_failed">' + this.i18n.could_not_send + '</div>');
 
     this.elt.append(this.messagesElt);
     this.elt.append(this.inputElt);
