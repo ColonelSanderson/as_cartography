@@ -60,10 +60,12 @@ Transfers.prototype.setupValidateMetadataButtons = function() {
 };
 
 Transfers.prototype.setupApprovalConfirmation = function() {
+    var self = this;
+
     $(document).on('submit', '.transfers-toolbar form', function () {
         var form = $(this);
 
-        var template = (form.attr('id') == 'approve_transfer_proposal') ?
+        var template = (form.attr('id') === 'approve_transfer_proposal') ?
                        'transfer_confirm_approval_template' :
                        'transfer_confirm_cancel_template';
 
