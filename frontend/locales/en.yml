@@ -76,6 +76,17 @@ en:
         metadata_valid: Valid
         metadata_errors: Show Errors
         metadata_errors_title: Metadata validation errors
+      import_button_label:
+        no_job: Import transfer metadata
+        queued: Transfer metadata import job queued ...
+        running: Transfer metadata importing ...
+        completed: Transfer metadata successfully imported
+        failed: Transfer metadata import failed - click to retry
+      import_job_state:
+        queued: Queued
+        running: Running
+        completed: Completed
+        failed: Failed
       back_button: Back
     _plural: Transfers
     _singular: Transfer

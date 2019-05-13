@@ -48,12 +48,19 @@
             </div>
 
             <% if @transfer['import_job'] %>
+              <% job = @transfer['import_job']['_resolved'] %>
+              <% state_time_map = { 'queued' => 'submitted',
+                                    'running' => 'started',
+                                    'canceled' => 'finished',
+                                    'completed' => 'finished',
+                                    'failed' => 'finished' } %>
               <div class="form-group">
                   <div class="control-label col-sm-2"><%= I18n.t("transfer.import_job") %></div>
                   <div class="token-list">
-                      <%= render_token(:object => @transfer['import_job']['_resolved'],
-                                       :label => I18n.t("transfer.submitted") + ' ' + @transfer['import_job']['_resolved']['time_submitted'],
-                                       :type => @transfer['import_job']['_resolved']['jsonmodel_type'],
+                      <%= render_token(:object => job,
+                                       :label => I18n.t("transfer._frontend.import_job_state.#{job['status']}") + ' ' + 
+                                                   job["time_#{state_time_map[job['status']]}"],
+                                       :type => job['jsonmodel_type'],
                                        :uri => @transfer['import_job']['ref'],
                                        :placement => "top") %>
                   </div>

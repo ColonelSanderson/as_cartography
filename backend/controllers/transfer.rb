@@ -70,8 +70,6 @@ class ArchivesSpaceService < Sinatra::Base
 
       job.add_file(tempfile)
 
-      JobRunner.for(job)
-
       transfer.import_job_uri = job.uri
       transfer.save
 
