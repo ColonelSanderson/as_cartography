@@ -3,5 +3,7 @@
                :record_type => 'transfer_proposal',
                :record => @transfer_proposal,
            }) do |sidebar| %>
+    <%= sidebar.render_for_view_only(:subrecord_type => 'files', :property => 'files') %>
     <%= sidebar.render_for_view_only(:subrecord_type => 'series', :property => 'series') %>
+    <%= sidebar.render_for_view_only(:subrecord_type => 'conversation', :property => :none) %>
 <% end %>

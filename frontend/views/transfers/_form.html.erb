@@ -30,7 +30,10 @@
             <%= form.label_and_date "date_received" %>
             <%= form.label_and_textfield "quantity_received" %>
 
-            <%= readonly.label_and_textfield "status" %>
+            <div class="form-group">
+              <label class="col-sm-2 control-label" for="transfer_status_" plugin="">Status</label>
+              <div class="col-sm-9 label-only"><%= I18n.t("transfer.status_values.#{@transfer['status']}", @transfer['status']) %></div>
+            </div>
 
             <div class="form-group">
                 <div class="control-label col-sm-2"><%= I18n.t("transfer_proposal._singular") %></div>

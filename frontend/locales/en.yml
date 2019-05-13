@@ -65,7 +65,7 @@ en:
       section:
         basic_information: Basic Information
         files: Attached Files
-        conversation: Conversation
+        conversation: Comments/Discussion
         checklist: Transfer Checklist
       messages:
         replace_file_title: "Replacing file"
@@ -96,6 +96,12 @@ en:
       transfer_received: Transfer Received
       metadata_imported: Metadata Imported
 
+    status_values:
+      TRANSFER_PROCESS_INITIATED: 'Initiated'
+      TRANSFER_PROCESS_PENDING: 'Pending'
+      TRANSFER_PROCESS_IN_PROGRESS: 'In Progress'
+      TRANSFER_PROCESS_COMPLETE: 'Complete'
+
     files:
       filename: File Name
       mime_type: File Type
@@ -105,3 +111,6 @@ en:
 
   transfer_checklist:
     _plural: Transfer Checklist
+
+  conversation:
+    _plural: Comments/Discussion
