@@ -77,7 +77,7 @@ class Transfer < Sequel::Model
                end
              else
                # If all checklist items are complete, you're done!
-               TRANSFER_PROCESS_IN_COMPLETE
+               TRANSFER_PROCESS_COMPLETE
              end
 
     json[:status] = status
