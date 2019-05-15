@@ -74,12 +74,13 @@ class IndexFeedThread
   def run_index_round
     # Set the isolation level to READ_COMMITTED so we observe the effects of
     # other concurrent indexer threads (on other machines)
-    MAPDB.open(true, :isolation_level => :committed) do |mapdb|
-      Repository.each do |repo|
-        RECORD_TYPES.each do |record_type|
-          now = Time.now
-          record_type_name = record_type.name.downcase
+    Repository.each do |repo|
+      RECORD_TYPES.each do |record_type|
+        now = Time.now
+        record_type_name = record_type.name.downcase
+        records_added = 0
 
+        MAPDB.open(true, :isolation_level => :committed) do |mapdb|
           last_index_epoch = [(@state.get_last_mtime(repo.id, record_type_name) - MTIME_WINDOW_SECONDS), 0].max
           last_index_time = Time.at(last_index_epoch)
 
@@ -120,7 +121,12 @@ class IndexFeedThread
               records = record_type.filter(:id => id_set.map(&:id)).all
 
               # Delete old versions of the records we're about to index
-              mapdb[:index_feed].filter(:record_uri => records.map(&:uri)).delete
+              records.each do |record|
+                mapdb[:index_feed]
+                  .filter(:record_uri => record.uri)
+                  .filter { lock_version < record.lock_version }
+                  .delete
+              end
 
               record_type.sequel_to_jsonmodel(records).each do |record|
                 mapped_json = map_record(record.id, record.to_hash(:trusted)).to_json
@@ -133,12 +139,17 @@ class IndexFeedThread
                 did_something = true
               end
 
-              Log.info("Added #{records.count} #{record_type} records to MAP index feed")
+              records_added += records.count
             end
           end
-
-          @state.set_last_mtime(repo.id, record_type_name, now)
         end
+
+
+        if records_added > 0
+          Log.info("Added #{records_added} #{record_type} records to MAP index feed")
+        end
+
+        @state.set_last_mtime(repo.id, record_type_name, now)
       end
     end
   end
