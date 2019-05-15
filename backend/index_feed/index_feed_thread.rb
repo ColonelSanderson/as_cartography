@@ -31,6 +31,8 @@ class IndexFeedThread
     Resource,
     ArchivalObject,
     AgentCorporateEntity,
+    DigitalRepresentation,
+    PhysicalRepresentation,
   ]
 
 
