@@ -1,3 +1,4 @@
+require 'pp'
 require 'zlib'
 require_relative 'indexer_state'
 
@@ -35,6 +36,8 @@ class IndexFeedThread
     PhysicalRepresentation,
   ]
 
+  REPRESENTATION_TYPES = ['physical_representation', 'digital_representation']
+
 
   def initialize
     @state = IndexState.new("indexer_plugin_qsauatmap_state")
@@ -64,6 +67,10 @@ class IndexFeedThread
         # Constraint violations (23*) are expected if we insert a record into
         # the feed at the same time as another node does.  We'll let these roll
         # back the transaction and try again later.
+        if ArchivesSpaceService.development?
+          Log.info("Exception caught and silently skipped: #{e}")
+          Log.exception(e)
+        end
       else
         # Something more serious went wrong?
         raise e
@@ -128,14 +135,14 @@ class IndexFeedThread
                   .delete
               end
 
-              record_type.sequel_to_jsonmodel(records).each do |record|
-                mapped_json = map_record(record.id, record.to_hash(:trusted)).to_json
+              jsonmodels = record_type.sequel_to_jsonmodel(records)
+              jsonmodels.zip(map_records(records, jsonmodels)).each do |record, mapped|
                 mapdb[:index_feed].insert(:record_type => record.jsonmodel_type,
                                           :record_uri => record.uri,
                                           :repo_id => repo.id,
                                           :record_id => record.id,
                                           :lock_version => record.lock_version,
-                                          :blob => Sequel::SQL::Blob.new(gzip(mapped_json)))
+                                          :blob => Sequel::SQL::Blob.new(gzip(mapped.to_json)))
                 did_something = true
               end
 
@@ -164,41 +171,99 @@ class IndexFeedThread
 
   private
 
-  # Map our jsonmodel into something ready for Solr
-  def map_record(id, jsonmodel)
-    solr_doc = {
-      'id' => jsonmodel['jsonmodel_type'] + ':' + id.to_s,
-      'uri' => jsonmodel['uri'],
-      'primary_type' => jsonmodel['jsonmodel_type'],
-      'title' => jsonmodel['display_string'] || jsonmodel['title'],
-      'qsa_id' => jsonmodel['qsa_id'].to_s,
-    }
+  # Load extra information about the representations in `jsonmodels`
+  def load_representation_metadata(sequel_records, jsonmodels)
+    return {} unless sequel_records.length > 0 && REPRESENTATION_TYPES.include?(jsonmodels[0].class.record_type)
 
-    if jsonmodel['jsonmodel_type'] == 'agent_corporate_entity'
-      solr_doc['title'] = jsonmodel['display_name']['sort_name']
+    metadata_by_ao = {}
+
+    ArchivalObject
+      .join(:resource, Sequel.qualify(:archival_object, :root_record_id) => Sequel.qualify(:resource, :id))
+      .filter(Sequel.qualify(:archival_object, :id) => sequel_records.map(&:archival_object_id))
+      .select(Sequel.qualify(:archival_object, :id),
+              Sequel.as(Sequel.qualify(:archival_object, :display_string), :record_title),
+              Sequel.as(Sequel.qualify(:resource, :title), :series_title))
+      .each do |row|
+      metadata_by_ao[row[:id]] = {
+        :containing_record_title => row[:record_title],
+        :containing_series_title => row[:series_title],
+      }
     end
 
-    if jsonmodel.has_key?('responsible_agency')
-      solr_doc['responsible_agency'] = jsonmodel['responsible_agency']['ref']
+    result = {}
+
+    sequel_records.each do |rec|
+      unless metadata_by_ao[rec.archival_object_id].nil?
+        result[rec.uri] = metadata_by_ao[rec.archival_object_id]
+      end
     end
 
-    if jsonmodel.has_key?('recent_responsible_agencies')
-      solr_doc['recent_responsible_agencies'] = jsonmodel['recent_responsible_agencies'].map{|r| r['ref']}
+    result
+  end
+
+
+  # Map our jsonmodel into something ready for Solr.  All records in the list
+  # are guaranteed to be the same type.
+  def map_records(sequel_records, jsonmodels)
+    result = []
+
+    representation_metadata = load_representation_metadata(sequel_records, jsonmodels)
+
+    jsonmodels.each do |jsonmodel|
+      solr_doc = {
+        'id' => jsonmodel['jsonmodel_type'] + ':' + jsonmodel.id.to_s,
+        'uri' => jsonmodel['uri'],
+        'primary_type' => jsonmodel['jsonmodel_type'],
+        'title' => jsonmodel['display_string'] || jsonmodel['title'],
+        'qsa_id' => jsonmodel['qsa_id'].to_s,
+      }
+
+      if jsonmodel['jsonmodel_type'] == 'agent_corporate_entity'
+        solr_doc['title'] = jsonmodel['display_name']['sort_name']
+      end
+
+      if jsonmodel.has_key?('responsible_agency')
+        solr_doc['responsible_agency'] = jsonmodel['responsible_agency']['ref']
+      end
+
+      if jsonmodel.has_key?('recent_responsible_agencies')
+        solr_doc['recent_responsible_agencies'] = jsonmodel['recent_responsible_agencies'].map{|r| r['ref']}
+      end
+
+      if jsonmodel.has_key?('other_responsible_agencies')
+        solr_doc['other_responsible_agencies'] = jsonmodel['other_responsible_agencies'].map{|r| r['ref']}
+      end
+
+      if jsonmodel.has_key?('physical_representations')
+        solr_doc['physical_representations'] = jsonmodel['physical_representations'].map {|rep| rep['uri']}
+      end
+
+      if jsonmodel.has_key?('digital_representations')
+        solr_doc['digital_representations'] = jsonmodel['digital_representations'].map {|rep| rep['uri']}
+      end
+
+      # Representations get indexed with keywords containing the titles of their
+      # containing record & its containing series.
+      if REPRESENTATION_TYPES.include?(jsonmodel.class.record_type)
+        extra_representation_metadata = representation_metadata.fetch(jsonmodel.uri, {})
+
+        solr_doc['keywords'] ||= []
+
+        if extra_representation_metadata[:containing_record_title]
+          solr_doc['keywords'] << extra_representation_metadata[:containing_record_title]
+        end
+
+        if extra_representation_metadata[:containing_series_title]
+          solr_doc['keywords'] << extra_representation_metadata[:containing_series_title]
+        end
+      end
+
+      Log.debug("Generated Solr doc:\n#{solr_doc.pretty_inspect}\n")
+
+      result << solr_doc
     end
 
-    if jsonmodel.has_key?('other_responsible_agencies')
-      solr_doc['other_responsible_agencies'] = jsonmodel['other_responsible_agencies'].map{|r| r['ref']}
-    end
-
-    if jsonmodel.has_key?('physical_representations')
-      solr_doc['physical_representations'] = jsonmodel['physical_representations'].map {|rep| rep['uri']}
-    end
-
-    if jsonmodel.has_key?('digital_representations')
-      solr_doc['digital_representations'] = jsonmodel['digital_representations'].map {|rep| rep['uri']}
-    end
-
-    solr_doc
+    result
   end
 
 
