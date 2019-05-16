@@ -175,26 +175,25 @@ class IndexFeedThread
   def load_representation_metadata(sequel_records, jsonmodels)
     return {} unless sequel_records.length > 0 && REPRESENTATION_TYPES.include?(jsonmodels[0].class.record_type)
 
-    metadata_by_ao = {}
+    metadata_by_ao_id = {}
 
-    ArchivalObject
-      .join(:resource, Sequel.qualify(:archival_object, :root_record_id) => Sequel.qualify(:resource, :id))
-      .filter(Sequel.qualify(:archival_object, :id) => sequel_records.map(&:archival_object_id))
-      .select(Sequel.qualify(:archival_object, :id),
-              Sequel.as(Sequel.qualify(:archival_object, :display_string), :record_title),
-              Sequel.as(Sequel.qualify(:resource, :title), :series_title))
-      .each do |row|
-      metadata_by_ao[row[:id]] = {
-        :containing_record_title => row[:record_title],
-        :containing_series_title => row[:series_title],
+    archival_objects = ArchivalObject.filter(:id => sequel_records.map(&:archival_object_id)).all
+    resolved = URIResolver.resolve_references(ArchivalObject.sequel_to_jsonmodel(archival_objects),
+                                              ['resource'])
+
+    archival_objects.zip(resolved).each do |ao, resolved|
+      metadata_by_ao_id[ao.id] = {
+        :containing_record_title => resolved['display_string'],
+        :containing_series_title => resolved['resource']['_resolved']['title'],
+        :responsible_agency_uri => resolved['responsible_agency']['ref'],
       }
     end
 
     result = {}
 
     sequel_records.each do |rec|
-      unless metadata_by_ao[rec.archival_object_id].nil?
-        result[rec.uri] = metadata_by_ao[rec.archival_object_id]
+      unless metadata_by_ao_id[rec.archival_object_id].nil?
+        result[rec.uri] = metadata_by_ao_id[rec.archival_object_id]
       end
     end
 
@@ -258,6 +257,10 @@ class IndexFeedThread
 
         if extra_representation_metadata[:containing_series_title]
           solr_doc['keywords'] << extra_representation_metadata[:containing_series_title]
+        end
+
+        if extra_representation_metadata[:responsible_agency_uri]
+          solr_doc['responsible_agency'] = extra_representation_metadata[:responsible_agency_uri]
         end
       end
 
