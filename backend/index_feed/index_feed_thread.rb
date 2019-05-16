@@ -214,6 +214,7 @@ class IndexFeedThread
         'id' => jsonmodel['jsonmodel_type'] + ':' + jsonmodel.id.to_s,
         'uri' => jsonmodel['uri'],
         'primary_type' => jsonmodel['jsonmodel_type'],
+        'types' => [jsonmodel['jsonmodel_type']],
         'title' => jsonmodel['display_string'] || jsonmodel['title'],
         'qsa_id' => jsonmodel['qsa_id'].to_s,
       }
@@ -246,6 +247,8 @@ class IndexFeedThread
       # containing record & its containing series.
       if REPRESENTATION_TYPES.include?(jsonmodel.class.record_type)
         extra_representation_metadata = representation_metadata.fetch(jsonmodel.uri, {})
+
+        solr_doc['types'] << 'representation'
 
         solr_doc['keywords'] ||= []
 
