@@ -181,11 +181,13 @@ class IndexFeedThread
     resolved = URIResolver.resolve_references(ArchivalObject.sequel_to_jsonmodel(archival_objects),
                                               ['resource'])
 
+
     archival_objects.zip(resolved).each do |ao, resolved|
       metadata_by_ao_id[ao.id] = {
         :containing_record_title => resolved['display_string'],
         :containing_series_title => resolved['resource']['_resolved']['title'],
         :responsible_agency_uri => resolved['responsible_agency']['ref'],
+        :recent_responsible_agency_refs => resolved.fetch('recent_responsible_agencies', []),
       }
     end
 
@@ -200,6 +202,21 @@ class IndexFeedThread
     result
   end
 
+  def build_recent_agency_filter(recent_agencies)
+    result = []
+
+    recent_agencies.each do |ref|
+      agency_uri = ref['ref']
+
+      date = Date.parse(ref['end_date'])
+
+      90.times do |i|
+        result << agency_uri + "_" + (date + i).strftime('%Y-%m-%d')
+      end
+    end
+
+    result
+  end
 
   # Map our jsonmodel into something ready for Solr.  All records in the list
   # are guaranteed to be the same type.
@@ -227,7 +244,9 @@ class IndexFeedThread
       end
 
       if jsonmodel.has_key?('recent_responsible_agencies')
+        # FIXME: is this field needed?
         solr_doc['recent_responsible_agencies'] = jsonmodel['recent_responsible_agencies'].map{|r| r['ref']}
+        solr_doc['recent_responsible_agency_filter'] = build_recent_agency_filter(jsonmodel['recent_responsible_agencies'])
       end
 
       if jsonmodel.has_key?('other_responsible_agencies')
@@ -261,6 +280,10 @@ class IndexFeedThread
 
         if extra_representation_metadata[:responsible_agency_uri]
           solr_doc['responsible_agency'] = extra_representation_metadata[:responsible_agency_uri]
+        end
+
+        if extra_representation_metadata[:recent_responsible_agency_refs]
+          solr_doc['recent_responsible_agency_filter'] = build_recent_agency_filter(extra_representation_metadata[:recent_responsible_agency_refs])
         end
       end
 
