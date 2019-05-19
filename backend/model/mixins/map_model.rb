@@ -1,3 +1,5 @@
+require_relative '../mapdb'
+
 module MAPModel
   def self.included(base)
     base.extend(ClassMethods)

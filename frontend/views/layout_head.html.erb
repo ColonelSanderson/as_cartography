@@ -1,5 +1,6 @@
 <%= javascript_include_tag "#{AppConfig[:frontend_proxy_prefix]}assets/transfers.js" %>
 <%= javascript_include_tag "#{AppConfig[:frontend_proxy_prefix]}assets/conversation.js" %>
+<%= javascript_include_tag "#{AppConfig[:frontend_proxy_prefix]}assets/file_issue.js" %>
 <link href="<%= "#{AppConfig[:frontend_proxy_prefix]}assets/styles/transfers.css" %>" media="all" rel="stylesheet" type="text/css">
 <link href="<%= "#{AppConfig[:frontend_proxy_prefix]}assets/styles/conversation.css" %>" media="all" rel="stylesheet" type="text/css">
 
@@ -7,4 +8,9 @@
   <li class="divider"></li>
   <li><%= link_to I18n.t("transfer_proposal._plural"), :controller => :transfer_proposals, :action => :index %></li>
   <li><%= link_to I18n.t("transfer._plural"), :controller => :transfers, :action => :index %></li>
+</script>
+
+<script type="text/template" id="MAPFileIssueBrowseActions">
+  <li class="divider"></li>
+  <li><%= link_to I18n.t("file_issue_request._plural"), :controller => :file_issue_requests, :action => :index %></li>
 </script>

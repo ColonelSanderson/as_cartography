@@ -14,4 +14,5 @@ ArchivesSpace::Application.routes.draw do
   resources :transfer_proposals
   resources :transfers
   resources :transfer_files
+  resources :file_issue_requests
 end

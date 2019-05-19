@@ -1,0 +1,7 @@
+<%= render(:layout => '/shared/sidebar',
+           :locals => {
+               :record_type => 'file_issue_request',
+               :record => @file_issue_request,
+           }) do |sidebar| %>
+    <%= sidebar.render_for_view_only(:subrecord_type => 'conversation', :property => :none) %>
+<% end %>

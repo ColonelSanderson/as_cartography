@@ -131,3 +131,11 @@ en:
     type_your_message: Type your message
     send_message: Send message
     could_not_send: Your message could not be sent. Please retry!
+
+
+  file_issue_request:
+    _frontend:
+      section:
+        basic_information: Basic Information
+    _plural: File Issue Requests
+    _singular: File Issue Request

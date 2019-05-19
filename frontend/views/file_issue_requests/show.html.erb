@@ -1,0 +1,98 @@
+<%= setup_context :object => @file_issue_request, :title => @file_issue_request.title %>
+
+<div class="row">
+  <div class="col-md-3">
+    <%= render_aspace_partial :partial => "sidebar" %>
+  </div>
+  <div class="col-md-9">
+    <%= render_aspace_partial :partial => "toolbar" %>
+    <div class="record-pane">
+      <%= readonly_context :file_issue_request, @file_issue_request do |readonly| %>
+        <h2><%= @file_issue_request.title %>  <span class="label label-info"><%= I18n.t("file_issue_request._singular") %></span></h2>
+
+        <%= render_aspace_partial :partial => "shared/flash_messages" %>
+
+        <% define_template "file_issue_request", jsonmodel_definition(:file_issue_request) do |form, file_issue_request| %>
+          <section id="basic_information">
+            <h3><%= I18n.t("file_issue_request._frontend.section.basic_information") %></h3>
+
+            <%= render_plugin_partials("top_of_basic_information_file_issue_request",
+                                       :form => form,
+                                       :record => @file_issue_request) %>
+
+            <div class="form-group">
+              <div class="control-label col-sm-2"><%= I18n.t("file_issue_request.agency") %></div>
+              <div class="token-list">
+                <%= render_token(:object => @file_issue_request['agency']['_resolved'],
+                                 :label => CGI::escapeHTML(@file_issue_request['agency']['_resolved']['title']),
+                                 :type => @file_issue_request['agency']['_resolved']['jsonmodel_type'],
+                                 :uri => @file_issue_request['agency']['ref'],
+                                 :placement => "top",
+                                 :inside_linker_browse => true) %>
+              </div>
+            </div>
+
+            <%= form.label_and_textfield "agency_location_display_string" %>
+
+            <%= form.label_and_textfield "status" %>
+
+            <% unless ASUtils.wrap(@file_issue_request['files']).empty? %>
+              <section id="file_issue_request_files_">
+                <h3><%= I18n.t("file_issue_request._frontend.section.files") %></h3>
+                <table class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th><%= I18n.t("file_issue_request.files.filename") %></th>
+                      <th><%= I18n.t("file_issue_request.files.mime_type") %></th>
+                      <th><%= I18n.t("file_issue_request.files.role") %></th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% ASUtils.wrap(@file_issue_request['files']).each do |file| %>
+                      <tr>
+                        <td><%= file.fetch('filename') %></td>
+                        <td><%= file.fetch('mime_type') %></td>
+                        <td><%= file.fetch('role') %></td>
+                        <td class="table-record-actions">
+                          <div class="btn-group">
+                            <%=
+                            link_to(I18n.t("file_issue_request.files.view"),
+                                    {
+                                      :controller => :transfer_files,
+                                      :action => :show,
+                                      :key => file.fetch('key'),
+                                      :filename => file.fetch('filename'),
+                                      :mime_type => file.fetch('mime_type'),
+                                    },
+                                    {
+                                      :class => "btn btn-primary"
+                                    })
+                            %>
+                          </div>
+                        </td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </section>
+            <% end %>
+
+            <section id="conversation" class="conversation">
+              <h3><%= I18n.t("transfer._frontend.section.conversation") %></h3>
+              <div id="conversation-widget"></div>
+            </section>
+
+            <%= display_audit_info(@file_issue_request) %>
+        <% end %>
+
+        <%= readonly.emit_template "file_issue_request" %>
+
+        <%= show_plugins_for(@file_issue_request, readonly) %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+
+<%= render_aspace_partial :partial => "shared/conversation_widget", :locals => { handle_id: @file_issue_request.handle_id } %>
