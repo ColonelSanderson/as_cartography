@@ -51,22 +51,58 @@
                         <tr>
                             <td><span class="label label-info"><%= request['request_type'] %></span></td>
                             <td>
-                                <div class="form-group">
-                                    <div class="token-list">
-                                        <%= render_token(:object => request['_resolved'],
-                                                         :label => CGI::escapeHTML(request['_resolved']['title']),
-                                                         :type => request['_resolved']['jsonmodel_type'],
-                                                         :uri => request['ref'],
-                                                         :placement => "top",
-                                                         :inside_linker_browse => true) %>
+                                <% if is_readonly %>
+                                    <div class="form-group">
+                                        <div class="token-list">
+                                            <%= render_token(:object => request['_resolved'],
+                                                             :label => CGI::escapeHTML(request['_resolved']['title']),
+                                                             :type => request['_resolved']['jsonmodel_type'],
+                                                             :uri => request['ref'],
+                                                             :placement => "top",
+                                                             :inside_linker_browse => true) %>
+                                        </div>
                                     </div>
-                                </div>
+                                <% else %>
+                                    <%# FIXME: Need the extra restriction on responsible agency here... %>
+                                    <div class="col-sm-9">
+                                        <div class="form-group required">
+                                            <div class="input-group linker-wrapper">
+                                                <input type="text" class="linker"
+                                                       data-label="<%= I18n.t("file_issue_request.representation") %>"
+                                                       data-label="<%= I18n.t("file_issue_request.representations") %>"
+                                                       data-path="<%= form.path %>"
+                                                       data-name="ref"
+                                                       data-url="<%= url_for(:controller => :search,
+                                                                             :action => :do_search,
+                                                                             :format => :json,
+                                                                             :filter_term => [{"controlling_record_u_sstr" => request['_resolved']['controlling_record']['ref']}.to_json]
+                                                                 )
+                                                                 %>"
+                                                       data-browse-url="<%= url_for(:controller => :search,
+                                                                                    :action => :do_search,
+                                                                                    :format => :js,
+                                                                                    :display_identifier => true,
+                                                                                    :filter_term => [{"controlling_record_u_sstr" => request['_resolved']['controlling_record']['ref']}.to_json])
+                                                                        %>"
+                                                       data-selected="<%= ASUtils.to_json(request['_resolved'] || {}) %>"
+                                                       data-format_property="title"
+                                                       data-multiplicity="one"
+                                                       data-types='["physical_representation", "digital_representation"]'/>
+                                                <div class="input-group-btn">
+                                                    <a class="btn btn-default dropdown-toggle last" data-toggle="dropdown" href="javascript:void(0);"><span class="caret"></span></a>
+                                                    <ul class="dropdown-menu">
+                                                        <li><a href="javascript:void(0);" class="linker-browse-btn"><%= I18n.t("actions.browse") %></a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% end %>
                             </td>
                             <td><%= request['record_details'] or '' %></td>
                             <td class="table-record-actions">
                                 <% unless is_readonly %>
                                     <div class="btn-group">
-                                        <button class="btn">Switch representation</button>
                                         <button class="btn btn-danger">Remove</button>
                                     </div>
                                 <% end %>
@@ -103,3 +139,9 @@
 
     <%= show_plugins_for(@file_issue_request, readonly) %>
 <% end %>
+
+<script>
+ $(function() {
+      $(".linker:not(.initialised)").linker();
+ });
+</script>
