@@ -85,8 +85,16 @@
                 <%= display_audit_info(@file_issue_request) %>
             <% else %>
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary"><%= I18n.t("file_issue_request._frontend.action.save") %></button>
-                    <%= link_to I18n.t("actions.cancel"), :back, :class => "btn btn-cancel btn-default" %>
+                    <%#
+                    Fun fact: these buttons do the same thing, which is
+                    nothing.  Currently we only have an edit version of this
+                    form so we know whether to show the various request
+                    modification buttons, but the actual changes are made via
+                    AJAX.
+                    %>
+
+                    <%= link_to I18n.t("file_issue_request._frontend.action.save"), {:controller => :file_issue_requests, :action => :show, :id => @file_issue_request.id}, :class => "btn btn-primary" %>
+                    <%= link_to I18n.t("actions.cancel"), {:controller => :file_issue_requests, :action => :show, :id => @file_issue_request.id}, :class => "btn btn-cancel btn-default" %>
                 </div>
             <% end %>
     <% end %>

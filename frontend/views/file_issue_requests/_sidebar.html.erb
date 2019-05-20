@@ -2,8 +2,9 @@
            :locals => {
                :record_type => 'file_issue_request',
                :record => @file_issue_request,
+               :suppress_submit_buttons => true,
            }) do |sidebar| %>
-    <%= sidebar.render_for_view_only(:subrecord_type => 'requested_representations', :property => :none) %>
+    <%= sidebar.render_for_view_and_edit(:subrecord_type => 'requested_representations', :property => :none) %>
     <% if is_readonly %>
         <%= sidebar.render_for_view_only(:subrecord_type => 'conversation', :property => :none) %>
     <% end %>
