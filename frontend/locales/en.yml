@@ -139,3 +139,6 @@ en:
         basic_information: Basic Information
     _plural: File Issue Requests
     _singular: File Issue Request
+    agency_location_display_string: Agency Location
+    agency: Agency
+    status: Status
