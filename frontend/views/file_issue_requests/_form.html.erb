@@ -47,7 +47,7 @@
                             <th><!-- Actions --></th>
                         <% end %>
                     </tr>
-                    <% (@file_issue_request['requested_representations'] or []).each do |request| %>
+                    <% (@file_issue_request['requested_representations'] or []).each_with_index do |request, idx| %>
                         <tr>
                             <td><span class="label label-info"><%= request['request_type'] %></span></td>
                             <td>
@@ -67,9 +67,9 @@
                                     <div class="col-sm-9">
                                         <div class="form-group required">
                                             <div class="input-group linker-wrapper">
-                                                <input type="text" class="linker"
+                                                <input id="linker_request_<%= idx %>" type="text" class="linker"
                                                        data-label="<%= I18n.t("file_issue_request.representation") %>"
-                                                       data-label="<%= I18n.t("file_issue_request.representations") %>"
+                                                       data-label_plural="<%= I18n.t("file_issue_request.representations") %>"
                                                        data-path="<%= form.path %>"
                                                        data-name="ref"
                                                        data-url="<%= url_for(:controller => :search,
@@ -81,7 +81,6 @@
                                                        data-browse-url="<%= url_for(:controller => :search,
                                                                                     :action => :do_search,
                                                                                     :format => :js,
-                                                                                    :display_identifier => true,
                                                                                     :filter_term => [{"controlling_record_u_sstr" => request['_resolved']['controlling_record']['ref']}.to_json])
                                                                         %>"
                                                        data-selected="<%= ASUtils.to_json(request['_resolved'] || {}) %>"

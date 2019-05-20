@@ -147,6 +147,14 @@ en:
     urgent: Urgent?
     request_notes: Notes
     deliver_to_reading_room: Deliver to reading room?
+    representation: Representation
+    representations: Representations
 
   requested_representations:
     _plural: Requested Representations
+
+  search_results:
+    controlling_record:
+      current: current
+    filter:
+      controlling_record_u_sstr: Controlling Record
