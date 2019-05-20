@@ -159,6 +159,8 @@ class IndexFeedThread
         @state.set_last_mtime(repo.id, record_type_name, now)
       end
     end
+
+    handle_deletes
   end
 
 
@@ -170,6 +172,34 @@ class IndexFeedThread
 
 
   private
+
+  def handle_deletes
+    start = Time.now
+
+    last_mtime = @state.get_last_mtime('_deletes', 'deletes')
+    last_delete_epoch = [(@state.get_last_mtime('_deletes', 'deletes') - MTIME_WINDOW_SECONDS), 0].max
+    last_delete_time = Time.at(last_delete_epoch)
+
+    did_something = false
+
+    # Using autocommit here since we can happily skip over failed inserts where
+    # someone else got in first.
+    MAPDB.open(false, :isolation_level => :committed) do |mapdb|
+      Tombstone.filter { timestamp >= last_delete_time }.each do |row|
+        begin
+          mapdb[:index_feed_deletes].insert(:record_uri => row[:uri])
+        rescue Sequel::DatabaseError => e
+          if (e.wrapped_exception && ( e.wrapped_exception.cause or e.wrapped_exception).getSQLState() =~ /^23/)
+            # Constraint violation.  Not a problem.
+          else
+            raise e
+          end
+        end
+      end
+    end
+
+    @state.set_last_mtime('_deletes', 'deletes', start)
+  end
 
   # Load extra information about the representations in `jsonmodels`
   def load_representation_metadata(sequel_records, jsonmodels)
