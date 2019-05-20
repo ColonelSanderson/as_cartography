@@ -44,6 +44,10 @@
             },
             "request_type" => {"type" => "string"},
             "record_details" => {"type" => "string"},
+            "_resolved" => {
+              "type" => "object",
+              "readonly" => "true"
+            }
           }
         }
       },

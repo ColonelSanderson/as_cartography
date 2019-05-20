@@ -135,6 +135,8 @@ en:
 
   file_issue_request:
     _frontend:
+      action:
+        save: Save Request
       section:
         basic_information: Basic Information
     _plural: File Issue Requests
@@ -142,3 +144,9 @@ en:
     agency_location_display_string: Agency Location
     agency: Agency
     status: Status
+    urgent: Urgent?
+    request_notes: Notes
+    deliver_to_reading_room: Deliver to reading room?
+
+  requested_representations:
+    _plural: Requested Representations

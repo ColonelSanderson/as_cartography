@@ -1,6 +1,6 @@
 class FileIssueRequestsController < ApplicationController
 
-  set_access_control  "view_repository" => [:index, :show]
+  set_access_control  "view_repository" => [:index, :show, :edit, :update]
 
 
   def index
@@ -18,9 +18,12 @@ class FileIssueRequestsController < ApplicationController
 
 
   def show
-    @file_issue_request = JSONModel(:file_issue_request).find(params[:id], find_opts.merge('resolve[]' => ['agency', 'file_issue']))
+    @file_issue_request = JSONModel(:file_issue_request).find(params[:id], find_opts.merge('resolve[]' => ['agency', 'file_issue', 'requested_representations']))
   end
 
+  def edit
+    @file_issue_request = JSONModel(:file_issue_request).find(params[:id], find_opts.merge('resolve[]' => ['agency', 'file_issue', 'requested_representations']))
+  end
 
   def current_record
     @file_issue_request

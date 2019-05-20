@@ -1,0 +1,97 @@
+<%= readonly_context :file_issue_request, @file_issue_request do |readonly| %>
+    <h2><%= @file_issue_request.title %>  <span class="label label-info"><%= I18n.t("file_issue_request._singular") %></span></h2>
+
+    <%= render_aspace_partial :partial => "shared/flash_messages" %>
+
+    <% define_template "file_issue_request", jsonmodel_definition(:file_issue_request) do |form, file_issue_request| %>
+        <section id="basic_information">
+            <h3><%= I18n.t("file_issue_request._frontend.section.basic_information") %></h3>
+
+            <%= render_plugin_partials("top_of_basic_information_file_issue_request",
+                                       :form => form,
+                                       :record => @file_issue_request) %>
+
+            <div class="form-group">
+                <div class="control-label col-sm-2"><%= I18n.t("file_issue_request.agency") %></div>
+                <div class="token-list">
+                    <%= render_token(:object => @file_issue_request['agency']['_resolved'],
+                                     :label => CGI::escapeHTML(@file_issue_request['agency']['_resolved']['title']),
+                                     :type => @file_issue_request['agency']['_resolved']['jsonmodel_type'],
+                                     :uri => @file_issue_request['agency']['ref'],
+                                     :placement => "top",
+                                     :inside_linker_browse => true) %>
+                </div>
+            </div>
+
+            <%= form.label_and_textfield "agency_location_display_string" %>
+
+            <%= form.label_and_textfield "status" %>
+
+            <%= form.label_and_boolean "urgent" %>
+
+            <%= form.label_and_textfield "request_notes" %>
+
+            <%= form.label_and_boolean "deliver_to_reading_room" %>
+
+
+            <%# FIXME: i18n %>
+            <section id="requested_representations">
+                <h3>Requested Representations</h3>
+
+                <table class="table table-striped">
+                    <tr>
+                        <th>Request Type</th>
+                        <th>Representation</th>
+                        <th>Details</th>
+                        <% unless is_readonly %>
+                            <th><!-- Actions --></th>
+                        <% end %>
+                    </tr>
+                    <% (@file_issue_request['requested_representations'] or []).each do |request| %>
+                        <tr>
+                            <td><span class="label label-info"><%= request['request_type'] %></span></td>
+                            <td>
+                                <div class="form-group">
+                                    <div class="token-list">
+                                        <%= render_token(:object => request['_resolved'],
+                                                         :label => CGI::escapeHTML(request['_resolved']['title']),
+                                                         :type => request['_resolved']['jsonmodel_type'],
+                                                         :uri => request['ref'],
+                                                         :placement => "top",
+                                                         :inside_linker_browse => true) %>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><%= request['record_details'] or '' %></td>
+                            <td class="table-record-actions">
+                                <% unless is_readonly %>
+                                    <div class="btn-group">
+                                        <button class="btn">Switch representation</button>
+                                        <button class="btn btn-danger">Remove</button>
+                                    </div>
+                                <% end %>
+                            </td>
+                        </tr>
+                    <% end %>
+                </table>
+            </section>
+
+            <% if is_readonly %>
+                <section id="conversation" class="conversation">
+                    <h3><%= I18n.t("transfer._frontend.section.conversation") %></h3>
+                    <div id="conversation-widget"></div>
+                </section>
+
+                <%= display_audit_info(@file_issue_request) %>
+            <% else %>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary"><%= I18n.t("file_issue_request._frontend.action.save") %></button>
+                    <%= link_to I18n.t("actions.cancel"), :back, :class => "btn btn-cancel btn-default" %>
+                </div>
+            <% end %>
+    <% end %>
+
+    <%= readonly.emit_template "file_issue_request" %>
+
+    <%= show_plugins_for(@file_issue_request, readonly) %>
+<% end %>
