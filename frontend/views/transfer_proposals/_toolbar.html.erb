@@ -6,7 +6,7 @@
                    :method => "post",
                    :id => "approve_transfer_proposal") do %>
         <%= hidden_field_tag "proposal_id", @transfer_proposal.id %>
-        <button class="btn btn-primary navbar-btn btn-default"><i class="fa fa-check"></i>&nbsp;<%= I18n.t("transfer_proposal._frontend.confirmation_button") %></button>
+        <button class="btn btn-primary btn-default btn-sm"><i class="fa fa-check"></i>&nbsp;<%= I18n.t("transfer_proposal._frontend.confirmation_button") %></button>
       <% end %>
 
       <%= form_tag({:controller => "transfer_proposals",
@@ -14,7 +14,7 @@
                    :method => "post",
                    :id => "cancel_transfer_proposal") do %>
         <%= hidden_field_tag "proposal_id", @transfer_proposal.id %>
-        <button class="btn btn-cancel navbar-btn btn-default"><%=  I18n.t("transfer_proposal._frontend.cancel_button") %></button>
+        <button class="btn btn-cancel btn-default btn-sm"><%=  I18n.t("transfer_proposal._frontend.cancel_button") %></button>
       <% end %>
     </div>
   <% end %>

@@ -2,7 +2,7 @@ class FileIssueRequestsController < ApplicationController
 
   RESOLVES = ['agency', 'file_issue', 'requested_representations', 'physical_quote', 'digital_quote']
 
-  set_access_control  "view_repository" => [:index, :show, :edit, :update, :generate_quote, :issue_quote, :withdraw_quote]
+  set_access_control  "view_repository" => [:index, :show, :edit, :update, :generate_quote, :issue_quote, :withdraw_quote, :cancel]
 
   def index
     respond_to do |format|
@@ -49,6 +49,19 @@ class FileIssueRequestsController < ApplicationController
                   flash[:success] = I18n.t("file_issue_request._frontend.messages.updated", JSONModelI18nWrapper.new(:transfer => @file_issue_request))
                   redirect_to :controller => :file_issue_requests, :action => :show, :id => id
                 })
+  end
+
+  def cancel
+    response = JSONModel::HTTP.post_form(JSONModel(:file_issue_request).uri_for("#{params[:file_issue_request_id]}/cancel"),
+                                        'cancel_target' => params[:cancel_target])
+
+    if response.code == '200'
+      flash[:info] = I18n.t('file_issue_request._frontend.messages.cancel_succeeded')
+    else
+      flash[:error] = I18n.t('file_issue_request._frontend.errors.cancel_failed')
+    end
+
+    redirect_to(:controller => :file_issue_requests, :action => :show, :id => params[:file_issue_request_id])
   end
 
   def current_record

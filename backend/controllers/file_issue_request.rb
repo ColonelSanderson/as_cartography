@@ -83,4 +83,20 @@ class ArchivesSpaceService < Sinatra::Base
     json_response({:message => 'Quote withdrawn'})
   end
 
+  Endpoint.post('/file_issue_requests/:id/cancel')
+    .description("Cancel a given request")
+    .params(["id", :id],
+            ["cancel_target", String, "The part of the request to cancel ('physical', 'digital' or 'both')"])
+    .permissions([])
+    .returns([200, "cancel succeeded"]) \
+  do
+    raise "Invalid cancel target" unless ['physical', 'digital', 'both'].include?(params[:cancel_target])
+
+    MAPDB.transaction do
+      FileIssueRequest[params[:id]].cancel!(params[:cancel_target])
+
+      json_response('status' => 'cancelled')
+    end
+  end
+
 end

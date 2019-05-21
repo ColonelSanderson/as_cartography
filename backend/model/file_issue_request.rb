@@ -6,10 +6,17 @@ class FileIssueRequest < Sequel::Model
   include MAPModel
   map_table :file_issue_request
 
-  def cancel!
-    # TODO
-    # self.status = CANCELLED_BY_QSA_STATUS
-    # self.save
+  CANCELLED_BY_QSA_STATUS = 'CANCELLED_BY_QSA'
+
+  def cancel!(cancel_target)
+    case cancel_target
+        when 'physical', 'both'
+          self.physical_request_status = CANCELLED_BY_QSA_STATUS
+        when 'digital', 'both'
+          self.digital_request_status = CANCELLED_BY_QSA_STATUS
+    end
+
+    self.save
   end
 
   def update_from_json(json, opts = {}, apply_nested_records = true)

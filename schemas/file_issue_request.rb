@@ -28,9 +28,10 @@
       "request_type" => {"type" => "string"},
       "urgent" => {"type" => "boolean", "readonly" => "true"},
       "deliver_to_reading_room" => {"type" => "boolean", "readonly" => "true"},
-      "delivery_authorizer" => {"type" => "text", "readonly" => "true"},
-      "status" => {"type" => "text"},
-      "request_notes" => {"type" => "text", "readonly" => "true"},
+      "delivery_authorizer" => {"type" => "string", "readonly" => "true"},
+      "physical_request_status" => {"type" => "string"},
+      "digital_request_status" => {"type" => "string"},
+      "request_notes" => {"type" => "string", "readonly" => "true"},
 
       "requested_representations" => {
         "type" => "array",

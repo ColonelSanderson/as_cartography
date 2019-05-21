@@ -11,6 +11,7 @@ en:
         files: Attached Files
       errors:
         approval_failed: Failed to approve transfer
+        cancel_failed: Failed to cancel transfer
       messages:
         approve_succeeded: New transfer created
         cancel_succeeded: Transfer cancelled
@@ -153,11 +154,26 @@ en:
         quote_issue_fail: Quote issue failed
         quote_withdraw_success: Quote withdrawn
         quote_withdraw_fail: Quote withdrawal failed
+        cancel_succeeded: File Issue Request cancelled
+        confirm_cancel_physical_title: Cancelling Physical File Issue Request
+        confirm_cancel_physical_message: Are you sure you want cancel the physical part of this file issue request?
+        confirm_cancel_digital_title: Cancelling Digital File Issue Request
+        confirm_cancel_digital_message: Are you sure you want cancel the digital part of this file issue request?
+        confirm_cancel_both_title: Cancelling File Issue Request
+        confirm_cancel_both_message: Are you sure you want cancel this entire file issue request?
+      errors:
+        cancel_failed: Failed to cancel file issue request
+      cancel_button: Cancel Request
+      cancel_button_physical: Cancel Physical Request
+      cancel_button_digital: Cancel Digital Request
+      cancel_button_both: Cancel Entire Request
+      back_button: Back
     _plural: File Issue Requests
     _singular: File Issue Request
     agency_location_display_string: Agency Location
     agency: Agency
-    status: Status
+    physical_request_status: Physical Request Status
+    digital_request_status: Digital Request Status
     urgent: Urgent?
     request_notes: Notes
     deliver_to_reading_room: Deliver to reading room?

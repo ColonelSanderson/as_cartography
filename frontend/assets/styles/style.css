@@ -1,0 +1,18 @@
+.record-toolbar.transfers-toolbar form, .record-toolbar.file-issue-toolbar form {
+    display: inline-block;
+}
+
+.transfer_checklist_item label {
+    text-align: left;
+    width: 15em;
+}
+
+.transfer_checklist_item {
+    margin-left: 0.5em;
+}
+
+.file-issue-toolbar .cancel-options * {
+    width: 100%;
+    border: none;
+    text-align: left;
+}

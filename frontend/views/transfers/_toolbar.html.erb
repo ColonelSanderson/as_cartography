@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-md-12">
-        <div class="record-toolbar transfer_toolbar">
+        <div class="record-toolbar transfers-toolbar">
             <% if !['edit', 'update'].include?(controller.action_name) %>
                 <div class="btn-group pull-left">
                     <%= link_to I18n.t("actions.edit"), {:controller => :transfers, :action => :edit, :id => @transfer.id}, :class => "btn btn-sm btn-primary" %>
@@ -18,6 +18,7 @@
                     <%= I18n.t("actions.toolbar_disabled_message") %>
                 </div>
             <% end %>
+            <div class="clearfix"></div>
         </div>
     </div>
 </div>

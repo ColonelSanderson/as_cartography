@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-md-12">
-        <div class="record-toolbar transfer_toolbar">
+        <div class="record-toolbar file-issue-toolbar">
             <% if !['edit', 'update'].include?(controller.action_name) %>
                 <div class="btn-group pull-left">
                     <%= link_to I18n.t("actions.edit"), {:controller => :file_issue_requests, :action => :edit, :id => @file_issue_request.id}, :class => "btn btn-sm btn-primary" %>
@@ -14,17 +14,62 @@
                 </div>
             <% end %>
 
-                <div class="btn-group pull-right">
-                    <% ['digital', 'physical'].each do |type| %>
-                        <%= link_to I18n.t("file_issue_request._frontend.action.generate_#{type}_quote"),
-                                    {:controller => :file_issue_requests,
-                                     :action => :generate_quote,
-                                     :type => type,
-                                     :id => @file_issue_request.id},
-                                    :class => "btn btn-sm btn-warning", :method => :post %>
-                    <% end %>
-                </div>
+            <div class="btn-group btn-toolbar pull-right">
+                <% ['digital', 'physical'].each do |type| %>
+                    <%= link_to I18n.t("file_issue_request._frontend.action.generate_#{type}_quote"),
+                     {:controller => :file_issue_requests,
+                      :action => :generate_quote,
+                      :type => type,
+                      :id => @file_issue_request.id},
+                     :class => "btn btn-sm btn-warning", :method => :post %>
+                <% end %>
 
+                <% if [@file_issue_request.physical_request_status, @file_issue_request.digital_request_status].include?('QUOTE_REQUESTED') %>
+                    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                        <%= I18n.t("file_issue_request._frontend.cancel_button") %> <span class="caret"></span>
+                    </button>
+
+                    <ul class="dropdown-menu cancel-options" role="menu">
+                        <%
+                        # We can cancel any part that hasn't been cancelled yet
+                        cancel_targets = ['physical', 'digital'].select {|cancel_target| @file_issue_request["#{cancel_target}_request_status"] == 'QUOTE_REQUESTED'}
+
+                        # And if both parts are available to cancel, we can do both at once as well.
+                            if cancel_targets.length == 2
+                                cancel_targets << 'both'
+                            end
+                        %>
+
+                        <% cancel_targets.each do |cancel_target| %>
+                            <li>
+                                <%= form_tag({:controller => "file_issue_requests", :action => "cancel"},
+                                             :method => "post",
+                                             :class => "file_issue_request_cancel_form",
+                                             :"data-cancel-target" => cancel_target,
+                                             :id => "file_issue_request_cancel_#{cancel_target}") do %>
+                                    <%= hidden_field_tag "file_issue_request_id", @file_issue_request.id %>
+                                    <%= hidden_field_tag "cancel_target", cancel_target %>
+                                    <button class="btn btn-cancel btn-default btn-sm"><%=  I18n.t("file_issue_request._frontend.cancel_button_#{cancel_target}") %></button>
+                                <% end %>
+                            </li>
+                        <% end %>
+                    </ul>
+                <% end %>
+            </div>
+            <div class="clearfix"></div>
         </div>
     </div>
 </div>
+
+<% ['physical', 'digital', 'both'].each do |cancel_target| %>
+    <div id="file_issue_request_confirm_cancel_<%= cancel_target %>_template"
+         data-title="<%= I18n.t("file_issue_request._frontend.messages.confirm_cancel_#{cancel_target}_title") %>"><!--
+       <div class="modal-body">
+          <p><%= I18n.t("file_issue_request._frontend.messages.confirm_cancel_#{cancel_target}_message") %></p>
+       </div>
+       <div class="modal-footer">
+          <button class="btn btn-primary confirmButton"><%= I18n.t('file_issue_request._frontend.cancel_button') %></button>
+          <button class="btn btn-cancel btn-default" data-dismiss="modal"><%= I18n.t "file_issue_request._frontend.back_button" %></button>
+       </div>
+    --></div>
+<% end %>
