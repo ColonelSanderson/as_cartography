@@ -137,8 +137,12 @@ en:
     _frontend:
       action:
         save: Save Request
+        generate_physical_quote: Generate Quote for Physical Items
+        generate_digital_quote: Generate Quote for Digital Items
       section:
         basic_information: Basic Information
+        physical_quote: Quote for Physical Items
+        digital_quote: Quote for Digital Items
       messages:
         updated: File Issue Request updated
     _plural: File Issue Requests

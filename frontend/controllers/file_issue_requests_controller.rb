@@ -2,8 +2,7 @@ class FileIssueRequestsController < ApplicationController
 
   RESOLVES = ['agency', 'file_issue', 'requested_representations']
 
-  set_access_control  "view_repository" => [:index, :show, :edit, :update]
-
+  set_access_control  "view_repository" => [:index, :show, :edit, :update, :generate_physical_quote]
 
   def index
     respond_to do |format|
@@ -56,4 +55,7 @@ class FileIssueRequestsController < ApplicationController
     @file_issue_request
   end
 
+  def generate_physical_quote
+    redirect_to :controller => :file_issue_requests, :action => :show, :id => params[:id]
+  end
 end

@@ -16,4 +16,6 @@ ArchivesSpace::Application.routes.draw do
   resources :transfers
   resources :transfer_files
   resources :file_issue_requests
+
+  match 'file_issue_requests/:id/generate_physical_quote' => 'file_issue_requests#generate_physical_quote', :via => [:get]
 end

@@ -13,6 +13,11 @@
                     <%= I18n.t("actions.toolbar_disabled_message") %>
                 </div>
             <% end %>
+
+                <div class="btn-group pull-right">
+                    <%= link_to I18n.t("file_issue_request._frontend.action.generate_physical_quote"), {:controller => :file_issue_requests, :action => :generate_physical_quote, :id => @file_issue_request.id}, :class => "btn btn-sm btn-warning" %>
+                </div>
+
         </div>
     </div>
 </div>
