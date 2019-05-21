@@ -302,6 +302,8 @@ class IndexFeedThread
 
         solr_doc['keywords'] ||= []
 
+        solr_doc['file_issue_allowed'] = jsonmodel['file_issue_allowed']
+
         if extra_representation_metadata[:containing_record_title]
           solr_doc['keywords'] << extra_representation_metadata[:containing_record_title]
         end
