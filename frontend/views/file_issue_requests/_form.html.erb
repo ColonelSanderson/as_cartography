@@ -142,7 +142,7 @@
                         <table class="table table-striped table-bordered">
                             <tr>
                                 <th>Unit description</th>
-                                <th>Unit cost</th>
+                                <th style="text-align:right">Unit cost</th>
                                 <th>Unit type</th>
                                 <th style="text-align:center">No. of Units</th>
                                 <th style="text-align:right">Cost</th>
@@ -151,7 +151,7 @@
                             <% quote['line_items'].each do |line| %>
                                 <tr>
                                     <td><%= line['description'] %></td>
-                                    <td><%= line['charge_per_unit_display'] %></td>
+                                    <td style="text-align:right"><%= line['charge_per_unit_display'] %></td>
                                     <td><%= line['charge_quantity_unit'] %></td>
                                     <td style="text-align:center"><%= line['quantity'] %></td>
                                     <td style="text-align:right"><%= line['charge_display'] %></td>

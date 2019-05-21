@@ -139,6 +139,7 @@ en:
         save: Save Request
         generate_physical_quote: Generate Quote for Physical Items
         generate_digital_quote: Generate Quote for Digital Items
+        issue_quote: Issue Quote
       section:
         basic_information: Basic Information
         physical_quote: Quote for Physical Items
