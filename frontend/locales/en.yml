@@ -145,6 +145,8 @@ en:
         digital_quote: Quote for Digital Items
       messages:
         updated: File Issue Request updated
+        quote_generation_success: Quote generated
+        quote_generation_fail: Quote generation failed
     _plural: File Issue Requests
     _singular: File Issue Request
     agency_location_display_string: Agency Location

@@ -15,7 +15,14 @@
             <% end %>
 
                 <div class="btn-group pull-right">
-                    <%= link_to I18n.t("file_issue_request._frontend.action.generate_physical_quote"), {:controller => :file_issue_requests, :action => :generate_physical_quote, :id => @file_issue_request.id}, :class => "btn btn-sm btn-warning" %>
+                    <% ['digital', 'physical'].each do |type| %>
+                        <%= link_to I18n.t("file_issue_request._frontend.action.generate_#{type}_quote"),
+                                    {:controller => :file_issue_requests,
+                                     :action => :generate_quote,
+                                     :type => type,
+                                     :id => @file_issue_request.id},
+                                    :class => "btn btn-sm btn-warning", :method => :post %>
+                    <% end %>
                 </div>
 
         </div>

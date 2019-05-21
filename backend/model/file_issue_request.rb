@@ -37,6 +37,15 @@ class FileIssueRequest < Sequel::Model
                   :aspace_record_id => record_id)
       end
 
+      # Update ids for physical and digital quotes
+      ['physical_quote', 'digital_quote'].each do |quote|
+        if json[quote]
+          mapdb[:file_issue_request]
+            .filter(:id => self.id)
+            .update(:"aspace_#{quote}_id" => JSONModel.parse_reference(json[quote]['ref'])[:id])
+        end
+      end
+
       super
     end
   end

@@ -1,8 +1,8 @@
 class FileIssueRequestsController < ApplicationController
 
-  RESOLVES = ['agency', 'file_issue', 'requested_representations']
+  RESOLVES = ['agency', 'file_issue', 'requested_representations', 'physical_quote', 'digital_quote']
 
-  set_access_control  "view_repository" => [:index, :show, :edit, :update, :generate_physical_quote]
+  set_access_control  "view_repository" => [:index, :show, :edit, :update, :generate_quote, :issue_quote]
 
   def index
     respond_to do |format|
@@ -55,7 +55,27 @@ class FileIssueRequestsController < ApplicationController
     @file_issue_request
   end
 
-  def generate_physical_quote
+  def generate_quote
+    response = JSONModel::HTTP.post_form("/file_issue_requests/#{params[:id]}/generate_quote/#{params[:type]}", {})
+
+    if response.code == '200'
+      flash[:success] = I18n.t("file_issue_request._frontend.messages.quote_generation_success")
+    else
+      flash[:error] = I18n.t("file_issue_request._frontend.messages.quote_generation_error", response.body)
+    end
+
+    redirect_to :controller => :file_issue_requests, :action => :show, :id => params[:id]
+  end
+
+  def issue_quote
+    response = JSONModel::HTTP.post_form("/file_issue_requests/#{params[:id]}/issue_quote/#{params[:type]}", {})
+
+    if response.code == '200'
+      flash[:success] = I18n.t("file_issue_request._frontend.messages.quote_issue_success")
+    else
+      flash[:error] = I18n.t("file_issue_request._frontend.messages.quote_issue_error", response.body)
+    end
+
     redirect_to :controller => :file_issue_requests, :action => :show, :id => params[:id]
   end
 end
