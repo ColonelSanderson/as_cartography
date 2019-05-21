@@ -25,6 +25,6 @@ class FileIssuePhysicalQuoteGenerator < QuoteGenerator
 
 
   def self.records(fir)
-    fir['requested_representations'].select{|rep| JSONModel.parse_reference(rep['ref'])[:type] == 'physical_representation'}
+    fir['requested_representations'].select{|rep| rep['request_type'] == 'PHYSICAL'}
   end
 end
