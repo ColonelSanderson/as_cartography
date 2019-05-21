@@ -52,9 +52,33 @@
         }
       },
 
-      # Not sure how these will look yet.
-      # "active_quote" => {},
-      # "previous_quotes" => {},
+      "physical_quote" => {
+        "type" => "object",
+        "subtype" => "ref",
+        "properties" => {
+          "ref" => {
+            "type" => [{"type" => "JSONModel(:service_quote) uri"}],
+          },
+          "_resolved" => {
+            "type" => "object",
+            "readonly" => "true"
+          }
+        }
+      },
+
+      "digital_quote" => {
+        "type" => "object",
+        "subtype" => "ref",
+        "properties" => {
+          "ref" => {
+            "type" => [{"type" => "JSONModel(:service_quote) uri"}],
+          },
+          "_resolved" => {
+            "type" => "object",
+            "readonly" => "true"
+          }
+        }
+      },
 
       # FIXME: We'll ultimately need one of these
       # "file_issue" => {

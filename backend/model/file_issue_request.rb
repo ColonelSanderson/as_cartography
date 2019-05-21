@@ -78,6 +78,14 @@ class FileIssueRequest < Sequel::Model
         }
 
         json['title'] = "%d requested items" % [requested_representations.length]
+
+        if obj.aspace_physical_quote_id
+          json['physical_quote'] = {'ref' => "/service_quotes/#{obj.aspace_physical_quote_id}"}
+        end
+
+        if obj.aspace_digital_quote_id
+          json['digital_quote'] = {'ref' => "/service_quotes/#{obj.aspace_digital_quote_id}"}
+        end
       end
     end
 
