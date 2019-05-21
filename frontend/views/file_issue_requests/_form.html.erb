@@ -75,13 +75,18 @@
                                                        data-url="<%= url_for(:controller => :search,
                                                                              :action => :do_search,
                                                                              :format => :json,
-                                                                             :filter_term => [{"controlling_record_u_sstr" => request['_resolved']['controlling_record']['ref']}.to_json]
-                                                                 )
+                                                                             :filter_term => [
+                                                                                 {"controlling_record_u_sstr" => request['_resolved']['controlling_record']['ref']}.to_json,
+                                                                                 {'file_issue_allowed_u_sbool' => true}.to_json
+                                                                             ])
                                                                  %>"
                                                        data-browse-url="<%= url_for(:controller => :search,
                                                                                     :action => :do_search,
                                                                                     :format => :js,
-                                                                                    :filter_term => [{"controlling_record_u_sstr" => request['_resolved']['controlling_record']['ref']}.to_json])
+                                                                                    :filter_term => [
+                                                                                        {"controlling_record_u_sstr" => request['_resolved']['controlling_record']['ref']}.to_json,
+                                                                                        {'file_issue_allowed_u_sbool' => true}.to_json
+                                                                                    ])
                                                                         %>"
                                                        data-selected="<%= ASUtils.to_json(request['_resolved'] || {}) %>"
                                                        data-format_property="title"
