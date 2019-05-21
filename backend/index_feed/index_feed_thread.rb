@@ -211,12 +211,11 @@ class IndexFeedThread
     resolved = URIResolver.resolve_references(ArchivalObject.sequel_to_jsonmodel(archival_objects),
                                               ['resource'])
 
-
     archival_objects.zip(resolved).each do |ao, resolved|
       metadata_by_ao_id[ao.id] = {
         :containing_record_title => resolved['display_string'],
         :containing_series_title => resolved['resource']['_resolved']['title'],
-        :responsible_agency_uri => resolved['responsible_agency']['ref'],
+        :responsible_agency_uri => resolved['responsible_agency'] ? resolved['responsible_agency']['ref'] : nil,
         :recent_responsible_agency_refs => resolved.fetch('recent_responsible_agencies', []),
       }
     end
@@ -290,6 +289,9 @@ class IndexFeedThread
       if jsonmodel.has_key?('digital_representations')
         solr_doc['digital_representations'] = jsonmodel['digital_representations'].map {|rep| rep['uri']}
       end
+
+      solr_doc['physical_representations_count'] = jsonmodel['physical_representations_count']
+      solr_doc['digital_representations_count'] = jsonmodel['digital_representations_count']
 
       # Representations get indexed with keywords containing the titles of their
       # containing record & its containing series.
