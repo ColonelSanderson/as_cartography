@@ -104,13 +104,13 @@
                                 <% end %>
                             </td>
                             <td><%= request['record_details'] or '' %></td>
-                            <td class="table-record-actions">
-                                <% unless is_readonly %>
+                            <% unless is_readonly %>
+                                <td class="table-record-actions">
                                     <div class="btn-group">
                                         <button class="btn btn-danger">Remove</button>
                                     </div>
-                                <% end %>
-                            </td>
+                                </td>
+                            <% end %>
                         </tr>
                     <% end %>
                 </table>
