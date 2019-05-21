@@ -284,10 +284,12 @@ class IndexFeedThread
 
       if jsonmodel.has_key?('physical_representations')
         solr_doc['physical_representations'] = jsonmodel['physical_representations'].map {|rep| rep['uri']}
+        solr_doc['file_issue_allowed'] = jsonmodel['physical_representations'].any?{|rep| rep['file_issue_allowed'] === true}
       end
 
       if jsonmodel.has_key?('digital_representations')
         solr_doc['digital_representations'] = jsonmodel['digital_representations'].map {|rep| rep['uri']}
+        solr_doc['file_issue_allowed'] = jsonmodel['digital_representations'].any?{|rep| rep['file_issue_allowed'] === true}
       end
 
       solr_doc['physical_representations_count'] = jsonmodel['physical_representations_count']
