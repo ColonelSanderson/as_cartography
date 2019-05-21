@@ -139,6 +139,8 @@ en:
         save: Save Request
       section:
         basic_information: Basic Information
+      messages:
+        updated: File Issue Request updated
     _plural: File Issue Requests
     _singular: File Issue Request
     agency_location_display_string: Agency Location

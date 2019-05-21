@@ -12,6 +12,36 @@ class FileIssueRequest < Sequel::Model
     # self.save
   end
 
+  def update_from_json(json, opts = {}, apply_nested_records = true)
+    # Requested representations can be re-linked.  Apply those updates.
+    MAPDB.open do |mapdb|
+      new_urls = json['requested_representations'].map {|rep| rep['ref']}
+
+      existing_items = mapdb[:file_issue_request_item].filter(:file_issue_request_id => self.id).order(:id).map {|row|
+        row[:id]
+      }
+
+      if new_urls.length != existing_items.length
+        raise "Unexpected mismatch between number of representations on update vs storage"
+      end
+
+      new_urls.zip(existing_items).each do |new_ref, request_item_id|
+        parsed_ref = JSONModel.parse_reference(new_ref)
+
+        record_type = parsed_ref[:type]
+        record_id = parsed_ref[:id]
+
+        mapdb[:file_issue_request_item]
+          .filter(:id => request_item_id)
+          .update(:aspace_record_type => record_type,
+                  :aspace_record_id => record_id)
+      end
+
+      super
+    end
+  end
+
+
   # We need to build URIs for representations, but the MAP doesn't have any
   # notion of an active repository.  So, we work out the repository that each
   # referenced representation belongs to and work backwards from that.
@@ -67,7 +97,9 @@ class FileIssueRequest < Sequel::Model
 
         requested_representations = file_issue_request_items.fetch(obj.id, [])
 
-        json['requested_representations'] = requested_representations.map {|item|
+        json['requested_representations'] = requested_representations
+                                              .sort_by {|row| row[:id]}
+                                              .map {|item|
           {
             'ref' => JSONModel(item[:aspace_record_type].intern)
                        .uri_for(item[:aspace_record_id],
@@ -77,8 +109,6 @@ class FileIssueRequest < Sequel::Model
           }
         }
 
-        json['title'] = "%d requested items" % [requested_representations.length]
-
         if obj.aspace_physical_quote_id
           json['physical_quote'] = {'ref' => "/service_quotes/#{obj.aspace_physical_quote_id}"}
         end
@@ -86,6 +116,8 @@ class FileIssueRequest < Sequel::Model
         if obj.aspace_digital_quote_id
           json['digital_quote'] = {'ref' => "/service_quotes/#{obj.aspace_digital_quote_id}"}
         end
+
+        json['title'] = "%s" % [Time.at(obj.create_time).to_s]
       end
     end
 

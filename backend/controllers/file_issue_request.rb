@@ -22,4 +22,14 @@ class ArchivesSpaceService < Sinatra::Base
     json_response(resolve_references(json, params[:resolve]))
   end
 
+  Endpoint.post('/file_issue_requests/:id')
+    .description("Update a File Issue Request")
+    .params(["id", :id],
+            ["file_issue_request", JSONModel(:file_issue_request), "The updated record", :body => true])
+    .permissions([])
+    .returns([200, :updated]) \
+  do
+    handle_update(FileIssueRequest, params[:id], params[:file_issue_request])
+  end
+
 end

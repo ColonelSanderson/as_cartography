@@ -44,7 +44,7 @@
                         <th>Representation</th>
                         <th>Details</th>
                         <% unless is_readonly %>
-                            <th><!-- Actions --></th>
+                            <th><%# Actions %></th>
                         <% end %>
                     </tr>
                     <% (@file_issue_request['requested_representations'] or []).each_with_index do |request, idx| %>
@@ -70,7 +70,7 @@
                                                 <input id="linker_request_<%= idx %>" type="text" class="linker"
                                                        data-label="<%= I18n.t("file_issue_request.representation") %>"
                                                        data-label_plural="<%= I18n.t("file_issue_request.representations") %>"
-                                                       data-path="<%= form.path %>"
+                                                       data-path="file_issue_request[requested_representations][]"
                                                        data-name="ref"
                                                        data-url="<%= url_for(:controller => :search,
                                                                              :action => :do_search,
@@ -120,27 +120,19 @@
                 <%= display_audit_info(@file_issue_request) %>
             <% else %>
                 <div class="form-actions">
-                    <%#
-                    Fun fact: these buttons do the same thing, which is
-                    nothing.  Currently we only have an edit version of this
-                    form so we know whether to show the various request
-                    modification buttons, but the actual changes are made via
-                    AJAX.
-                    %>
-
-                    <%= link_to I18n.t("file_issue_request._frontend.action.save"), {:controller => :file_issue_requests, :action => :show, :id => @file_issue_request.id}, :class => "btn btn-primary" %>
+                    <button type="submit" class="btn btn-primary"><%= I18n.t("file_issue_request._frontend.action.save") %></button>
                     <%= link_to I18n.t("actions.cancel"), {:controller => :file_issue_requests, :action => :show, :id => @file_issue_request.id}, :class => "btn btn-cancel btn-default" %>
                 </div>
             <% end %>
     <% end %>
 
-    <%= readonly.emit_template "file_issue_request" %>
+    <% readonly.emit_template "file_issue_request" %>
 
     <%= show_plugins_for(@file_issue_request, readonly) %>
 <% end %>
 
 <script>
  $(function() {
-      $(".linker:not(.initialised)").linker();
+     $(".linker:not(.initialised)").linker();
  });
 </script>

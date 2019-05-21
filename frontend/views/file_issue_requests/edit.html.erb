@@ -7,7 +7,15 @@
   <div class="col-md-9">
     <%= render_aspace_partial :partial => "toolbar" %>
     <div class="record-pane">
-      <%= render_aspace_partial :partial => "file_issue_requests/form", locals: {is_readonly: false} %>
+      <%= form_for(@file_issue_request,
+                   :as => "file_issue_request",
+                   :url => {:action => :update},
+                   :html => {:class => 'form-horizontal aspace-record-form',
+                             :id => "file_issue_request_form"}.merge(update_monitor_params(@file_issue_request))) do |f| %>
+        <%= form_context :file_issue_request, @file_issue_request do |form| %>
+          <%= render_aspace_partial :partial => "file_issue_requests/form", locals: {is_readonly: false, form: form} %>
+        <% end %>
+      <% end %>
     </div>
   </div>
 </div>
