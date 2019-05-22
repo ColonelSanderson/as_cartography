@@ -58,6 +58,10 @@ class ArchivesSpaceService < Sinatra::Base
 
     ServiceQuote[JSONModel.parse_reference(json["#{params[:type]}_quote"]['ref'])[:id]].issue
 
+    fir = FileIssueRequest[params[:id]]
+    fir["#{params[:type]}_request_status"] = 'QUOTE_PROVIDED'
+    fir.save
+
     json_response({:message => 'Quote issued'})
   end
 
@@ -71,6 +75,10 @@ class ArchivesSpaceService < Sinatra::Base
     json = FileIssueRequest.to_jsonmodel(params[:id])
 
     ServiceQuote[JSONModel.parse_reference(json["#{params[:type]}_quote"]['ref'])[:id]].withdraw
+
+    fir = FileIssueRequest[params[:id]]
+    fir["#{params[:type]}_request_status"] = 'QUOTE_REQUESTED'
+    fir.save
 
     json_response({:message => 'Quote withdrawn'})
   end
