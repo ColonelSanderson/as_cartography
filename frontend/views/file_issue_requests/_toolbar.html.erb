@@ -15,15 +15,6 @@
             <% end %>
 
             <div class="btn-group btn-toolbar pull-right">
-                <% ['digital', 'physical'].each do |type| %>
-                    <%= link_to I18n.t("file_issue_request._frontend.action.generate_#{type}_quote"),
-                     {:controller => :file_issue_requests,
-                      :action => :generate_quote,
-                      :type => type,
-                      :id => @file_issue_request.id},
-                     :class => "btn btn-sm btn-warning", :method => :post %>
-                <% end %>
-
                 <% if [@file_issue_request.physical_request_status, @file_issue_request.digital_request_status].include?('QUOTE_REQUESTED') %>
                     <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
                         <%= I18n.t("file_issue_request._frontend.cancel_button") %> <span class="caret"></span>

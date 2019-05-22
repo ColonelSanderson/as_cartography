@@ -125,7 +125,7 @@
                     <section id="<%= type %>" class="<%= type %>">
                         <h3><%= I18n.t("file_issue_request._frontend.section.#{type}") %></h3>
 
-                        <div>
+                        <div style="padding-bottom:40px;">
                             <% if quote['issued_date'] %>
                                 <div class="pull-left">
                                     <span class="label label-success">
@@ -152,7 +152,7 @@
                                                  :action => :issue_quote,
                                                  :type => quote_type,
                                                  :id => @file_issue_request.id},
-                                                :class => "btn btn-sm btn-warning", :method => :post %>
+                                                :class => "btn btn-sm btn-success", :method => :post %>
                                 </div>
                             <% end %>
                         </div>
@@ -183,6 +183,21 @@
                                 <th style="text-align:right"><%= quote['total_charge_display'] %></th>
                             </tr>
                         </table>
+                    </section>
+                <% else %>
+                    <section id="<%= type %>" class="<%= type %>">
+                        <h3><%= I18n.t("file_issue_request._frontend.section.#{type}") %></h3>
+
+                        <div style="padding-bottom:40px;">
+                            <div class="btn-group pull-left">
+                                <%= link_to I18n.t("file_issue_request._frontend.action.generate_#{quote_type}_quote"),
+                                            {:controller => :file_issue_requests,
+                                             :action => :generate_quote,
+                                             :type => quote_type,
+                                             :id => @file_issue_request.id},
+                                             :class => "btn btn-sm btn-success", :method => :post %>
+                            </div>
+                        </div>
                     </section>
                 <% end %>
             <% end %>
