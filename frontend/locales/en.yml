@@ -140,6 +140,7 @@ en:
         generate_physical_quote: Generate Quote for Physical Items
         generate_digital_quote: Generate Quote for Digital Items
         issue_quote: Issue Quote
+        withdraw_quote: Withdraw Quote
       section:
         basic_information: Basic Information
         physical_quote: Quote for Physical Items
@@ -148,6 +149,10 @@ en:
         updated: File Issue Request updated
         quote_generation_success: Quote generated
         quote_generation_fail: Quote generation failed
+        quote_issue_success: Quote issued
+        quote_issue_fail: Quote issue failed
+        quote_withdraw_success: Quote withdrawn
+        quote_withdraw_fail: Quote withdrawal failed
     _plural: File Issue Requests
     _singular: File Issue Request
     agency_location_display_string: Agency Location

@@ -61,4 +61,18 @@ class ArchivesSpaceService < Sinatra::Base
     json_response({:message => 'Quote issued'})
   end
 
+  Endpoint.post('/file_issue_requests/:id/withdraw_quote/:type')
+    .description("Withdraw a previously issued quote for a File Issue Request")
+    .params(["id", :id],
+            ["type", String, "The type of quote (physical or digital)"])
+    .permissions([])
+    .returns([200, :updated]) \
+  do
+    json = FileIssueRequest.to_jsonmodel(params[:id])
+
+    ServiceQuote[JSONModel.parse_reference(json["#{params[:type]}_quote"]['ref'])[:id]].withdraw
+
+    json_response({:message => 'Quote withdrawn'})
+  end
+
 end
