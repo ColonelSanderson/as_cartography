@@ -170,7 +170,7 @@
                                 <tr>
                                     <td><%= line['description'] %></td>
                                     <td style="text-align:right"><%= line['charge_per_unit_display'] %></td>
-                                    <td><%= line['charge_quantity_unit'] %></td>
+                                    <td><%= I18n.t("enumerations.runcorn_charge_quantity_unit.#{line['charge_quantity_unit']}") %></td>
                                     <td style="text-align:center"><%= line['quantity'] %></td>
                                     <td style="text-align:right"><%= line['charge_display'] %></td>
                                 </tr>
