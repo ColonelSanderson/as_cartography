@@ -185,20 +185,22 @@
                         </table>
                     </section>
                 <% else %>
-                    <section id="<%= type %>" class="<%= type %>">
-                        <h3><%= I18n.t("file_issue_request._frontend.section.#{type}") %></h3>
+                    <% if @file_issue_request['requested_representations'].any?{|rep| rep['request_type'] == quote_type.upcase} %>
+                        <section id="<%= type %>" class="<%= type %>">
+                            <h3><%= I18n.t("file_issue_request._frontend.section.#{type}") %></h3>
 
-                        <div style="padding-bottom:40px;">
-                            <div class="btn-group pull-left">
-                                <%= link_to I18n.t("file_issue_request._frontend.action.generate_#{quote_type}_quote"),
-                                            {:controller => :file_issue_requests,
-                                             :action => :generate_quote,
-                                             :type => quote_type,
-                                             :id => @file_issue_request.id},
-                                             :class => "btn btn-sm btn-success", :method => :post %>
+                            <div style="padding-bottom:40px;">
+                                <div class="btn-group pull-left">
+                                    <%= link_to I18n.t("file_issue_request._frontend.action.generate_#{type}"),
+                                                {:controller => :file_issue_requests,
+                                                 :action => :generate_quote,
+                                                 :type => quote_type,
+                                                 :id => @file_issue_request.id},
+                                                 :class => "btn btn-sm btn-success", :method => :post %>
+                                </div>
                             </div>
-                        </div>
-                    </section>
+                        </section>
+                    <% end %>
                 <% end %>
             <% end %>
 
