@@ -154,8 +154,8 @@ en:
         quote_issue_fail: Quote issue failed
         quote_withdraw_success: Quote withdrawn
         quote_withdraw_fail: Quote withdrawal failed
-        quote_issued_on: Issued on %{date}
-        quote_not_issued: Quote not issued
+        quote_issued_on: ISSUED ON %{date}
+        quote_not_issued: QUOTE NOT ISSUED
         cancel_succeeded: File Issue Request cancelled
         confirm_cancel_physical_title: Cancelling Physical File Issue Request
         confirm_cancel_physical_message: Are you sure you want cancel the physical part of this file issue request?
