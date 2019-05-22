@@ -128,7 +128,9 @@
                         <div>
                             <% if quote['issued_date'] %>
                                 <div class="pull-left">
-                                    Issued on <%= quote['issued_date'] %>
+                                    <span class="label label-success">
+                                        <%= I18n.t("file_issue_request._frontend.messages.quote_issued_on", :date => quote['issued_date']) %>
+                                    </span>
                                 </div>
                                 <div class="btn-group pull-right">
                                     <%= link_to I18n.t("file_issue_request._frontend.action.withdraw_quote"),
@@ -140,7 +142,9 @@
                                 </div>
                             <% else %>
                                 <div class="pull-left">
-                                    Quote not issued
+                                    <span class="label label-warning">
+                                        <%= I18n.t("file_issue_request._frontend.messages.quote_not_issued") %>
+                                    </span>
                                 </div>
                                 <div class="btn-group pull-right">
                                     <%= link_to I18n.t("file_issue_request._frontend.action.issue_quote"),
@@ -155,11 +159,11 @@
 
                         <table class="table table-striped table-bordered">
                             <tr>
-                                <th>Unit description</th>
-                                <th style="text-align:right">Unit cost</th>
-                                <th>Unit type</th>
-                                <th style="text-align:center">No. of Units</th>
-                                <th style="text-align:right">Cost</th>
+                                <th><%= I18n.t("file_issue_request.quote.unit_description") %></th>
+                                <th style="text-align:right"><%= I18n.t("file_issue_request.quote.unit_cost") %></th>
+                                <th><%= I18n.t("file_issue_request.quote.unit_type") %></th>
+                                <th style="text-align:center"><%= I18n.t("file_issue_request.quote.number_of_units") %></th>
+                                <th style="text-align:right"><%= I18n.t("file_issue_request.quote.cost") %></th>
                             </tr>
 
                             <% quote['line_items'].each do |line| %>
@@ -172,7 +176,7 @@
                                 </tr>
                             <% end %>
                             <tr>
-                                <th>TOTAL</th>
+                                <th><%= I18n.t("file_issue_request.quote.total") %></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>

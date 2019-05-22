@@ -154,6 +154,8 @@ en:
         quote_issue_fail: Quote issue failed
         quote_withdraw_success: Quote withdrawn
         quote_withdraw_fail: Quote withdrawal failed
+        quote_issued_on: Issued on %{date}
+        quote_not_issued: Quote not issued
         cancel_succeeded: File Issue Request cancelled
         confirm_cancel_physical_title: Cancelling Physical File Issue Request
         confirm_cancel_physical_message: Are you sure you want cancel the physical part of this file issue request?
@@ -179,6 +181,13 @@ en:
     deliver_to_reading_room: Deliver to reading room?
     representation: Representation
     representations: Representations
+    quote:
+      unit_description: Unit description
+      unit_cost: Unit cost
+      unit_type: Unit type
+      number_of_units: No. of Units
+      cost: Cost
+      total: TOTAL
 
   requested_representations:
     _plural: Requested Representations
