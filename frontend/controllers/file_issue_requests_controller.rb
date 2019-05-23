@@ -2,7 +2,7 @@ class FileIssueRequestsController < ApplicationController
 
   RESOLVES = ['agency', 'file_issue', 'requested_representations', 'physical_quote', 'digital_quote']
 
-  set_access_control  "view_repository" => [:index, :show, :edit, :update, :generate_quote, :issue_quote, :withdraw_quote, :cancel]
+  set_access_control  "view_repository" => [:index, :show, :edit, :update, :generate_quote, :issue_quote, :withdraw_quote, :save_quote, :cancel]
 
   def index
     respond_to do |format|
@@ -99,6 +99,23 @@ class FileIssueRequestsController < ApplicationController
       flash[:success] = I18n.t("file_issue_request._frontend.messages.quote_withdraw_success")
     else
       flash[:error] = I18n.t("file_issue_request._frontend.messages.quote_withdraw_error", response.body)
+    end
+
+    redirect_to :controller => :file_issue_requests, :action => :show, :id => params[:id]
+  end
+
+  def save_quote
+
+    json = JSON.parse(params[:quote_json])
+
+    url = URI("#{JSONModel::HTTP.backend_url}#{json['uri']}")
+
+    response = JSONModel::HTTP.post_json(url, params[:quote_json])
+
+    if response.code == '200'
+      flash[:success] = I18n.t("file_issue_request._frontend.messages.quote_save_success")
+    else
+      flash[:error] = I18n.t("file_issue_request._frontend.messages.quote_save_error", response.body)
     end
 
     redirect_to :controller => :file_issue_requests, :action => :show, :id => params[:id]

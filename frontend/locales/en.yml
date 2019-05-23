@@ -142,6 +142,8 @@ en:
         generate_digital_quote: Generate Quote for Digital Items
         issue_quote: Issue Quote
         withdraw_quote: Withdraw Quote
+        save_quote: Save Quote
+        revert_quote: Revert Changes
       section:
         basic_information: Basic Information
         physical_quote: Quote for Physical Items
@@ -154,6 +156,8 @@ en:
         quote_issue_fail: Quote issue failed
         quote_withdraw_success: Quote withdrawn
         quote_withdraw_fail: Quote withdrawal failed
+        quote_save_success: Quote saved
+        quote_save_fail: Quote save failed
         quote_issued_on: ISSUED ON %{date}
         quote_not_issued: QUOTE NOT ISSUED
         cancel_succeeded: File Issue Request cancelled

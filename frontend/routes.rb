@@ -15,6 +15,7 @@ ArchivesSpace::Application.routes.draw do
   match 'file_issue_requests/:id/generate_quote/:type' => 'file_issue_requests#generate_quote', :via => [:post]
   match 'file_issue_requests/:id/issue_quote/:type' => 'file_issue_requests#issue_quote', :via => [:post]
   match 'file_issue_requests/:id/withdraw_quote/:type' => 'file_issue_requests#withdraw_quote', :via => [:post]
+  match 'file_issue_requests/:id/save_quote/:type' => 'file_issue_requests#save_quote', :via => [:post]
 
 
   resources :transfer_proposals
