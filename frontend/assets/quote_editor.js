@@ -82,6 +82,10 @@ QuoteEditor.prototype.dataFor = function(field, value) {
 	return parseInt(value.replace(/\D/g, ''));
     }
 
+    if (elt.attr('name') == 'quantity') {
+	return parseInt(value);
+    }
+
     return value;
 }
 
@@ -111,6 +115,15 @@ QuoteEditor.prototype.validate = function(field, value) {
     return valid;
 }
 
+QuoteEditor.prototype.save = function(cell, value) {
+    cell.addClass('edited-quote-field');
+    var val = this.dataFor(cell.data('field'), value);
+    cell.data('value', val);
+
+    var ix = parseInt(cell.parent().data('index'));
+    this.json['line_items'][ix][cell.data('field')] = val;
+}
+
 QuoteEditor.prototype.bindEvents = function() {
     var self = this;
 
@@ -136,10 +149,7 @@ QuoteEditor.prototype.bindEvents = function() {
 		    var cell = $(this).parent();
 		    if (self.validate(cell.data('field'), $(this).val())) {
 			if (cell.data('value') != self.dataFor(cell.data('field'), $(this).val())) {
-			    cell.addClass('edited-quote-field');
-			    cell.data('value', self.dataFor(cell.data('field'), $(this).val()));
-			    var ix = parseInt(cell.parent().data('index'));
-			    self.json['line_items'][ix][cell.data('field')] = cell.data('value');
+			    self.save(cell, $(this).val());
 			    self.edited();
 			}
 			cell.html(self.displayFor(cell.data('field'), cell.data('value')));
@@ -153,5 +163,6 @@ QuoteEditor.prototype.bindEvents = function() {
 
         $(this).html(inputElt);
 	inputElt.focus();
+	inputElt.select();
     });
 };
