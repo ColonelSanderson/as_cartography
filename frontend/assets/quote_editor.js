@@ -16,12 +16,22 @@ QuoteEditor.prototype.edited = function() {
     this.elt.parent().find('.quote-save-button').show();
 }
 
-QuoteEditor.prototype.message = function(msg) {
+QuoteEditor.prototype.message = function(msg, clear) {
+    var self = this;
+
     this.elt.parent().find('.quote-message').html(msg).show();
+
+    if (clear) {
+	setTimeout(function() {
+	    if (self.elt.parent().find('.quote-message').html() == msg) {
+		self.clearMessage();
+	    }
+	}, 3000);
+    }
 }
 
 QuoteEditor.prototype.clearMessage = function(msg) {
-    this.elt.parent().find('.quote-message').hide();
+    this.elt.parent().find('.quote-message').fadeOut();
 }
 
 QuoteEditor.prototype.centsToDollars = function(cents) {
@@ -104,7 +114,7 @@ QuoteEditor.prototype.validate = function(field, value) {
     }
 
     if (elt.attr('name') == 'quantity') {
-	valid = !!parseInt(value + 1) && !value.match(/\D/); // add one bc zero is false
+	valid = value.length > 0 && !!parseInt(value + 1) && !value.match(/\D/); // add one bc zero is false
 	if (valid) {
 	    this.clearMessage();
 	} else {
@@ -126,6 +136,10 @@ QuoteEditor.prototype.save = function(cell, value) {
 
 QuoteEditor.prototype.bindEvents = function() {
     var self = this;
+
+    self.elt.on('mouseenter', function () {
+	    self.message('Click a cell to edit. Return to set, escape to exit', true);
+	});
 
     self.elt.find('td.editable-quote-field').on('click', function () {
 	if (self.editing) {
