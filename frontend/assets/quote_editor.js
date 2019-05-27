@@ -154,12 +154,13 @@ QuoteEditor.prototype.bindEvents = function() {
         inputElt.css('width', '100%');
 
 	inputElt.keypress(function( event ) {
-		if ( event.which == 27 ) {
+		if ( event.which == 27 ) {  // escape
 		    event.preventDefault();
 		    $(this).parent().html(self.displayFor($(this).parent().data('field'), $(this).parent().data('value')));
 		    self.editing = false;
+		    self.clearMessage();
 		}
-		if ( event.which == 13 ) {
+		if ( event.which == 13 ) {  // return
 		    event.preventDefault();
 		    var cell = $(this).parent();
 		    if (self.validate(cell.data('field'), $(this).val())) {
