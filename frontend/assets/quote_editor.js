@@ -1,30 +1,46 @@
 function QuoteEditor(opts) {
-    this.elt = $(opts.el);
-    this.editing = false;
+    this.quote = $(opts.quote);
+    this.section = this.quote.parent();
+    this.editing(false);
     this.clearMessage();
-    this.json = JSON.parse(this.elt.parent().find('.quote-json').text());
+    this.json = JSON.parse(this.section.find('.quote-json').text());
     this.bindEvents();
 }
 
+QuoteEditor.prototype.editing = function(value) {
+    if (typeof(value) != 'undefined') {
+	this.editingFlag = !!value;
+
+	if (this.editingFlag) {
+	    this.section.find('.quote-button').attr('disabled', true);
+	} else {
+	    this.section.find('.quote-button').removeAttr('disabled');
+	}
+    }
+    return this.editingFlag;
+}
+
 QuoteEditor.prototype.edited = function() {
-    this.elt.parent().find('input[name=quote_json]').val(JSON.stringify(this.json));
+    this.section.find('input[name=quote_json]').val(JSON.stringify(this.json));
 
     this.updateCosts();
 
-    this.elt.parent().find('.quote-issue-button').hide();
-    this.elt.parent().find('.quote-regenerate-button').hide();
-    this.elt.parent().find('.quote-revert-button').show();
-    this.elt.parent().find('.quote-save-button').show();
+    this.section.find('.quote-issue-button').hide();
+    this.section.find('.quote-regenerate-button').hide();
+    this.section.find('.quote-revert-button').show();
+    this.section.find('.quote-save-button').show();
+
+    this.message("Value set. Click 'Save Quote' to save.");
 }
 
-QuoteEditor.prototype.message = function(msg, clear) {
+QuoteEditor.prototype.message = function(msg, sticky) {
     var self = this;
 
-    this.elt.parent().find('.quote-message').html(msg).show();
+    this.section.find('.quote-message').html(msg).show();
 
-    if (clear) {
+    if (!sticky) {
 	setTimeout(function() {
-	    if (self.elt.parent().find('.quote-message').html() == msg) {
+	    if (self.section.find('.quote-message').html() == msg) {
 		self.clearMessage();
 	    }
 	}, 3000);
@@ -32,7 +48,7 @@ QuoteEditor.prototype.message = function(msg, clear) {
 }
 
 QuoteEditor.prototype.clearMessage = function(msg) {
-    this.elt.parent().find('.quote-message').fadeOut();
+    this.section.find('.quote-message').fadeOut();
 }
 
 QuoteEditor.prototype.centsToDollars = function(cents) {
@@ -44,7 +60,7 @@ QuoteEditor.prototype.centsToDollars = function(cents) {
 QuoteEditor.prototype.updateCosts = function() {
     var self = this;
     var total = 0;
-    this.elt.find('tr').each(function(row) {
+    this.quote.find('tr').each(function(row) {
 	    if (typeof($(this).data('index')) !== 'undefined') {
 		var cents = parseInt($(this).find('td[data-field=charge_per_unit_cents]').data('value'));
 		var q = parseInt($(this).find('td[data-field=quantity]').data('value'));
@@ -54,15 +70,15 @@ QuoteEditor.prototype.updateCosts = function() {
 	    }
 	});
 
-    this.elt.find('.quote-total').html(self.centsToDollars(total));
+    this.quote.find('.quote-total').html(self.centsToDollars(total));
 }
 
 QuoteEditor.prototype.inputFor = function(field) {
-    return this.elt.parent().find('.quote-form-elements').find('[name=' + field + ']').clone();
+    return this.section.find('.quote-form-elements').find('[name=' + field + ']').clone();
 }
 
 QuoteEditor.prototype.displayFor = function(field, value) {
-    elt = this.elt.parent().find('.quote-form-elements').find('[name=' + field + ']');
+    elt = this.section.find('.quote-form-elements').find('[name=' + field + ']');
 
     if (elt.is('select')) {
 	return elt.find('option[value=' + value + ']').text();
@@ -76,7 +92,7 @@ QuoteEditor.prototype.displayFor = function(field, value) {
 }
 
 QuoteEditor.prototype.editFor = function(field, value) {
-    elt = this.elt.parent().find('.quote-form-elements').find('[name=' + field + ']');
+    elt = this.section.find('.quote-form-elements').find('[name=' + field + ']');
 
     if (elt.attr('name').endsWith('_cents')) {
 	str = '$' + value;
@@ -87,7 +103,7 @@ QuoteEditor.prototype.editFor = function(field, value) {
 }
 
 QuoteEditor.prototype.dataFor = function(field, value) {
-    elt = this.elt.parent().find('.quote-form-elements').find('[name=' + field + ']');
+    elt = this.section.find('.quote-form-elements').find('[name=' + field + ']');
 
     if (elt.attr('name').endsWith('_cents')) {
 	return parseInt(value.replace(/\D/g, ''));
@@ -103,23 +119,19 @@ QuoteEditor.prototype.dataFor = function(field, value) {
 QuoteEditor.prototype.validate = function(field, value) {
     var valid = true;
 
-    elt = this.elt.parent().find('.quote-form-elements').find('[name=' + field + ']');
+    elt = this.section.find('.quote-form-elements').find('[name=' + field + ']');
 
     if (elt.attr('name').endsWith('_cents')) {
 	valid = !!value.match(/^\$\d+\.\d\d$/);
-	if (valid) {
-	    this.clearMessage();
-	} else {
-	    this.message('Cost must be in the form: $123.45');
+	if (!valid) {
+	    this.message('Cost must be in the form: $123.45', true);
 	}
     }
 
     if (elt.attr('name') == 'quantity') {
 	valid = value.length > 0 && !!parseInt(value + 1) && !value.match(/\D/); // add one bc zero is false
-	if (valid) {
-	    this.clearMessage();
-	} else {
-	    this.message('Quantity must be an integer');
+	if (!valid) {
+	    this.message('Quantity must be an integer', true);
 	}
     }
 
@@ -138,16 +150,15 @@ QuoteEditor.prototype.save = function(cell, value) {
 QuoteEditor.prototype.bindEvents = function() {
     var self = this;
 
-    self.elt.on('mouseenter', function () {
-	    self.message('Click a cell to edit. Return to set, escape to exit', true);
+    self.quote.on('mouseenter', function () {
+	    self.message('Click a cell to edit. Return to set, escape to exit');
 	});
 
-    self.elt.find('td.editable-quote-field').on('click', function () {
-	if (self.editing) {
+    self.quote.find('td.editable-quote-field').on('click', function () {
+	if (self.editing()) {
 	    return;
 	}
-	self.editing = true;
-
+	self.editing(true);
 	
         var inputElt = self.inputFor($(this).data('field'));
         inputElt.val(self.editFor($(this).data('field'), $(this).data('value')));
@@ -157,8 +168,8 @@ QuoteEditor.prototype.bindEvents = function() {
 		if ( event.which == 27 ) {  // escape
 		    event.preventDefault();
 		    $(this).parent().html(self.displayFor($(this).parent().data('field'), $(this).parent().data('value')));
-		    self.editing = false;
-		    self.clearMessage();
+		    self.editing(false);
+		    self.message('No change');
 		}
 		if ( event.which == 13 ) {  // return
 		    event.preventDefault();
@@ -169,10 +180,7 @@ QuoteEditor.prototype.bindEvents = function() {
 			    self.edited();
 			}
 			cell.html(self.displayFor(cell.data('field'), cell.data('value')));
-			self.editing = false;
-		    } else {
-			// FIXME
-			console.log('BAD');
+			self.editing(false);
 		    }
 		}
 	    });

@@ -156,20 +156,20 @@
                                                  :action => :generate_quote,
                                                  :type => quote_type,
                                                  :id => @file_issue_request.id},
-                                                 :class => "btn btn-sm btn-info quote-regenerate-button", :method => :post %>
+                                                 :class => "btn btn-sm btn-info quote-button quote-regenerate-button", :method => :post %>
 
                                     <%= link_to I18n.t("file_issue_request._frontend.action.issue_quote"),
                                                 {:controller => :file_issue_requests,
                                                  :action => :issue_quote,
                                                  :type => quote_type,
                                                  :id => @file_issue_request.id},
-                                                :class => "btn btn-sm btn-success quote-issue-button", :method => :post %>
+                                                :class => "btn btn-sm btn-success quote-button quote-issue-button", :method => :post %>
 
                                     <%= link_to I18n.t("file_issue_request._frontend.action.revert_quote"),
                                                 {:controller => :file_issue_requests,
                                                  :action => :show,
                                                  :id => @file_issue_request.id},
-                                                :class => "btn btn-sm btn-info quote-revert-button",
+                                                :class => "btn btn-sm btn-info quote-button quote-revert-button",
                                                 :style => "display:none;" %>
 
 
@@ -177,7 +177,7 @@
                                                    :action => :save_quote,
                                                    :type => quote_type,
                                                    :id => @file_issue_request.id}, {:style => "display:inline-block;"}) do |f| %>
-                                        <button type="submit" class="btn btn-sm btn-primary quote-save-button" style="display:none;">
+                                        <button type="submit" class="btn btn-sm btn-primary quote-button quote-save-button" style="display:none;">
                                             <%= I18n.t("file_issue_request._frontend.action.save_quote") %>
                                         </button>
 
@@ -264,7 +264,7 @@
                             </div>
 
                             <script>
-                                new QuoteEditor({el: '#<%= type %>-table'});
+                                new QuoteEditor({quote: '#<%= type %>-table'});
                             </script>
                         <% end %>
 
