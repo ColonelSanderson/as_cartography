@@ -208,21 +208,21 @@
                                     </tr>
                                 <% else %>
                                     <tr data-index="<%= ix %>">
-                                        <td class="editable-quote-field" title="Click to edit"
+                                        <td class="editable-quote-field"
                                             data-field="description" data-value="<%= line['description'] %>">
                                             <%= line['description'] %>
                                         </td>
-                                        <td class="editable-quote-field" style="text-align:right" title="Click to edit"
+                                        <td class="editable-quote-field" style="text-align:right"
                                             data-field="charge_per_unit_cents"
                                             data-value="<%= line['charge_per_unit_cents'] %>">
                                             <%= line['charge_per_unit_display'] %>
                                         </td>
-                                        <td class="editable-quote-field" title="Click to edit"
+                                        <td class="editable-quote-field"
                                             data-field="charge_quantity_unit"
                                             data-value="<%= line['charge_quantity_unit'] %>">
                                             <%= I18n.t("enumerations.runcorn_charge_quantity_unit.#{line['charge_quantity_unit']}") %>
                                         </td>
-                                        <td class="editable-quote-field" style="text-align:center" title="Click to edit"
+                                        <td class="editable-quote-field" style="text-align:center"
                                             data-field="quantity"
                                             data-value="<%= line['quantity'] %>">
                                             <%= line['quantity'] %>
