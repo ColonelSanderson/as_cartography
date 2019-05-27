@@ -5,6 +5,14 @@
                :suppress_submit_buttons => true,
            }) do |sidebar| %>
     <%= sidebar.render_for_view_and_edit(:subrecord_type => 'requested_representations', :property => :none) %>
+
+    <% ['digital', 'physical'].each do |quote_type| %>
+        <% type = quote_type + '_quote' %>
+        <% if @file_issue_request[type] %>
+            <%= sidebar.render_for_view_and_edit(:subrecord_type => type, :property => :none) %>
+        <% end %>
+    <% end %>
+
     <% if is_readonly %>
         <%= sidebar.render_for_view_only(:subrecord_type => 'conversation', :property => :none) %>
     <% end %>
