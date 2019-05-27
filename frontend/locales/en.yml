@@ -140,6 +140,7 @@ en:
         save: Save Request
         generate_physical_quote: Generate Quote for Physical Items
         generate_digital_quote: Generate Quote for Digital Items
+        regenerate_quote: Regenerate Quote
         issue_quote: Issue Quote
         withdraw_quote: Withdraw Quote
         save_quote: Save Quote

@@ -12,6 +12,7 @@ QuoteEditor.prototype.edited = function() {
     this.updateCosts();
 
     this.elt.parent().find('.quote-issue-button').hide();
+    this.elt.parent().find('.quote-regenerate-button').hide();
     this.elt.parent().find('.quote-revert-button').show();
     this.elt.parent().find('.quote-save-button').show();
 }

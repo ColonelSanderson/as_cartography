@@ -151,6 +151,13 @@
                                 <div class="btn-group pull-right">
                                 <div class="pull-left quote-message"> </div>
 
+                                    <%= link_to I18n.t("file_issue_request._frontend.action.regenerate_quote"),
+                                                {:controller => :file_issue_requests,
+                                                 :action => :generate_quote,
+                                                 :type => quote_type,
+                                                 :id => @file_issue_request.id},
+                                                 :class => "btn btn-sm btn-info quote-regenerate-button", :method => :post %>
+
                                     <%= link_to I18n.t("file_issue_request._frontend.action.issue_quote"),
                                                 {:controller => :file_issue_requests,
                                                  :action => :issue_quote,
