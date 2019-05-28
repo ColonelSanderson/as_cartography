@@ -15,3 +15,11 @@ td.edited-quote-field {
   background-color: #fef;
   box-shadow: 0 0 3px 1px #ccc;
 }
+
+.quote-line-delete-button {
+  display: none;
+}
+
+.quote-line-flagged-for-delete {
+  background-color: #fcc !important;
+}

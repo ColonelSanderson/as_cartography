@@ -20,7 +20,7 @@ QuoteEditor.prototype.editing = function(value) {
     return this.editingFlag;
 }
 
-QuoteEditor.prototype.edited = function() {
+QuoteEditor.prototype.edited = function(msg) {
     this.section.find('input[name=quote_json]').val(JSON.stringify(this.json));
 
     this.updateCosts();
@@ -30,7 +30,7 @@ QuoteEditor.prototype.edited = function() {
     this.section.find('.quote-revert-button').show();
     this.section.find('.quote-save-button').show();
 
-    this.message("Value set. Click 'Save Quote' to save.");
+    this.message(msg + ". Click 'Save Quote' to save.");
 }
 
 QuoteEditor.prototype.message = function(msg, sticky) {
@@ -60,15 +60,13 @@ QuoteEditor.prototype.centsToDollars = function(cents) {
 QuoteEditor.prototype.updateCosts = function() {
     var self = this;
     var total = 0;
-    this.quote.find('tr').each(function(row) {
-	    if (typeof($(this).data('index')) !== 'undefined') {
-		var cents = parseInt($(this).find('td[data-field=charge_per_unit_cents]').data('value'));
-		var q = parseInt($(this).find('td[data-field=quantity]').data('value'));
-		var cost = cents * q;
-		total += cost;
-		$(this).find('td.quote-cost').html(self.centsToDollars(cost));
-	    }
-	});
+    this.lines().each(function(row) {
+        var cents = parseInt($(this).find('td[data-field=charge_per_unit_cents]').data('value'));
+	var q = parseInt($(this).find('td[data-field=quantity]').data('value'));
+	var cost = cents * q;
+	total += cost;
+	$(this).find('td.quote-cost').html(self.centsToDollars(cost));
+    });
 
     this.quote.find('.quote-total').html(self.centsToDollars(total));
 }
@@ -138,13 +136,27 @@ QuoteEditor.prototype.validate = function(field, value) {
     return valid;
 }
 
+QuoteEditor.prototype.lines = function() {
+    return this.quote.find('tr.quote-line:not(.quote-line-flagged-for-delete)');
+}
+
 QuoteEditor.prototype.save = function(cell, value) {
     cell.addClass('edited-quote-field');
     var val = this.dataFor(cell.data('field'), value);
     cell.data('value', val);
 
-    var ix = parseInt(cell.parent().data('index'));
+    var ix = this.lines().index(cell.parent());
+
     this.json['line_items'][ix][cell.data('field')] = val;
+}
+
+QuoteEditor.prototype.deleteLine = function(line) {
+    this.json['line_items'].splice(this.lines().index(line), 1);
+
+    line.addClass('quote-line-flagged-for-delete');
+    line.find('td').removeClass('editable-quote-field');
+
+    this.edited('Line flagged for deletion');
 }
 
 QuoteEditor.prototype.bindEvents = function() {
@@ -152,6 +164,20 @@ QuoteEditor.prototype.bindEvents = function() {
 
     self.quote.on('mouseenter', function () {
 	    self.message('Click a cell to edit. Return to set, escape to exit');
+	});
+
+    self.quote.find('tr').on('mouseenter', function () {
+	    if (!$(this).hasClass('quote-line-flagged-for-delete')) {
+	        $(this).find('.quote-line-delete-button').show();
+	    }
+	});
+
+    self.quote.find('tr').on('mouseleave', function () {
+	    $(this).find('.quote-line-delete-button').hide();
+	});
+
+    self.quote.find('.quote-line-delete-button').on('click', function () {
+	    self.deleteLine($(this).closest('tr'));
 	});
 
     self.quote.find('td.editable-quote-field').on('click', function () {
@@ -177,7 +203,7 @@ QuoteEditor.prototype.bindEvents = function() {
 		    if (self.validate(cell.data('field'), $(this).val())) {
 			if (cell.data('value') != self.dataFor(cell.data('field'), $(this).val())) {
 			    self.save(cell, $(this).val());
-			    self.edited();
+			    self.edited('Value set');
 			}
 			cell.html(self.displayFor(cell.data('field'), cell.data('value')));
 			self.editing(false);
