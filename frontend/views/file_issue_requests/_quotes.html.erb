@@ -7,19 +7,42 @@
 
             <div style="padding-bottom:40px;">
                 <% if quote['issued_date'] %>
-                    <div class="pull-left">
-                        <span class="label label-success">
-                            <%= I18n.t("file_issue_request._frontend.messages.quote_issued_on", :date => quote['issued_date']) %>
+                    <% if @file_issue_request['version'] != @file_issue_request["#{quote_type}_quote_for_version"] %>
+                        <div class="alert alert-warning">
+                          <%= I18n.t("file_issue_request._frontend.messages.quote_stale") %>
+                        </div>
+                        <span class="label label-warning">
+                            <%= I18n.t("file_issue_request._frontend.messages.stale_quote_issued_on", :date => quote['issued_date']) %>
                         </span>
-                    </div>
-                    <div class="btn-group pull-right">
-                        <%= link_to I18n.t("file_issue_request._frontend.action.withdraw_quote"),
-                                    {:controller => :file_issue_requests,
-                                     :action => :withdraw_quote,
-                                     :type => quote_type,
-                                     :id => @file_issue_request.id},
-                                    :class => "btn btn-sm btn-warning", :method => :post %>
-                    </div>
+                        <div class="btn-group pull-right">
+                            <%= link_to I18n.t("file_issue_request._frontend.action.regenerate_quote"),
+                                        {:controller => :file_issue_requests,
+                                         :action => :generate_quote,
+                                         :type => quote_type,
+                                         :id => @file_issue_request.id},
+                                        :class => "btn btn-sm btn-info quote-button quote-regenerate-button", :method => :post %>
+                            <%= link_to I18n.t("file_issue_request._frontend.action.issue_quote"),
+                                        {:controller => :file_issue_requests,
+                                         :action => :issue_quote,
+                                         :type => quote_type,
+                                         :id => @file_issue_request.id},
+                                        :class => "btn btn-sm btn-success quote-button quote-issue-button", :method => :post %>
+                        </div>
+                    <% else %>
+                        <div class="pull-left">
+                            <span class="label label-success">
+                                <%= I18n.t("file_issue_request._frontend.messages.quote_issued_on", :date => quote['issued_date']) %>
+                            </span>
+                        </div>
+                        <div class="btn-group pull-right">
+                            <%= link_to I18n.t("file_issue_request._frontend.action.withdraw_quote"),
+                                        {:controller => :file_issue_requests,
+                                         :action => :withdraw_quote,
+                                         :type => quote_type,
+                                         :id => @file_issue_request.id},
+                                        :class => "btn btn-sm btn-warning", :method => :post %>
+                        </div>
+                    <% end %>
                 <% else %>
                     <div class="pull-left">
                         <span class="label label-warning">

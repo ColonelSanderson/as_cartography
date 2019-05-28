@@ -160,7 +160,9 @@ en:
         quote_save_success: Quote saved
         quote_save_fail: Quote save failed
         quote_issued_on: ISSUED ON %{date}
+        stale_quote_issued_on: PREVIOUS QUOTE ISSUED ON %{date}
         quote_not_issued: QUOTE NOT ISSUED
+        quote_stale: The request has changed since the quote was issued.  Please review the request and issue a new quote.
         cancel_succeeded: File Issue Request cancelled
         approve_succeeded: File Issue Request approved
         confirm_cancel_physical_title: Cancelling Physical File Issue Request

@@ -110,6 +110,10 @@
           }
         }
       },
+
+      "version" => {"type" => "integer"},
+      "digital_quote_for_version" => {"type" => "integer"},
+      "physical_quote_for_version" => {"type" => "integer"},
     },
   }
 }

@@ -60,6 +60,7 @@ class ArchivesSpaceService < Sinatra::Base
 
     fir = FileIssueRequest[params[:id]]
     fir["#{params[:type]}_request_status"] = 'QUOTE_PROVIDED'
+    fir["#{params[:type]}_quote_for_version"] = fir[:version]
     fir.save
 
     json_response({:message => 'Quote issued'})
