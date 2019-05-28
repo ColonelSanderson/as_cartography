@@ -34,19 +34,19 @@ class ArchivesSpaceService < Sinatra::Base
   end
 
   Endpoint.post('/transfers/:id/import')
-    .description("Import a transfer's CSV")
+    .description("Import a transfer's Import file")
     .permissions([])
     .params(["id", String],
             ["repo_id", :repo_id])
     .returns([200, "(:ok)"]) \
   do
     transfer = Transfer[params[:id]]
-    csv = transfer.csv
+    import = transfer.import
 
-    tempfile = ASUtils.tempfile(csv[:filename])
+    tempfile = ASUtils.tempfile(import[:filename])
 
     begin
-      tempfile.write(csv[:data])
+      tempfile.write(import[:data])
     ensure
       tempfile.close
     end
@@ -57,7 +57,7 @@ class ArchivesSpaceService < Sinatra::Base
       "job_params" => "",
       "job" => {
         "jsonmodel_type" => "import_job",
-        "filenames" => [ csv[:filename] ],
+        "filenames" => [ import[:filename] ],
         "import_type" => "agency_transfer",
         "opts" => {
           "transfer_id" => params[:id]

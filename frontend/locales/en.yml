@@ -1,7 +1,7 @@
 en:
   validation_errors:
-    there_can_only_be_one_file_with_a_csv_role: There can only be one file with a CSV role
-    cannot_check_metadata_received_until_a_csv_file_has_been_attached: "Cannot check metadata received until a CSV file has been attached"
+    there_can_only_be_one_file_with_an_import_role: There can only be one file with an Import role
+    cannot_check_metadata_received_until_an_import_file_has_been_attached: "Cannot check metadata received until an Import file has been attached"
     cannot_check_metadata_approved_until_metadata_received_has_been_checked: "Cannot check metadata approved until metadata received has been checked"
   transfer_proposal:
     _frontend:

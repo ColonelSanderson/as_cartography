@@ -68,14 +68,14 @@ class AgencyTransferConverter < Converter
     [
       {
         :name => "agency_transfer",
-        :description => "Agency Transfer CSV"
+        :description => "Agency Transfer Import"
       }
     ]
   end
 
 
   def self.profile
-    "Convert an Agency Transfer CSV to ArchivesSpace records"
+    "Convert an Agency Transfer Import to ArchivesSpace records"
   end
 
 
@@ -88,8 +88,6 @@ class AgencyTransferConverter < Converter
     # let's not be special, opt keys might come in as strings or symbols - woteva
     opts = opts.map{|k,v| [k.intern, v]}.to_h
 
-    @file_data_provided = !!opts.fetch(:file_data_provided, false)
-
     @items = []
     @representations = []
 
@@ -101,36 +99,30 @@ class AgencyTransferConverter < Converter
 
 
   def run
-    rows = @file_data_provided ? CSV.parse(@input_file) : CSV.read(@input_file)
+    xlsx = Roo::Spreadsheet.open(@input_file, extension: :xlsx)
 
-    # drop column headers
-    rows.shift
+    xlsx.each_row_streaming(:offset => 1, :pad_cells => true) do |row|
+      values = row_values(row)
 
-    begin
-      while(row = rows.shift)
-        values = row_values(row)
+      next if values.select{|v| !v.empty?}.compact.empty?
 
-        next if values.select{|v| !v.empty?}.compact.empty?
+      values_map = Hash[@@columns.zip(values)]
 
-        values_map = Hash[@@columns.zip(values)]
-
-        if values_map[:sequence_ref].empty?
-          # an item
-          @items << values_map
-        else
-          # a representation
-          @representations << values_map
-        end
+      if values_map[:sequence_ref].empty?
+        # an item
+        @items << values_map
+      else
+        # a representation
+        @representations << values_map
       end
-
-      @items.each do |item|
-        @records << format_item(item)
-      end
-
-      raise "Unlinked representations!!" unless @representations.empty?
-
-    rescue StopIteration
     end
+
+    @items.each do |item|
+      @records << format_item(item)
+    end
+
+    raise "Unlinked representations!!" unless @representations.empty?
+
 
     # assign all records to the batch importer in reverse
     # order to retain position from spreadsheet
@@ -153,7 +145,16 @@ class AgencyTransferConverter < Converter
   private
 
   def row_values(row)
-    (0...row.size).map {|i| row[i] ? row[i].to_s.strip : ''}
+    # We want a value for every column, even if that value is an empty string.
+    # Our row might be shorter than the total number of columns possible.
+    (0...@@columns.size).map {|i|
+      if row[i].to_s.strip.empty?
+        # nil/empty string/whitespace
+        ''
+      else
+        row[i].value.to_s.strip
+      end
+    }
   end
 
 

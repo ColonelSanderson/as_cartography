@@ -26,7 +26,7 @@ Transfers.prototype.setupValidateMetadataButtons = function() {
             return;
         }
 
-        // Validate this CSV
+        // Validate this Import
         var fileKey = button.data('file-key');
 
         $.ajax({
@@ -82,7 +82,7 @@ Transfers.prototype.setupApprovalConfirmation = function() {
 Transfers.prototype.resetValidateButtons = function() {
     $('.validate-metadata-btn').each(function () {
         var button = $(this);
-        if (button.closest('tr').find('.file-role-cell .file-role').val() == 'CSV') {
+        if (button.closest('tr').find('.file-role-cell .file-role').val() == 'IMPORT') {
             button.text(button.data('default-label'));
             button.removeClass('has-errors').removeClass('btn-warning').removeClass('btn-success').addClass('btn-default');
             button.show();

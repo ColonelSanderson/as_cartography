@@ -92,18 +92,18 @@ class Transfer < Sequel::Model
 
   def validate
     handle_id = self.db[:handle].filter(:transfer_id => self.id).first[:id]
-    csv_count = self.db[:transfer_file].filter(:handle_id => handle_id, :role => "CSV").count
+    import_count = self.db[:transfer_file].filter(:handle_id => handle_id, :role => "IMPORT").count
 
-    if csv_count > 1
-      errors.add(:files, "There can only be one file with a CSV role")
+    if import_count > 1
+      errors.add(:files, "There can only be one file with an Import role")
     end
 
     if self.checklist_metadata_approved == 1 && self.checklist_metadata_received == 0
       errors.add(:checklist, "Cannot check metadata approved until metadata received has been checked")
     end
 
-    if self.checklist_metadata_received == 1 && csv_count == 0
-      errors.add(:checklist, "Cannot check metadata received until a CSV file has been attached")
+    if self.checklist_metadata_received == 1 && import_count == 0
+      errors.add(:checklist, "Cannot check metadata received until an Import file has been attached")
     end
   end
 
@@ -168,12 +168,12 @@ class Transfer < Sequel::Model
   end
 
 
-  def csv
+  def import
     MAPDB.open do |mapdb|
       mapdb[:transfer_file]
         .join(:handle, Sequel.qualify(:handle, :id) => Sequel.qualify(:transfer_file, :handle_id))
         .filter(Sequel.qualify(:handle, :transfer_id) => self.id)
-        .filter(Sequel.qualify(:transfer_file, :role) => 'CSV')
+        .filter(Sequel.qualify(:transfer_file, :role) => 'IMPORT')
         .join(:file, Sequel.qualify(:file, :key) => Sequel.qualify(:transfer_file, :key))
         .select(Sequel.as(Sequel.qualify(:file, :blob), :data), Sequel.as(Sequel.qualify(:transfer_file, :filename), :filename))
         .first

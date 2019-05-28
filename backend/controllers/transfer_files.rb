@@ -17,41 +17,32 @@ class ArchivesSpaceService < Sinatra::Base
   end
 
   Endpoint.get('/transfer_files/validate')
-    .description("Validate a CSV metadata file")
+    .description("Validate an import metadata file")
     .params(["key", String, "The file key to validate"])
     .permissions([])
     .returns([200, "{valid: [boolean], errors: [string]}"]) \
   do
     MAPDB.open do |mapdb|
       # All of this will be rejiggered when we switch to S3, so just spamming it in here for now...
-      csv_file = Tempfile.new
+      import_file = Tempfile.new(['transfer_files', '.xlsx'])
       begin
-        csv_file.write(mapdb[:file][:key => params[:key]][:blob])
-        csv_file.close
+        import_file.write(mapdb[:file][:key => params[:key]][:blob])
+        import_file.close
 
-        # Sanity check that the file we're looking at is CSV.  Maybe the CSV validator should handle this?
-        believable_csv = File.open(csv_file, "rb") do |csv|
-          csv.read(256).bytes.all? {|b| b >= 32}
-        end
-
-        if believable_csv
-          errors = []
-          csv_validator = MapValidator.new
-          csv_validator.run_validations(csv_file, csv_validator.sample_validations)
-          csv_validator.notifications.notification_list.each do |notification|
-            if notification.source.to_s.empty?
-              errors << "#{notification.type} - #{notification.message}"
-            else
-              errors << "#{notification.type} - [#{notification.source}] #{notification.message}"
-            end
+        errors = []
+        import_validator = MapValidator.new
+        import_validator.run_validations(import_file.path, import_validator.sample_validations)
+        import_validator.notifications.notification_list.each do |notification|
+          if notification.source.to_s.empty?
+            errors << "#{notification.type} - #{notification.message}"
+          else
+            errors << "#{notification.type} - [#{notification.source}] #{notification.message}"
           end
-
-          json_response({'valid' => errors.empty?, 'errors' => errors})
-        else
-          json_response({'valid' => false, 'errors' => ["Does not appear to be a comma-separated file"]})
         end
+
+        json_response({'valid' => errors.empty?, 'errors' => errors})
       ensure
-        csv_file.unlink
+        import_file.unlink
       end
     end
   end
