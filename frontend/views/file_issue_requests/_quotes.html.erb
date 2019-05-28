@@ -168,6 +168,36 @@
                     <%= quote.to_json %>
                 </div>
 
+                <div class="quote-new-line" style="display:none;">
+                    <table>
+                        <tr class="quote-line">
+                            <td>
+                            </td>
+
+                            <td class="editable-quote-field"
+                                data-field="description" data-value="-- Add a description --">
+                                -- Add a description --
+                            </td>
+                            <td class="editable-quote-field" style="text-align:right"
+                                data-field="charge_per_unit_cents"
+                                data-value="0">
+                                $0.00
+                            </td>
+                            <td class="editable-quote-field"
+                                data-field="charge_quantity_unit"
+                                data-value="order">
+                                <%= I18n.t("enumerations.runcorn_charge_quantity_unit.order") %>
+                            </td>
+                            <td class="editable-quote-field" style="text-align:center"
+                                data-field="quantity"
+                                data-value="1">
+                                1
+                            </td>
+                            <td class="quote-cost" style="text-align:right">$0.00</td>
+                        </tr>
+                    </table>
+                </div>
+
                 <div class="quote-form-elements" style="display:none;">
                     <input class="form-control" name="description"/>
                     <input class="form-control" name="charge_per_unit_cents" style="max-width:80px;"/>

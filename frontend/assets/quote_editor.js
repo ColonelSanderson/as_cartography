@@ -93,8 +93,7 @@ QuoteEditor.prototype.editFor = function(field, value) {
     elt = this.section.find('.quote-form-elements').find('[name=' + field + ']');
 
     if (elt.attr('name').endsWith('_cents')) {
-	str = '$' + value;
-	return str.slice(0, str.length - 2) + '.' + str.slice(str.length - 2);
+	return this.centsToDollars(value);
     }
 
     return value;
@@ -159,6 +158,20 @@ QuoteEditor.prototype.deleteLine = function(line) {
     this.edited('Line flagged for deletion');
 }
 
+QuoteEditor.prototype.addLine = function(line) {
+    var line_obj = {};
+
+    line.find('td.editable-quote-field').each(function() {
+	    line_obj[$(this).data('field')] = $(this).data('value');
+    });
+
+    this.json['line_items'].push(line_obj);
+
+    this.lines().last().after(line);
+
+    this.edited('Line added');
+}
+
 QuoteEditor.prototype.bindEvents = function() {
     var self = this;
 
@@ -180,7 +193,11 @@ QuoteEditor.prototype.bindEvents = function() {
 	    self.deleteLine($(this).closest('tr'));
 	});
 
-    self.quote.find('td.editable-quote-field').on('click', function () {
+    self.quote.find('.quote-line-add-button').on('click', function () {
+	    self.addLine(self.section.find('.quote-new-line').find('tr'));
+	});
+
+    self.section.find('td.editable-quote-field').on('click', function () {
 	if (self.editing()) {
 	    return;
 	}
