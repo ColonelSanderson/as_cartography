@@ -9,11 +9,15 @@ class FileIssueRequest < Sequel::Model
   CANCELLED_BY_QSA_STATUS = 'CANCELLED_BY_QSA'
 
   def cancel!(cancel_target)
-    case cancel_target
-        when 'physical', 'both'
-          self.physical_request_status = CANCELLED_BY_QSA_STATUS
-        when 'digital', 'both'
-          self.digital_request_status = CANCELLED_BY_QSA_STATUS
+    if ['physical', 'both'].include?(cancel_target)
+      self.physical_request_status = CANCELLED_BY_QSA_STATUS
+    end
+    if ['digital', 'both'].include?(cancel_target)
+      self.digital_request_status = CANCELLED_BY_QSA_STATUS
+    end
+
+    self.save
+  end
     end
 
     self.save
