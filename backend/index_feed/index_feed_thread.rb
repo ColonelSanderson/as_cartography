@@ -105,7 +105,7 @@ class IndexFeedThread
             record_type
               .this_repo
               .filter { system_mtime > last_index_time }
-              .select(:id, :lock_version).each_slice(INDEX_BATCH_SIZE) do |id_set|
+              .select(:id, :system_mtime).each_slice(INDEX_BATCH_SIZE) do |id_set|
 
               # Other nodes might have got in first on some of these records.
               # And, actually, because we use MTIME_WINDOW_SECONDS to overlap
@@ -114,11 +114,11 @@ class IndexFeedThread
               uri_set = id_set.map {|row| record_type.uri_for(record_type.my_jsonmodel.record_type, row.id)}
 
               already_indexed = mapdb[:index_feed].filter(:record_uri => uri_set)
-                                  .select(:record_id, :lock_version)
-                                  .map {|row| [row[:record_id], row[:lock_version]]}
+                                  .select(:record_id, :system_mtime)
+                                  .map {|row| [row[:record_id], row[:system_mtime]]}
                                   .to_h
 
-              id_set.reject! {|row| already_indexed[row[:id]] && already_indexed[row[:id]] >= row[:lock_version]}
+              id_set.reject! {|row| already_indexed[row[:id]] && already_indexed[row[:id]] >= row[:system_mtime].to_i}
 
               if id_set.empty?
                 # All records got filtered out, so there's nothing to do.
@@ -131,17 +131,17 @@ class IndexFeedThread
               records.each do |record|
                 mapdb[:index_feed]
                   .filter(:record_uri => record.uri)
-                  .filter { lock_version < record.lock_version }
+                  .filter { system_mtime < record.system_mtime.to_i }
                   .delete
               end
 
               jsonmodels = record_type.sequel_to_jsonmodel(records)
-              jsonmodels.zip(map_records(records, jsonmodels)).each do |record, mapped|
-                mapdb[:index_feed].insert(:record_type => record.jsonmodel_type,
-                                          :record_uri => record.uri,
+              jsonmodels.zip(records, map_records(records, jsonmodels)).each do |jsonmodel, sequel_record, mapped|
+                mapdb[:index_feed].insert(:record_type => jsonmodel.jsonmodel_type,
+                                          :record_uri => jsonmodel.uri,
                                           :repo_id => repo.id,
-                                          :record_id => record.id,
-                                          :lock_version => record.lock_version,
+                                          :record_id => sequel_record.id,
+                                          :system_mtime => sequel_record.system_mtime.to_i,
                                           :blob => Sequel::SQL::Blob.new(gzip(mapped.to_json)))
                 did_something = true
               end
