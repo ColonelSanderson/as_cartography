@@ -3,7 +3,7 @@
     "$schema" => "http://www.archivesspace.org/archivesspace.json",
     "version" => 1,
     "type" => "object",
-    "uri" => "/file_issue_requests",
+    "uri" => "/file_issue",
     "properties" => {
       "uri" => {"type" => "string"},
 
@@ -29,9 +29,7 @@
       "urgent" => {"type" => "boolean", "readonly" => "true"},
       "deliver_to_reading_room" => {"type" => "boolean", "readonly" => "true"},
       "delivery_authorizer" => {"type" => "string", "readonly" => "true"},
-      "physical_request_status" => {"type" => "string"},
-      "digital_request_status" => {"type" => "string"},
-      "request_notes" => {"type" => "string", "readonly" => "true"},
+      "status" => {"type" => "string"},
 
       "requested_representations" => {
         "type" => "array",
@@ -53,56 +51,13 @@
         }
       },
 
-      "physical_quote" => {
-        "type" => "object",
-        "subtype" => "ref",
-        "properties" => {
-          "ref" => {
-            "type" => [{"type" => "JSONModel(:service_quote) uri"}],
-          },
-          "_resolved" => {
-            "type" => "object",
-            "readonly" => "true"
-          }
-        }
-      },
-
-      "digital_quote" => {
-        "type" => "object",
-        "subtype" => "ref",
-        "properties" => {
-          "ref" => {
-            "type" => [{"type" => "JSONModel(:service_quote) uri"}],
-          },
-          "_resolved" => {
-            "type" => "object",
-            "readonly" => "true"
-          }
-        }
-      },
-
-      "file_issue_physical" => {
+      "file_issue_request" => {
         "readonly" => "true",
         "type" => "object",
         "subtype" => "ref",
         "properties" => {
           "ref" => {
-            "type" => [{"type" => "JSONModel(:file_issue) uri"}],
-          },
-          "_resolved" => {
-            "type" => "object",
-            "readonly" => "true"
-          }
-        }
-      },
-
-      "file_issue_digital" => {
-        "readonly" => "true",
-        "type" => "object",
-        "subtype" => "ref",
-        "properties" => {
-          "ref" => {
-            "type" => [{"type" => "JSONModel(:file_issue) uri"}],
+            "type" => [{"type" => "JSONModel(:file_issue_request) uri"}],
           },
           "_resolved" => {
             "type" => "object",

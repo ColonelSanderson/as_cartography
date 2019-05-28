@@ -14,37 +14,76 @@
                 </div>
             <% end %>
 
-            <div class="btn-group btn-toolbar pull-right">
+            <div class="btn-group pull-right">
+                <%# Approval buttons %>
+                <% if [@file_issue_request.physical_request_status, @file_issue_request.digital_request_status].include?('QUOTE_ACCEPTED') %>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                            <%= I18n.t("file_issue_request._frontend.approve_button") %> <span class="caret"></span>
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-menu-right approve-options" role="menu">
+                            <%
+                            # We can approve any part whose quote was accepted
+                            approve_targets = ['physical', 'digital'].select {|approve_target| @file_issue_request["#{approve_target}_request_status"] == 'QUOTE_ACCEPTED'}
+
+                            # And if both parts are available to approve, we can do both at once as well.
+                                if approve_targets.length == 2
+                                    approve_targets << 'both'
+                                end
+                            %>
+
+                            <% approve_targets.each do |approve_target| %>
+                                <li>
+                                    <%= form_tag({:controller => "file_issue_requests", :action => "approve"},
+                                                 :method => "post",
+                                                 :class => "file_issue_request_approve_form",
+                                                 :"data-approve-target" => approve_target,
+                                                 :id => "file_issue_request_approve_#{approve_target}") do %>
+                                        <%= hidden_field_tag "file_issue_request_id", @file_issue_request.id %>
+                                        <%= hidden_field_tag "approve_target", approve_target %>
+                                        <button class="btn btn-approve btn-default btn-sm"><%=  I18n.t("file_issue_request._frontend.approve_button_#{approve_target}") %></button>
+                                    <% end %>
+                                </li>
+                            <% end %>
+                        </ul>
+                    </div>
+                <% end %>
+
+
+                <%# Cancel buttons %>
                 <% if [@file_issue_request.physical_request_status, @file_issue_request.digital_request_status].include?('QUOTE_REQUESTED') %>
-                    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-                        <%= I18n.t("file_issue_request._frontend.cancel_button") %> <span class="caret"></span>
-                    </button>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                            <%= I18n.t("file_issue_request._frontend.cancel_button") %> <span class="caret"></span>
+                        </button>
 
-                    <ul class="dropdown-menu cancel-options" role="menu">
-                        <%
-                        # We can cancel any part that hasn't been cancelled yet
-                        cancel_targets = ['physical', 'digital'].select {|cancel_target| @file_issue_request["#{cancel_target}_request_status"] == 'QUOTE_REQUESTED'}
+                        <ul class="dropdown-menu dropdown-menu-right cancel-options" role="menu">
+                            <%
+                            # We can cancel any part that hasn't been cancelled yet
+                            cancel_targets = ['physical', 'digital'].select {|cancel_target| @file_issue_request["#{cancel_target}_request_status"] == 'QUOTE_REQUESTED'}
 
-                        # And if both parts are available to cancel, we can do both at once as well.
-                            if cancel_targets.length == 2
-                                cancel_targets << 'both'
-                            end
-                        %>
+                            # And if both parts are available to cancel, we can do both at once as well.
+                                if cancel_targets.length == 2
+                                    cancel_targets << 'both'
+                                end
+                            %>
 
-                        <% cancel_targets.each do |cancel_target| %>
-                            <li>
-                                <%= form_tag({:controller => "file_issue_requests", :action => "cancel"},
-                                             :method => "post",
-                                             :class => "file_issue_request_cancel_form",
-                                             :"data-cancel-target" => cancel_target,
-                                             :id => "file_issue_request_cancel_#{cancel_target}") do %>
-                                    <%= hidden_field_tag "file_issue_request_id", @file_issue_request.id %>
-                                    <%= hidden_field_tag "cancel_target", cancel_target %>
-                                    <button class="btn btn-cancel btn-default btn-sm"><%=  I18n.t("file_issue_request._frontend.cancel_button_#{cancel_target}") %></button>
-                                <% end %>
-                            </li>
-                        <% end %>
-                    </ul>
+                            <% cancel_targets.each do |cancel_target| %>
+                                <li>
+                                    <%= form_tag({:controller => "file_issue_requests", :action => "cancel"},
+                                                 :method => "post",
+                                                 :class => "file_issue_request_cancel_form",
+                                                 :"data-cancel-target" => cancel_target,
+                                                 :id => "file_issue_request_cancel_#{cancel_target}") do %>
+                                        <%= hidden_field_tag "file_issue_request_id", @file_issue_request.id %>
+                                        <%= hidden_field_tag "cancel_target", cancel_target %>
+                                        <button class="btn btn-cancel btn-default btn-sm"><%=  I18n.t("file_issue_request._frontend.cancel_button_#{cancel_target}") %></button>
+                                    <% end %>
+                                </li>
+                            <% end %>
+                        </ul>
+                    </div>
                 <% end %>
             </div>
             <div class="clearfix"></div>

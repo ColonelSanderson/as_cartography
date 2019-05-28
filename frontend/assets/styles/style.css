@@ -11,7 +11,7 @@
     margin-left: 0.5em;
 }
 
-.file-issue-toolbar .cancel-options * {
+.file-issue-toolbar .cancel-options *, .approve-options * {
     width: 100%;
     border: none;
     text-align: left;

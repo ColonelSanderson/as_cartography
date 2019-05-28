@@ -99,4 +99,19 @@ class ArchivesSpaceService < Sinatra::Base
     end
   end
 
+  Endpoint.post('/file_issue_requests/:id/approve')
+    .description("Approve a given request")
+    .params(["id", :id],
+            ["approve_target", String, "The part of the request to approve ('physical', 'digital' or 'both')"])
+    .permissions([])
+    .returns([200, "approved"]) \
+  do
+    raise "Invalid approve target" unless ['physical', 'digital', 'both'].include?(params[:approve_target])
+
+    MAPDB.transaction do
+      FileIssueRequest[params[:id]].approve!(params[:approve_target])
+      json_response('status' => 'approved')
+    end
+  end
+
 end

@@ -10,6 +10,7 @@ ArchivesSpace::Application.routes.draw do
   match 'transfer_conversation' => 'transfers#conversation', :via => [:get]
   match 'transfer_conversation_send' => 'transfers#conversation_send', :via => [:post]
 
+  match 'file_issue_requests/approve' => 'file_issue_requests#approve', :via => [:post]
   match 'file_issue_requests/cancel' => 'file_issue_requests#cancel', :via => [:post]
   match 'file_issue_requests/:id' => 'file_issue_requests#update', :via => [:post]
   match 'file_issue_requests/:id/generate_quote/:type' => 'file_issue_requests#generate_quote', :via => [:post]

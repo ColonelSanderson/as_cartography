@@ -6,7 +6,11 @@ class FileIssueRequest < Sequel::Model
   include MAPModel
   map_table :file_issue_request
 
+  include FileIssueHelpers
+
   CANCELLED_BY_QSA_STATUS = 'CANCELLED_BY_QSA'
+  FILE_ISSUE_CREATED_STATUS = 'FILE_ISSUE_CREATED'
+  INITIATED_STATUS = 'INITIATED'
 
   def cancel!(cancel_target)
     if ['physical', 'both'].include?(cancel_target)
@@ -18,10 +22,53 @@ class FileIssueRequest < Sequel::Model
 
     self.save
   end
+
+  def approve!(approve_target)
+    if ['physical', 'both'].include?(approve_target)
+      spawn_file_issue('PHYSICAL')
+      self.physical_request_status = FILE_ISSUE_CREATED_STATUS
+    end
+
+    if ['digital', 'both'].include?(approve_target)
+      spawn_file_issue('DIGITAL')
+      self.digital_request_status = FILE_ISSUE_CREATED_STATUS
     end
 
     self.save
   end
+
+  def spawn_file_issue(file_issue_type)
+    spawn_values = self.values.merge(
+      :file_issue_request_id => self.id,
+      :issue_type => file_issue_type,
+      :status => INITIATED_STATUS,
+    )
+
+    # Exclude protected values
+    [:lock_version, :created_by, :create_time, :system_mtime, :id].each do |prop|
+      spawn_values.delete(prop)
+    end
+
+    file_issue = FileIssue.create(spawn_values)
+
+    self.db[:handle].insert(:file_issue_id => file_issue.id)
+
+    # Copy each of the requested items into our file issue
+    MAPDB.open do |mapdb|
+      db[:file_issue_request_item]
+        .filter(:file_issue_request_id => self.id,
+                :request_type => file_issue_type)
+        .each do |request_item|
+        db[:file_issue_item].insert(
+          :file_issue_id => file_issue.id,
+          :aspace_record_type => request_item[:aspace_record_type],
+          :aspace_record_id => request_item[:aspace_record_id],
+          :record_details => request_item[:record_details],
+        )
+      end
+    end
+  end
+
 
   def update_from_json(json, opts = {}, apply_nested_records = true)
     # Requested representations can be re-linked.  Apply those updates.
@@ -62,25 +109,6 @@ class FileIssueRequest < Sequel::Model
   end
 
 
-  # We need to build URIs for representations, but the MAP doesn't have any
-  # notion of an active repository.  So, we work out the repository that each
-  # referenced representation belongs to and work backwards from that.
-  def self.repo_ids_for_items(file_issue_request_items)
-    repo_id_by_item_id = {}
-    aspace_models = {}
-
-    file_issue_request_items.values.flatten.each do |item|
-      aspace_record_type = item[:aspace_record_type]
-      aspace_record_id = item[:aspace_record_id]
-
-      aspace_models[aspace_record_type] ||= ASModel.all_models.find {|m| m.my_jsonmodel(true) && (m.my_jsonmodel(true).record_type == aspace_record_type)}
-
-      repo_id_by_item_id[item[:id]] = aspace_models.fetch(aspace_record_type).any_repo[aspace_record_id][:repo_id]
-    end
-
-    repo_id_by_item_id
-  end
-
   def self.sequel_to_jsonmodel(objs, opts = {})
     jsons = super
 
@@ -105,6 +133,12 @@ class FileIssueRequest < Sequel::Model
           .filter(:file_issue_request_id => objs.map(&:id))
           .map {|row| [row[:file_issue_request_id], row[:id]]}
           .to_h
+
+      file_issues =
+        mapdb[:file_issue]
+          .filter(:file_issue_request_id => objs.map(&:id))
+          .all
+          .group_by {|row| row[:file_issue_request_id]}
 
       repo_id_by_item = repo_ids_for_items(file_issue_request_items)
 
@@ -135,6 +169,11 @@ class FileIssueRequest < Sequel::Model
 
         if obj.aspace_digital_quote_id
           json['digital_quote'] = {'ref' => "/service_quotes/#{obj.aspace_digital_quote_id}"}
+        end
+
+        file_issues.fetch(obj.id, []).each do |file_issue|
+          issue_type = file_issue[:issue_type]
+          json["file_issue_#{issue_type}"] = {'ref' => JSONModel(:file_issue).uri_for(file_issue[:id])}
         end
 
         json['title'] = "%s" % [Time.at(obj.create_time).to_s]

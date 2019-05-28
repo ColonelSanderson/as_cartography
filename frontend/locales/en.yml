@@ -162,6 +162,7 @@ en:
         quote_issued_on: ISSUED ON %{date}
         quote_not_issued: QUOTE NOT ISSUED
         cancel_succeeded: File Issue Request cancelled
+        approve_succeeded: File Issue Request approved
         confirm_cancel_physical_title: Cancelling Physical File Issue Request
         confirm_cancel_physical_message: Are you sure you want cancel the physical part of this file issue request?
         confirm_cancel_digital_title: Cancelling Digital File Issue Request
@@ -174,6 +175,10 @@ en:
       cancel_button_physical: Cancel Physical Request
       cancel_button_digital: Cancel Digital Request
       cancel_button_both: Cancel Entire Request
+      approve_button: Approve Request
+      approve_button_physical: Approve Physical File Issue
+      approve_button_digital: Approve Digital File Issue
+      approve_button_both: Approve Both File Issues
       back_button: Back
     _plural: File Issue Requests
     _singular: File Issue Request
