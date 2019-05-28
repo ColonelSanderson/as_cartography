@@ -6,14 +6,14 @@
            }) do |sidebar| %>
     <%= sidebar.render_for_view_and_edit(:subrecord_type => 'requested_representations', :property => :none) %>
 
-    <% ['digital', 'physical'].each do |quote_type| %>
-        <% type = quote_type + '_quote' %>
-        <% if @file_issue_request[type] %>
-            <%= sidebar.render_for_view_and_edit(:subrecord_type => type, :property => :none) %>
-        <% end %>
-    <% end %>
-
     <% if is_readonly %>
+        <% ['digital', 'physical'].each do |quote_type| %>
+            <% type = quote_type + '_quote' %>
+            <% if @file_issue_request['requested_representations'].any?{|rep| rep['request_type'] == quote_type.upcase} %>
+                <%= sidebar.render_for_view_only(:subrecord_type => type, :property => :none) %>
+            <% end %>
+        <% end %>
+
         <%= sidebar.render_for_view_only(:subrecord_type => 'conversation', :property => :none) %>
     <% end %>
 <% end %>
