@@ -23,3 +23,7 @@ td.edited-quote-field {
 .quote-line-flagged-for-delete {
   background-color: #fcc !important;
 }
+
+.quote-line {
+  height: 40px;
+}
