@@ -52,7 +52,11 @@ class IndexFeedThread
         Log.exception($!)
       end
 
-      sleep AppConfig[:map_index_feed_interval_seconds]
+      if AppConfig.has_key?(:map_index_feed_interval_seconds)
+        sleep AppConfig[:map_index_feed_interval_seconds]
+      else
+        sleep 5
+      end
     end
   end
 
