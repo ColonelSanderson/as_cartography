@@ -27,3 +27,7 @@ td.edited-quote-field {
 .quote-line {
   height: 40px;
 }
+
+.quote-form-element {
+  height: 22px;
+}

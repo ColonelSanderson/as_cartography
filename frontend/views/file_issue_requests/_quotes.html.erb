@@ -94,7 +94,7 @@
                     <th></th>
                     <th><%= I18n.t("file_issue_request.quote.unit_description") %></th>
                     <th style="text-align:right"><%= I18n.t("file_issue_request.quote.unit_cost") %></th>
-                    <th><%= I18n.t("file_issue_request.quote.unit_type") %></th>
+                    <th style="width:100px;"><%= I18n.t("file_issue_request.quote.unit_type") %></th>
                     <th style="text-align:center"><%= I18n.t("file_issue_request.quote.number_of_units") %></th>
                     <th style="text-align:right"><%= I18n.t("file_issue_request.quote.cost") %></th>
                 </tr>
@@ -199,14 +199,14 @@
                 </div>
 
                 <div class="quote-form-elements" style="display:none;">
-                    <input class="form-control" name="description"/>
-                    <input class="form-control" name="charge_per_unit_cents" style="max-width:80px;"/>
-                    <select class="form-control" name="charge_quantity_unit">
+                    <input class="form-control quote-form-element" name="description"/>
+                    <input class="form-control quote-form-element" name="charge_per_unit_cents" style="max-width:80px;text-align:right"/>
+                    <select class="form-control quote-form-element" name="charge_quantity_unit">
                         <% JSONModel.enum_values('runcorn_charge_quantity_unit').each do |v| %>
                             <option value="<%= v %>"><%= I18n.t('enumerations.runcorn_charge_quantity_unit.' + v) %></option>
                         <% end %>
                     </select>
-                    <input class="form-control" name="quantity" style="max-width:60px;"/>
+                    <input class="form-control quote-form-element" name="quantity" style="max-width:60px;text-align:center"/>
                 </div>
 
                 <script>
