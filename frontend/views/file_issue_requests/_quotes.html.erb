@@ -91,7 +91,9 @@
 
             <table class="table table-striped table-bordered" id="<%= type %>-table">
                 <tr>
-                    <th></th>
+                    <% unless quote['issued_date'] %>
+                        <th></th>
+                    <% end %>
                     <th><%= I18n.t("file_issue_request.quote.unit_description") %></th>
                     <th style="text-align:right"><%= I18n.t("file_issue_request.quote.unit_cost") %></th>
                     <th style="width:100px;"><%= I18n.t("file_issue_request.quote.unit_type") %></th>
@@ -149,12 +151,14 @@
                     <% end %>
                 <% end %>
                 <tr>
-                    <th>
-                        <button class="btn btn-xs btn-success quote-line-button quote-line-add-button"
-                                title="Add a line to the quote">
-                            +
-                        </button>
-                    </th>
+                    <% unless quote['issued_date'] %>
+                        <th>
+                            <button class="btn btn-xs btn-success quote-line-button quote-line-add-button"
+                                    title="Add a line to the quote">
+                                +
+                            </button>
+                        </th>
+                    <% end %>
                     <th><%= I18n.t("file_issue_request.quote.total") %></th>
                     <th></th>
                     <th></th>
