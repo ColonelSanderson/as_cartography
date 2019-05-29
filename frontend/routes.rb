@@ -18,9 +18,11 @@ ArchivesSpace::Application.routes.draw do
   match 'file_issue_requests/:id/withdraw_quote/:type' => 'file_issue_requests#withdraw_quote', :via => [:post]
   match 'file_issue_requests/:id/save_quote/:type' => 'file_issue_requests#save_quote', :via => [:post]
 
+  match 'file_issues/:id' => 'file_issues#update', :via => [:post]
 
   resources :transfer_proposals
   resources :transfers
   resources :transfer_files
   resources :file_issue_requests
+  resources :file_issues
 end

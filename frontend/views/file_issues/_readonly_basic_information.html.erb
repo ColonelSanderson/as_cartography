@@ -1,0 +1,41 @@
+<%= readonly_context :file_issue, @file_issue do |readonly| %>
+    <h2><%= @file_issue.title %>  <span class="label label-info"><%= I18n.t("file_issue._singular") %></span></h2>
+
+    <% define_template "file_issue", jsonmodel_definition(:file_issue) do |form, file_issue| %>
+        <section id="basic_information">
+            <h3><%= I18n.t("file_issue._frontend.section.basic_information") %></h3>
+
+            <%= render_plugin_partials("top_of_basic_information_file_issue",
+                                       :form => form,
+                                       :record => @file_issue) %>
+
+          <%= form.label_and_readonly "issue_type" %>
+
+            <div class="form-group">
+                <div class="control-label col-sm-2"><%= I18n.t("file_issue.agency") %></div>
+                <div class="token-list">
+                    <%= render_token(:object => @file_issue['agency']['_resolved'],
+                                     :label => CGI::escapeHTML(@file_issue['agency']['_resolved']['title']),
+                                     :type => @file_issue['agency']['_resolved']['jsonmodel_type'],
+                                     :uri => @file_issue['agency']['ref'],
+                                     :placement => "top",
+                                     :inside_linker_browse => true) %>
+                </div>
+            </div>
+
+            <%= form.label_and_textfield "agency_location_display_string" %>
+
+            <%= form.label_and_textfield "physical_request_status" %>
+
+            <%= form.label_and_textfield "digital_request_status" %>
+
+            <%= form.label_and_boolean "urgent" %>
+
+            <%= form.label_and_textfield "request_notes" %>
+
+            <%= form.label_and_boolean "deliver_to_reading_room" %>
+        </section>
+    <% end %>
+
+    <% readonly.emit_template "file_issue" %>
+<% end %>

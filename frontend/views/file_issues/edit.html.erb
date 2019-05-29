@@ -1,0 +1,31 @@
+<%= setup_context :object => @file_issue, :title => @file_issue.title %>
+
+<div class="row">
+  <div class="col-md-3">
+    <%= render_aspace_partial :partial => "sidebar", locals: {is_readonly: false} %>
+  </div>
+  <div class="col-md-9">
+    <%= render_aspace_partial :partial => "toolbar" %>
+    <div class="record-pane">
+      <%= form_for(@file_issue,
+                   :as => "file_issue",
+                   :url => {:action => :update},
+                   :html => {:class => 'form-horizontal aspace-record-form',
+                             :id => "file_issue_form"}.merge(update_monitor_params(@file_issue))) do |f| %>
+        <%= form_context :file_issue, @file_issue do |form| %>
+          <%= render_aspace_partial :partial => "shared/form_messages", :locals => {:object => @file_issue, :form => form} %>
+          <%= render_aspace_partial :partial => "file_issues/readonly_basic_information", locals: {is_readonly: false, form: form} %>
+          <%= render_aspace_partial :partial => "file_issues/requested_representations", locals: {form: form} %>
+        <% end %>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary"><%= I18n.t("file_issue._frontend.action.save") %></button>
+          <%= link_to I18n.t("actions.cancel"), :back, :class => "btn btn-cancel btn-default" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+
+<%= render_aspace_partial :partial => "shared/conversation_widget", :locals => { handle_id: @file_issue.handle_id } %>

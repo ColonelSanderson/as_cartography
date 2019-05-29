@@ -209,3 +209,8 @@ en:
       current: current
     filter:
       controlling_record_u_sstr: Controlling Record
+
+  file_issue:
+    agency: Agency
+    _plural: File Issues
+    _singular: File Issue

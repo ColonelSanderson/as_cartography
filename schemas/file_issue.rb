@@ -3,7 +3,7 @@
     "$schema" => "http://www.archivesspace.org/archivesspace.json",
     "version" => 1,
     "type" => "object",
-    "uri" => "/file_issue",
+    "uri" => "/file_issues",
     "properties" => {
       "uri" => {"type" => "string"},
 
@@ -25,11 +25,21 @@
 
       "agency_location_display_string" => {"type" => "string"},
       "handle_id" => {"type" => "string", "readonly" => "true"},
+
       "request_type" => {"type" => "string"},
+      "issue_type" => {"type" => "string"},
+
       "urgent" => {"type" => "boolean", "readonly" => "true"},
       "deliver_to_reading_room" => {"type" => "boolean", "readonly" => "true"},
       "delivery_authorizer" => {"type" => "string", "readonly" => "true"},
+
       "status" => {"type" => "string"},
+
+      "checklist_submitted" => {"type" => "boolean"},
+      "checklist_retrieval_started" => {"type" => "boolean"},
+      "checklist_dispatched" => {"type" => "boolean"},
+      "checklist_summary_sent" => {"type" => "boolean"},
+      "checklist_completed" => {"type" => "boolean"},
 
       "requested_representations" => {
         "type" => "array",
@@ -41,8 +51,14 @@
               "type" => [{"type" => "JSONModel(:physical_representation) uri"},
                          {"type" => "JSONModel(:digital_representation) uri"}],
             },
-            "request_type" => {"type" => "string"},
+            "id" => {"type" => "integer"},
             "record_details" => {"type" => "string"},
+            "dispatch_date" => {"type" => "date"},
+            "dispatched_by" => {"type" => "string"},
+            "expiry_date" => {"type" => "date"},
+            "returned_date" => {"type" => "date"},
+            "received_by" => {"type" => "string"},
+            "overdue" => {"type" => "boolean", "readonly" => "true"},
             "_resolved" => {
               "type" => "object",
               "readonly" => "true"

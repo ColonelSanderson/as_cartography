@@ -1,0 +1,31 @@
+<%= setup_context :object => @file_issue, :title => @file_issue.title %>
+
+<div class="row">
+  <div class="col-md-3">
+    <%= render_aspace_partial :partial => "sidebar", locals: {is_readonly: true} %>
+  </div>
+  <div class="col-md-9">
+    <%= render_aspace_partial :partial => "toolbar" %>
+    <div class="record-pane">
+      <%= render_aspace_partial :partial => "shared/flash_messages" %>
+      <%= render_aspace_partial :partial => "file_issues/readonly_basic_information", locals: {is_readonly: true} %>
+      <%= readonly_context :file_issue, @file_issue do |readonly| %>
+        <%= render_aspace_partial :partial => "file_issues/requested_representations", locals: {form: readonly} %>
+      <% end %>
+
+      <section id="conversation" class="conversation">
+        <h3><%= I18n.t("transfer._frontend.section.conversation") %></h3>
+        <div id="conversation-widget"></div>
+      </section>
+
+      <%= display_audit_info(@file_issue) %>
+
+      <%= readonly_context :file_issue, @file_issue do |readonly| %>
+        <%= show_plugins_for(@file_issue, readonly) %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+
+<%= render_aspace_partial :partial => "shared/conversation_widget", :locals => { handle_id: @file_issue.handle_id } %>

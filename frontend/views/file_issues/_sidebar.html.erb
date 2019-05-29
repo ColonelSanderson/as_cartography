@@ -1,0 +1,19 @@
+<%= render(:layout => '/shared/sidebar',
+           :locals => {
+               :record_type => 'file_issue',
+               :record => @file_issue,
+               :suppress_submit_buttons => true,
+           }) do |sidebar| %>
+    <%= sidebar.render_for_view_and_edit(:subrecord_type => 'requested_representations', :property => :none) %>
+
+    <% if is_readonly %>
+        <% ['digital', 'physical'].each do |quote_type| %>
+            <% type = quote_type + '_quote' %>
+            <% if @file_issue['requested_representations'].any?{|rep| rep['request_type'] == quote_type.upcase} %>
+                <%= sidebar.render_for_view_only(:subrecord_type => type, :property => :none) %>
+            <% end %>
+        <% end %>
+
+        <%= sidebar.render_for_view_only(:subrecord_type => 'conversation', :property => :none) %>
+    <% end %>
+<% end %>
