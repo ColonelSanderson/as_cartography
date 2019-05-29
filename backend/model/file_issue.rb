@@ -17,6 +17,9 @@ class FileIssue < Sequel::Model
   STATUS_FILE_ISSUE_ACTIVE = 'ACTIVE'
   STATUS_FILE_ISSUE_COMPLETE = 'COMPLETE'
 
+  ISSUE_TYPE_DIGITAL = 'DIGITAL'
+  ISSUE_TYPE_PHYSICAL = 'PHYSICAL'
+
 
   def update_from_json(json, opts = {}, apply_nested_records = true)
     # The status of a transfer is determined by its checklist.  Make sure the
@@ -61,17 +64,15 @@ class FileIssue < Sequel::Model
     json[:status] = status
 
     # Update the items table to reflect the latest types
-    MAPDB.open do |mapdb|
-      json[:requested_representations].each do |item|
-        mapdb[:file_issue_item]
-          .filter(id: item['id'])
-          .filter(file_issue_id: self.id)
-          .update(dispatch_date: item['dispatch_date'],
-                  dispatched_by: item['dispatched_by'],
-                  expiry_date: item['expiry_date'],
-                  returned_date: item['returned_date'],
-                  received_by: item['received_by'])
-      end
+    json[:requested_representations].each do |item|
+      self.db[:file_issue_item]
+        .filter(id: item['id'])
+        .filter(file_issue_id: self.id)
+        .update(dispatch_date: item['dispatch_date'],
+                dispatched_by: item['dispatched_by'],
+                expiry_date: item['expiry_date'],
+                returned_date: item['returned_date'],
+                received_by: item['received_by'])
     end
 
     super
@@ -135,12 +136,35 @@ class FileIssue < Sequel::Model
 
         json['file_issue_request'] = {'ref' => JSONModel(:file_issue_request).uri_for(obj.file_issue_request_id)}
 
-        json['title'] = "%s: %s" % [obj.issue_type, Time.at(obj.create_time).to_s]
+        json['title'] = "FI%s%s: %s" % [obj.issue_type[0].upcase, obj.id.to_s, Time.at(obj.create_time).to_s]
       end
     end
 
     jsons
+  end
+
+  def validate
+    # can only set checklist_dispatched if all requested_representations have a dispatch date
+    if self.checklist_dispatched == 1
+      not_yet_dispatched_count = self.db[:file_issue_item]
+                                   .filter(file_issue_id: self.id)
+                                   .filter(dispatch_date: nil)
+                                   .count
+      if not_yet_dispatched_count > 0
+        errors.add(:checklist, "Cannot check dispatched until all items have a dispatch date")
+      end
     end
+    # physical: checklist_completed is only set once all requested_representations have a returned_date
+    if self.issue_type == ISSUE_TYPE_PHYSICAL && self.checklist_completed == 1
+      not_yet_returned_count = self.db[:file_issue_item]
+                                   .filter(file_issue_id: self.id)
+                                   .filter(returned_date: nil)
+                                   .count
+      if not_yet_returned_count > 0
+        errors.add(:checklist, "Cannot check completed until all items have a returned date")
+      end
+    end
+  end
 
   def self.item_is_overdue?(item)
     return false if item[:returned_date]

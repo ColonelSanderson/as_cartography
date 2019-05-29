@@ -30,6 +30,17 @@ class FileIssuesController < ApplicationController
     # Fetch the current version
     updated = JSONModel(:file_issue).find(params[:id], find_opts.merge('resolve[]' => RESOLVES))
 
+    # Apply checklist updates
+    updated[:checklist_submitted] = true # always true!
+    [
+      :checklist_retrieval_started,
+      :checklist_dispatched,
+      :checklist_summary_sent,
+      :checklist_completed,
+    ].each do |prop|
+      updated[prop] = (params[:file_issue][prop] == "1")
+    end
+
     # update the representations
     updated.requested_representations.zip(params[:file_issue][:requested_representations].map{|_, values| values}) do |requested_representation, form|
       requested_representation['dispatch_date'] = form['dispatch_date']

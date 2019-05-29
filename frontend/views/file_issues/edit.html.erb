@@ -15,6 +15,7 @@
         <%= form_context :file_issue, @file_issue do |form| %>
           <%= render_aspace_partial :partial => "shared/form_messages", :locals => {:object => @file_issue, :form => form} %>
           <%= render_aspace_partial :partial => "file_issues/readonly_basic_information", locals: {is_readonly: false, form: form} %>
+          <%= render_aspace_partial :partial => "file_issues/checklist", locals: {form: form} %>
           <%= render_aspace_partial :partial => "file_issues/requested_representations", locals: {form: form} %>
         <% end %>
 
