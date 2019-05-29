@@ -182,11 +182,35 @@ QuoteEditor.prototype.addLine = function(line) {
     this.edited('Line added');
 }
 
+QuoteEditor.prototype.editIsValid = function() {
+    if (this.editing()) {
+	var cell = this.editing().parent();
+	var val = this.editing().val();
+	return this.validate(cell.data('field'), val);
+    }
+    return false;
+}
+
+QuoteEditor.prototype.commitEdit = function() {
+    if (this.editIsValid()) {
+	var cell = this.editing().parent();
+	var val = this.editing().val();
+	if (cell.data('value') != this.dataFor(cell.data('field'), val)) {
+	    this.save(cell, val);
+	    this.edited('Value set');
+	}
+	cell.html(this.displayFor(cell.data('field'), cell.data('value')));
+	this.editing(false);
+	return true;
+    }
+    return false;
+}
+
 QuoteEditor.prototype.bindEvents = function() {
     var self = this;
 
     self.quote.on('mouseenter', function () {
-	    self.message('Click a cell to edit. Return to set, escape to exit');
+	    self.message('Click a cell to edit. Return to set, tab to next, escape to exit');
 	});
 
     self.quote.find('tr').on('mouseenter', function () {
@@ -212,9 +236,7 @@ QuoteEditor.prototype.bindEvents = function() {
 	    if (self.editing().parent()[0] == $(this)[0]) {
 		return;
 	    }
-	    var evt = jQuery.Event('keypress');
-	    evt.which = 13;  // return
-	    self.editing().trigger(evt);
+	    self.commitEdit();
 	}
 
         var inputElt = self.inputFor($(this).data('field'));
@@ -223,12 +245,36 @@ QuoteEditor.prototype.bindEvents = function() {
 
 	self.editing(inputElt);
 	
-	inputElt.keypress(function( event ) {
+	inputElt.keydown(function( event ) {
 		if ( event.which == 9 ) {  // tab
 		    event.preventDefault();
-		    console.log('weeeee');
+		    var cells = self.quote.find('td.editable-quote-field');
+		    var ix = cells.index($(this).parent());
+		    var rev = self.editing().reverse;
+		    if (self.editing().reverse) {
+			ix -= 1;
+			if (ix < 0)  { ix = cells.length - 1 }
+		    } else {
+			ix += 1;
+			if (ix == cells.length) { ix = 0 }
+		    }
+		    if (self.editIsValid()) {
+			$(cells[ix]).trigger('click');
+			self.editing().reverse = rev;
+		    }
 		}
+		if ( event.which == 16 ) {  // shift down
+		    self.editing().reverse = true;
+		}
+	});
 
+	inputElt.keyup(function( event ) {
+		if ( event.which == 16 ) {  // shift up
+		    self.editing().reverse = false;
+		}
+	});
+
+	inputElt.keypress(function( event ) {
 		if ( event.which == 27 ) {  // escape
 		    event.preventDefault();
 		    $(this).parent().html(self.displayFor($(this).parent().data('field'), $(this).parent().data('value')));
@@ -237,15 +283,7 @@ QuoteEditor.prototype.bindEvents = function() {
 		}
 		if ( event.which == 13 ) {  // return
 		    event.preventDefault();
-		    var cell = $(this).parent();
-		    if (self.validate(cell.data('field'), $(this).val())) {
-			if (cell.data('value') != self.dataFor(cell.data('field'), $(this).val())) {
-			    self.save(cell, $(this).val());
-			    self.edited('Value set');
-			}
-			cell.html(self.displayFor(cell.data('field'), cell.data('value')));
-			self.editing(false);
-		    }
+		    self.commitEdit();
 		}
 	    });
 
