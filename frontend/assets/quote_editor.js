@@ -118,6 +118,16 @@ QuoteEditor.prototype.validate = function(field, value) {
 
     elt = this.section.find('.quote-form-elements').find('[name=' + field + ']');
 
+    if (field == 'description') {
+	if (value.length == 0) {
+	    valid = false;
+	    this.message('Cannot be empty');
+	} else if (value.length > 255) {
+	    valid = false;
+	    this.message('Too long');
+	}
+    }
+
     if (elt.attr('name').endsWith('_cents')) {
 	valid = !!value.match(/^\$\d+\.\d\d$/);
 	if (!valid) {
