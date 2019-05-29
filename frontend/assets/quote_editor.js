@@ -9,15 +9,15 @@ function QuoteEditor(opts) {
 
 QuoteEditor.prototype.editing = function(value) {
     if (typeof(value) != 'undefined') {
-	this.editingFlag = !!value;
+	this.editingElt = value;
 
-	if (this.editingFlag) {
+	if (this.editingElt) {
 	    this.section.find('.quote-button').attr('disabled', true);
 	} else {
 	    this.section.find('.quote-button').removeAttr('disabled');
 	}
     }
-    return this.editingFlag;
+    return this.editingElt;
 }
 
 QuoteEditor.prototype.edited = function(msg) {
@@ -209,15 +209,26 @@ QuoteEditor.prototype.bindEvents = function() {
 
     self.section.find('td.editable-quote-field').on('click', function () {
 	if (self.editing()) {
-	    return;
+	    if (self.editing().parent()[0] == $(this)[0]) {
+		return;
+	    }
+	    var evt = jQuery.Event('keypress');
+	    evt.which = 13;  // return
+	    self.editing().trigger(evt);
 	}
-	self.editing(true);
-	
+
         var inputElt = self.inputFor($(this).data('field'));
         inputElt.val(self.editFor($(this).data('field'), $(this).data('value')));
         inputElt.css('width', '100%');
 
+	self.editing(inputElt);
+	
 	inputElt.keypress(function( event ) {
+		if ( event.which == 9 ) {  // tab
+		    event.preventDefault();
+		    console.log('weeeee');
+		}
+
 		if ( event.which == 27 ) {  // escape
 		    event.preventDefault();
 		    $(this).parent().html(self.displayFor($(this).parent().data('field'), $(this).parent().data('value')));
