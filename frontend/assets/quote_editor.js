@@ -204,7 +204,7 @@ QuoteEditor.prototype.bindEvents = function() {
 	});
 
     self.quote.find('.quote-line-add-button').on('click', function () {
-	    self.addLine(self.section.find('.quote-new-line').find('tr'));
+	    self.addLine(self.section.find('.quote-new-line').find('tr').clone(true, true));
 	});
 
     self.section.find('td.editable-quote-field').on('click', function () {
