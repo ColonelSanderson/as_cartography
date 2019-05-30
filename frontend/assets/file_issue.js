@@ -46,7 +46,7 @@ FileIssue.prototype.showConfirmation = function(form, templateId) {
 };
 
 FileIssue.prototype.setupRepresentationListForm = function() {
-    var $table = $('#requested_representations table');
+    var $table = $('#file_issue_requested_representations_ table');
 
     function toggleAll(event) {
         var checked = $(event.currentTarget).is(':checked');
@@ -130,8 +130,8 @@ FileIssue.prototype.setupRepresentationListForm = function() {
             }
         });
 
-        $('#requested_representations #dispatch').on('click', showDispatchModal);
-        $('#requested_representations #receive').on('click', showReceiveModal);
+        $('#file_issue_requested_representations_ #dispatch').on('click', showDispatchModal);
+        $('#file_issue_requested_representations_ #receive').on('click', showReceiveModal);
     }
 };
 

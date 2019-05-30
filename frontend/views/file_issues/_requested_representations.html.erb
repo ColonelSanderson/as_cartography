@@ -47,10 +47,14 @@
                   </td>
                 <% end %>
                 <td>
+                  <% if item['_resolved']['representation_file'].nil? %>
+                    <div class="text-warning"><%= I18n.t("file_issue._frontend.messages.digital_file_missing") %></div>
+                  <% end %>
                   <div class="form-group">
                     <div class="token-list">
+                      <span class="label label-info"><%= I18n.t("#{item['_resolved']['jsonmodel_type']}._singular") %></span>
                       <%= render_token(:object => item['_resolved'],
-                                       :label => CGI::escapeHTML(item['_resolved']['title']),
+                                       :label => CGI::escapeHTML(item['_resolved']['display_string']),
                                        :type => item['_resolved']['jsonmodel_type'],
                                        :uri => item['ref'],
                                        :placement => "top",

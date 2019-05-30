@@ -16,23 +16,28 @@
 
             <div class="btn-group pull-right">
                 <%# Approval buttons %>
-                <% if [@file_issue_request.physical_request_status, @file_issue_request.digital_request_status].include?('QUOTE_ACCEPTED') %>
+                <%
+                  # We can approve any part whose quote was accepted
+                  approve_targets = ['physical', 'digital'].select {|approve_target| @file_issue_request["#{approve_target}_request_status"] == 'QUOTE_ACCEPTED'}
+
+                  if approve_targets.include?('digital')
+                    if @file_issue_request.requested_representations.any?{|item| item['_resolved']['jsonmodel_type'] == 'physical_representation' && item['request_type'] == 'DIGITAL'}
+                      approve_targets.delete('digital')
+                    end
+                  end
+
+                  # And if both parts are available to approve, we can do both at once as well.
+                  if approve_targets.length == 2
+                    approve_targets << 'both'
+                  end
+                %>
+                <% unless approve_targets.empty? %>
                     <div class="btn-group">
                         <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
                             <%= I18n.t("file_issue_request._frontend.approve_button") %> <span class="caret"></span>
                         </button>
 
                         <ul class="dropdown-menu dropdown-menu-right approve-options" role="menu">
-                            <%
-                            # We can approve any part whose quote was accepted
-                            approve_targets = ['physical', 'digital'].select {|approve_target| @file_issue_request["#{approve_target}_request_status"] == 'QUOTE_ACCEPTED'}
-
-                            # And if both parts are available to approve, we can do both at once as well.
-                                if approve_targets.length == 2
-                                    approve_targets << 'both'
-                                end
-                            %>
-
                             <% approve_targets.each do |approve_target| %>
                                 <li>
                                     <%= form_tag({:controller => "file_issue_requests", :action => "approve"},

@@ -35,6 +35,33 @@
 
             <%= form.label_and_textfield "delivery_location" %>
 
+            <% if @file_issue_request['file_issue_digital'] %>
+              <div class="form-group">
+                <div class="control-label col-sm-2"><%= I18n.t("file_issue_request.file_issue_digital") %></div>
+                <div class="token-list">
+                  <%= render_token(:object => @file_issue_request['file_issue_digital']['_resolved'],
+                                   :label => CGI::escapeHTML(@file_issue_request['file_issue_digital']['_resolved']['title']),
+                                   :type => @file_issue_request['file_issue_digital']['_resolved']['jsonmodel_type'],
+                                   :uri => @file_issue_request['file_issue_digital']['ref'],
+                                   :placement => "top",
+                                   :inside_linker_browse => true) %>
+                </div>
+              </div>
+            <% end %>
+
+            <% if @file_issue_request['file_issue_physical'] %>
+              <div class="form-group">
+                <div class="control-label col-sm-2"><%= I18n.t("file_issue_request.file_issue_physical") %></div>
+                <div class="token-list">
+                  <%= render_token(:object => @file_issue_request['file_issue_physical']['_resolved'],
+                                   :label => CGI::escapeHTML(@file_issue_request['file_issue_physical']['_resolved']['title']),
+                                   :type => @file_issue_request['file_issue_physical']['_resolved']['jsonmodel_type'],
+                                   :uri => @file_issue_request['file_issue_physical']['ref'],
+                                   :placement => "top",
+                                   :inside_linker_browse => true) %>
+                </div>
+              </div>
+            <% end %>
 
             <%# FIXME: i18n %>
             <section id="requested_representations">
@@ -53,11 +80,17 @@
                         <tr>
                             <td><span class="label label-info"><%= request['request_type'] %></span></td>
                             <td>
+                                <% if @file_issue_request["digital_request_status"] == 'QUOTE_ACCEPTED' && request['request_type'] == 'DIGITAL' && request['_resolved']['jsonmodel_type'] == 'physical_representation' %>
+                                  <div class="text-warning">
+                                    Requested representation must be linked to a Digital Representation before approval is permitted 
+                                  </div>
+                                <% end %>
                                 <% if is_readonly %>
                                     <div class="form-group">
                                         <div class="token-list">
+                                            <span class="label label-info"><%= I18n.t("#{request['_resolved']['jsonmodel_type']}._singular") %></span>
                                             <%= render_token(:object => request['_resolved'],
-                                                             :label => CGI::escapeHTML(request['_resolved']['title']),
+                                                             :label => CGI::escapeHTML(request['_resolved']['display_string']),
                                                              :type => request['_resolved']['jsonmodel_type'],
                                                              :uri => request['ref'],
                                                              :placement => "top",

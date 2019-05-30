@@ -172,7 +172,7 @@ class FileIssueRequest < Sequel::Model
         end
 
         file_issues.fetch(obj.id, []).each do |file_issue|
-          issue_type = file_issue[:issue_type]
+          issue_type = file_issue[:issue_type].downcase
           json["file_issue_#{issue_type}"] = {'ref' => JSONModel(:file_issue).uri_for(file_issue[:id])}
         end
 

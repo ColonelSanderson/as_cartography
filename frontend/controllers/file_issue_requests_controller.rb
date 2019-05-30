@@ -1,6 +1,6 @@
 class FileIssueRequestsController < ApplicationController
 
-  RESOLVES = ['agency', 'file_issue', 'requested_representations', 'physical_quote', 'digital_quote']
+  RESOLVES = ['agency', 'file_issue', 'requested_representations', 'physical_quote', 'digital_quote', 'file_issue_digital', 'file_issue_physical']
 
   set_access_control  "view_repository" => [:index, :show, :edit, :update, :generate_quote, :issue_quote, :withdraw_quote, :save_quote, :cancel, :approve]
 

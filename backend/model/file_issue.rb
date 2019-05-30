@@ -208,6 +208,25 @@ class FileIssue < Sequel::Model
     if requiring_dispatch_date > 0
       errors.add(:requested_representations, "Dispatch date is required when item has expiry or returned date")
     end
+
+    # check requested digital items have a file attached when dispatched
+    if self.issue_type == ISSUE_TYPE_DIGITAL
+      dispatched_digital_representations = self.db[:file_issue_item]
+                                             .filter(file_issue_id: self.id)
+                                             .filter(Sequel.~(dispatch_date: nil))
+                                             .select(:aspace_record_id)
+                                             .map {|row| row[:aspace_record_id].to_i}
+
+      DB.open do |aspace_db|
+        file_count = aspace_db[:representation_file]
+                      .filter(:digital_representation_id => dispatched_digital_representations)
+                      .count
+
+          if dispatched_digital_representations.length > file_count
+            errors.add(:requested_representations, "Digital items cannot be dispatched until they are linked to a file")
+          end
+      end
+    end
   end
 
   def self.item_is_overdue?(item)

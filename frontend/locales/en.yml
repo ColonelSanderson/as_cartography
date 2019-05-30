@@ -7,6 +7,8 @@ en:
     dispatch_date_is_required_when_item_has_expiry_or_returned_date: "Dispatch date is required when item has expiry or returned date"
     expiry_date_is_required_when_item_has_dispatch_date: "Expiry date is required when item has dispatch date"
     cannot_check_completed_until_all_items_have_a_returned_date: "Cannot check completed until all items have a returned date"
+    digital_items_cannot_be_dispatched_until_they_are_linked_to_a_file: "Can't dispatch a digital representation with no file attached"
+
   transfer_proposal:
     _frontend:
       section:
@@ -199,6 +201,8 @@ en:
     representations: Representations
     digital_processing_estimate: Processing Estimate
     physical_processing_estimate: Processing Estimate
+    file_issue_digital: Digital File Issue
+    file_issue_physical: Physical File Issue
     quote:
       unit_description: Unit description
       unit_cost: Unit cost
@@ -248,5 +252,6 @@ en:
         requested_representations: Requested Representations
       messages:
         updated: File Issue updated
+        digital_file_missing: No digital file attached to representation
     _plural: File Issues
     _singular: File Issue
