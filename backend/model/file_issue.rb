@@ -43,6 +43,11 @@ class FileIssue < Sequel::Model
       STATUS_FILE_ISSUE_COMPLETE,
     ]
 
+    if json[:requested_representations].all?{|item| item['dispatch_date']}
+      # all dispatched! so assume checklist_dispatched
+      json[:checklist_dispatched] = true
+    end
+
     # Our status is determined by how many consecutive checklist items are
     # marked off.  For example, mark off the first three checklist items and you
     # get a "pending" status.

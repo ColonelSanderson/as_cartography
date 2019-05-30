@@ -4,7 +4,9 @@
   <% unless form.readonly? %>
     <div class="btn-group pull-right">
       <a class="btn btn-info disabled" href="javascript:void(0)" id="dispatch">Mark as Dispatched</a>
-      <a class="btn btn-info disabled" href="javascript:void(0)" id="receive">Mark as Returned</a>
+      <% if @file_issue['issue_type'] === 'PHYSICAL' %>
+        <a class="btn btn-info disabled" href="javascript:void(0)" id="receive">Mark as Returned</a>
+      <% end %>
     </div>
   <% end %>
 
@@ -19,8 +21,8 @@
         <th>Representation</th>
         <th>Details</th>
         <% if @file_issue['issue_type'] === 'DIGITAL' %>
-          <th>Upload Date</th>
-          <th>Link Expiry Date</th>
+          <th style="width: 200px;">Upload Date</th>
+          <th style="width: 200px;">Link Expiry Date</th>
         <% else %>
           <th style="width: 140px;">Dispatch</th>
           <th style="width: 140px;">Expiry</th>
