@@ -3,6 +3,10 @@ en:
     there_can_only_be_one_file_with_an_import_role: There can only be one file with an Import role
     cannot_check_metadata_received_until_an_import_file_has_been_attached: "Cannot check metadata received until an Import file has been attached"
     cannot_check_metadata_approved_until_metadata_received_has_been_checked: "Cannot check metadata approved until metadata received has been checked"
+    cannot_check_dispatched_until_all_items_have_a_dispatch_date: "Cannot check dispatched until all items have a dispatch date"
+    dispatch_date_is_required_when_item_has_expiry_or_returned_date: "Dispatch date is required when item has expiry or returned date"
+    expiry_date_is_required_when_item_has_dispatch_date: "Expiry date is required when item has dispatch date"
+    cannot_check_completed_until_all_items_have_a_returned_date: "Cannot check completed until all items have a returned date"
   transfer_proposal:
     _frontend:
       section:
@@ -212,5 +216,33 @@ en:
 
   file_issue:
     agency: Agency
+    issue_type: Issue Type
+    status: Status
+    agency_location_display_string: Agency Location
+    urgent: Urgent?
+    deliver_to_reading_room: Deliver to Reading Room?
+    checklist_submitted: Request Submitted
+    checklist_retrieval_started: Retrieval Started
+    checklist_dispatched: Files Dispatched/Uploaded
+    checklist_summary_sent: File Issue Summary Sent
+    checklist_completed: Link Expired/Loan Returned
+    dispatch_date: Dispatch Date
+    dispatched_by: Dispatched By
+    expiry_date: Expiry Date
+    returned_date: Returned Date
+    received_by: Received By
+    _frontend:
+      action:
+        save: Save File Issue
+        mark_dispatched: Mark as Dispatched
+        mark_received: Mark as Received
+        dispatch_button: Apply to Dispatch fields
+        receive_button: Apply to Returned fields
+      section:
+        basic_information: Basic Information
+        checklist: Checklist
+        requested_representations: Requested Representations
+      messages:
+        updated: File Issue updated
     _plural: File Issues
     _singular: File Issue

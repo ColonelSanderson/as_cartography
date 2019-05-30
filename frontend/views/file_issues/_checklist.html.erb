@@ -1,22 +1,22 @@
-<section id="file_issue_checklist" class="subrecord-form file_issue-checklist">
-  <h3 class="subrecord-form-heading-label"><%= I18n.t("file_issue._frontend.section.checklist") %></h3>
-  <div class="file_issue_checklist_item">
-    <%= form.label_and_boolean 'checklist_submitted', disabled: true %>
-  </div>
-
-  <div class="file_issue_checklist_item">
-    <%= form.label_and_boolean 'checklist_retrieval_started' %>
-  </div>
-
-  <div class="file_issue_checklist_item">
-    <%= form.label_and_boolean 'checklist_dispatched' %>
-  </div>
-
-  <div class="file_issue_checklist_item">
-    <%= form.label_and_boolean 'checklist_summary_sent' %>
-  </div>
-
-  <div class="file_issue_checklist_item">
-    <%= form.label_and_boolean 'checklist_completed' %>
-  </div>
+<section id="file_issue_checklist_" class="subrecord-form file_issue-checklist">
+    <h3 class="subrecord-form-heading-label"><%= I18n.t("file_issue._frontend.section.checklist") %></h3>
+    <div class="subrecord-form-container">
+        <div class="subrecord-form-fields">
+            <div class="file_issue_checklist_item">
+                <%= form.label_and_boolean 'checklist_submitted', disabled: true %>
+            </div>
+            <div class="file_issue_checklist_item">
+                <%= form.label_and_boolean 'checklist_retrieval_started' %>
+            </div>
+            <div class="file_issue_checklist_item">
+                <%= form.label_and_boolean 'checklist_dispatched' %>
+            </div>
+            <div class="file_issue_checklist_item">
+                <%= form.label_and_boolean 'checklist_summary_sent' %>
+            </div>
+            <div class="file_issue_checklist_item">
+                <%= form.label_and_boolean 'checklist_completed' %>
+            </div>
+        </div>
+    </div>
 </section>

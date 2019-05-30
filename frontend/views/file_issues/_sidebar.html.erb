@@ -4,7 +4,8 @@
                :record => @file_issue,
                :suppress_submit_buttons => true,
            }) do |sidebar| %>
-    <%= sidebar.render_for_view_and_edit(:subrecord_type => 'requested_representations', :property => :none) %>
+    <%= sidebar.render_for_view_and_edit(:subrecord_type => 'checklist', :property => :none, :anchor => 'file_issue_checklist_') %>
+    <%= sidebar.render_for_view_and_edit(:subrecord_type => 'requested_representations', :property => :none, :anchor => 'file_issue_requested_representations_') %>
 
     <% if is_readonly %>
         <% ['digital', 'physical'].each do |quote_type| %>
