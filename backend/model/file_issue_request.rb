@@ -176,7 +176,7 @@ class FileIssueRequest < Sequel::Model
           json["file_issue_#{issue_type}"] = {'ref' => JSONModel(:file_issue).uri_for(file_issue[:id])}
         end
 
-        json['title'] = "FIR%s" % [obj.id.to_s]
+        json['title'] = "R%s" % [obj.id.to_s]
       end
     end
 
