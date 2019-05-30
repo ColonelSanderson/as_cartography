@@ -197,6 +197,8 @@ en:
     delivery_location: Delivery Location
     representation: Representation
     representations: Representations
+    digital_processing_estimate: Processing Estimate
+    physical_processing_estimate: Processing Estimate
     quote:
       unit_description: Unit description
       unit_cost: Unit cost

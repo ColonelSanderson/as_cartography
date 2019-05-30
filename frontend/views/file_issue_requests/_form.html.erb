@@ -120,7 +120,7 @@
 
 
             <% if is_readonly %>
-                <%= render_aspace_partial :partial => "quotes" %>
+                <%= render_aspace_partial :partial => "quotes", locals: {form: readonly} %>
             <% end %>
 
 
@@ -131,11 +131,6 @@
                 </section>
 
                 <%= display_audit_info(@file_issue_request) %>
-            <% else %>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary"><%= I18n.t("file_issue_request._frontend.action.save") %></button>
-                    <%= link_to I18n.t("actions.cancel"), {:controller => :file_issue_requests, :action => :show, :id => @file_issue_request.id}, :class => "btn btn-cancel btn-default" %>
-                </div>
             <% end %>
     <% end %>
 

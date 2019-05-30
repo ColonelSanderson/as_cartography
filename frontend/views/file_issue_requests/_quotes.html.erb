@@ -167,6 +167,8 @@
                 </tr>
             </table>
 
+            <%= form.label_and_textarea "#{quote_type}_processing_estimate" %>
+
             <% unless quote['issued_date'] %>
                 <div class="quote-json" style="display:none;">
                     <%= quote.to_json %>
@@ -226,7 +228,7 @@
                 <h3><%= I18n.t("file_issue_request._frontend.section.#{type}") %></h3>
 
                 <div style="padding-bottom:40px;">
-                    <div class="btn-group pull-left">
+                    <div class="btn-group">
                         <%= link_to I18n.t("file_issue_request._frontend.action.generate_#{type}"),
                                     {:controller => :file_issue_requests,
                                      :action => :generate_quote,
@@ -234,6 +236,8 @@
                                      :id => @file_issue_request.id},
                                     :class => "btn btn-sm btn-success", :method => :post %>
                     </div>
+
+                    <%= form.label_and_textarea "#{quote_type}_processing_estimate" %>
                 </div>
             </section>
         <% end %>
