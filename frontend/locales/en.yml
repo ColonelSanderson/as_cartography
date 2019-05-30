@@ -194,7 +194,7 @@ en:
     digital_request_status: Digital Request Status
     urgent: Urgent?
     request_notes: Notes
-    deliver_to_reading_room: Deliver to reading room?
+    delivery_location: Delivery Location
     representation: Representation
     representations: Representations
     quote:
@@ -220,7 +220,7 @@ en:
     status: Status
     agency_location_display_string: Agency Location
     urgent: Urgent?
-    deliver_to_reading_room: Deliver to Reading Room?
+    delivery_location: Delivery Location
     checklist_submitted: Request Submitted
     checklist_retrieval_started: Retrieval Started
     checklist_dispatched: Files Dispatched/Uploaded

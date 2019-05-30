@@ -15,7 +15,7 @@ class FileIssuePhysicalQuoteGenerator < QuoteGenerator
 
 
   add_rule('File Issue Delivery') do |fir|
-    fir['deliver_to_reading_room'] ? 0 : 1
+    fir['delivery_location'] == 'AGENCY_LOCATION' ? 1 : 0
   end
 
 
