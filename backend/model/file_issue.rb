@@ -156,7 +156,7 @@ class FileIssue < Sequel::Model
 
         json['file_issue_request'] = {'ref' => JSONModel(:file_issue_request).uri_for(obj.file_issue_request_id)}
 
-        json['title'] = "FI%s%s: %s" % [obj.issue_type[0].upcase, obj.id.to_s, Time.at(obj.create_time).to_s]
+        json['title'] = "FI%s%s" % [obj.issue_type[0].upcase, obj.id.to_s]
       end
     end
 
