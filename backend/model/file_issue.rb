@@ -95,6 +95,29 @@ class FileIssue < Sequel::Model
                 received_by: item['received_by'])
     end
 
+    # Create any digital file issue tokens, reusing token keys if they've
+    # already been minted.
+    existing_token_keys = self.db[:file_issue_token]
+                            .filter(:file_issue_id => self.id)
+                            .map {|row|
+      [row[:aspace_digital_representation_id], row[:token_key]]
+    }.to_h
+
+    self.db[:file_issue_token].filter(:file_issue_id => self.id).delete
+
+    json[:requested_representations].each do |item|
+      parsed = JSONModel.parse_reference(item['ref'])
+      next unless parsed.fetch(:type) == 'digital_representation'
+      next unless item['dispatch_date'] && item['expiry_date']
+
+      self.db[:file_issue_token].insert(
+        token_key: existing_token_keys.fetch(parsed[:id]) { SecureRandom.hex },
+        aspace_digital_representation_id: parsed[:id],
+        file_issue_id: self.id,
+        expire_date: Date.parse(item['expiry_date']).to_time.to_i
+      )
+    end
+
     super
   end
 
