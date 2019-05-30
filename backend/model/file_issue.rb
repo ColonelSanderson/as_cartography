@@ -20,6 +20,8 @@ class FileIssue < Sequel::Model
   ISSUE_TYPE_DIGITAL = 'DIGITAL'
   ISSUE_TYPE_PHYSICAL = 'PHYSICAL'
 
+  DIGITAL_DEFAULT_EXPIRY_DAYS = 14
+  PHYSICAL_DEFAULT_EXPIRY_DAYS = 90
 
   def update_from_json(json, opts = {}, apply_nested_records = true)
     # The status of a transfer is determined by its checklist.  Make sure the
@@ -65,6 +67,19 @@ class FileIssue < Sequel::Model
 
     # Update the items table to reflect the latest types
     json[:requested_representations].each do |item|
+      if item['dispatch_date'] && item['expiry_date'].nil?
+        begin
+          dispatch_date = Date.parse(item['dispatch_date'])
+          if self.issue_type == ISSUE_TYPE_DIGITAL
+            item['expiry_date'] = (dispatch_date + DIGITAL_DEFAULT_EXPIRY_DAYS).to_s
+          else
+            item['expiry_date'] = (dispatch_date + PHYSICAL_DEFAULT_EXPIRY_DAYS).to_s
+          end
+        rescue
+          # validations will pick up invalid dates
+        end
+      end
+
       self.db[:file_issue_item]
         .filter(id: item['id'])
         .filter(file_issue_id: self.id)
@@ -154,6 +169,7 @@ class FileIssue < Sequel::Model
         errors.add(:checklist, "Cannot check dispatched until all items have a dispatch date")
       end
     end
+
     # physical: checklist_completed is only set once all requested_representations have a returned_date
     if self.issue_type == ISSUE_TYPE_PHYSICAL && self.checklist_completed == 1
       not_yet_returned_count = self.db[:file_issue_item]
@@ -163,6 +179,26 @@ class FileIssue < Sequel::Model
       if not_yet_returned_count > 0
         errors.add(:checklist, "Cannot check completed until all items have a returned date")
       end
+    end
+
+    # expiry date required if there's a dispatch date
+    requiring_expiry_date_count = self.db[:file_issue_item]
+                                    .filter(file_issue_id: self.id)
+                                    .filter(Sequel.~(dispatch_date: nil))
+                                    .filter(expiry_date: nil)
+                                    .count
+    if requiring_expiry_date_count > 0
+      errors.add(:requested_representations, "Expiry date is required when item has dispatch date")
+    end
+
+    # dispatch date is requird if expiry or return date is provided
+    requiring_dispatch_date = self.db[:file_issue_item]
+                                .filter(file_issue_id: self.id)
+                                .filter(Sequel.|(Sequel.~(returned_date: nil), Sequel.~(expiry_date: nil)))
+                                .filter(dispatch_date: nil)
+                                .count
+    if requiring_dispatch_date > 0
+      errors.add(:requested_representations, "Dispatch date is required when item has expiry or returned date")
     end
   end
 

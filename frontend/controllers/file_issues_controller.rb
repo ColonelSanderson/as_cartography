@@ -24,6 +24,7 @@ class FileIssuesController < ApplicationController
 
   def edit
     @file_issue = JSONModel(:file_issue).find(params[:id], find_opts.merge('resolve[]' => RESOLVES))
+    @current_user = User.find('current-user')
   end
 
   def update
@@ -56,6 +57,7 @@ class FileIssuesController < ApplicationController
                 :model => JSONModel(:file_issue),
                 :obj => JSONModel(:file_issue).find(params[:id], find_opts.merge('resolve[]' => RESOLVES)),
                 :on_invalid => ->(){
+                  @current_user = User.find('current-user')
                   render action: "edit"
                 },
                 :on_valid => ->(id){

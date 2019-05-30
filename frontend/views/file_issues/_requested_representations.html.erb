@@ -1,59 +1,120 @@
 <section id="requested_representations">
   <h3>Requested Representations</h3>
 
+  <% unless form.readonly? %>
+    <div class="btn-group pull-right">
+      <a class="btn btn-info disabled" href="javascript:void(0)" id="dispatch">Mark as Dispatched</a>
+      <a class="btn btn-info disabled" href="javascript:void(0)" id="receive">Mark as Returned</a>
+    </div>
+  <% end %>
+
   <table class="table table-bordered table-striped">
-    <tr>
-      <th style="width: 40px;">Request Type</th>
-      <th>Representation</th>
-      <th>Details</th>
-      <% if @file_issue['issue_type'] === 'DIGITAL' %>
-        <th>Upload Date</th>
-        <th>Link Expiry Date</th>
-      <% else %>
-        <th style="width: 140px;">Dispatch</th>
-        <th style="width: 140px;">Expiry</th>
-        <th style="width: 140px;">Returned</th>
-        <th style="width: 40px;">Overdue?</th>
-      <% end %>
-    </tr>
-    <% (@file_issue['requested_representations'] or []).each_with_index do |item, idx| %>
-      <% form.push(form.set_index('requested_representations[]', idx), item) do  %>
-        <tr <% if item['overdue'] %>class="danger"<% end %>>
-          <td>
-            <span class="label label-info"><%= @file_issue['issue_type'] %></span>
-          </td>
-          <td>
-            <div class="form-group">
-              <div class="token-list">
-                <%= render_token(:object => item['_resolved'],
-                                 :label => CGI::escapeHTML(item['_resolved']['title']),
-                                 :type => item['_resolved']['jsonmodel_type'],
-                                 :uri => item['ref'],
-                                 :placement => "top",
-                                 :inside_linker_browse => true) %>
+    <thead>
+      <tr>
+        <% unless form.readonly? %>
+          <th style="width: 40px;">
+            <label><input type="checkbox"> <span class="sr-only">Toggle All</span></label>
+          </th>
+        <% end %>
+        <th>Representation</th>
+        <th>Details</th>
+        <% if @file_issue['issue_type'] === 'DIGITAL' %>
+          <th>Upload Date</th>
+          <th>Link Expiry Date</th>
+        <% else %>
+          <th style="width: 140px;">Dispatch</th>
+          <th style="width: 140px;">Expiry</th>
+          <th style="width: 140px;">Returned</th>
+          <th style="width: 40px;">Overdue?</th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% (@file_issue['requested_representations'] or []).each_with_index do |item, idx| %>
+        <% form.push(form.set_index('requested_representations[]', idx), item) do  %>
+          <tr <% if item['overdue'] %>class="danger"<% end %>>
+            <% unless form.readonly? %>
+              <td>
+                <label><%= form.checkbox('id') %> <span class="sr-only">Toggle row</span></label>
+              </td>
+            <% end %>
+            <td>
+              <div class="form-group">
+                <div class="token-list">
+                  <%= render_token(:object => item['_resolved'],
+                                   :label => CGI::escapeHTML(item['_resolved']['title']),
+                                   :type => item['_resolved']['jsonmodel_type'],
+                                   :uri => item['ref'],
+                                   :placement => "top",
+                                   :inside_linker_browse => true) %>
+                </div>
               </div>
-            </div>
-          </td>
-          <td><%= item['record_details'] or '' %></td>
-          <td>
-            <div><%= form.label('dispatch_date', {}, ['text-muted']) %><br><%= form.textfield('dispatch_date', form.obj['dispatch_date'], placeholder: 'YYYY-MM-DD') %></div>
-            <div><%= form.label('dispatched_by', {}, ['text-muted']) %><br><%= form.textfield('dispatched_by', form.obj['dispatched_by']) %></div>
-          </td>
-          <td>
-            <%= form.label('expiry_date', {}, ['text-muted']) %><br>
-            <%= form.textfield('expiry_date', form.obj['expiry_date'], placeholder: 'YYYY-MM-DD') %>
-          </td>
-          <% if @file_issue['issue_type'] === 'PHYSICAL' %>
+            </td>
+            <td><%= item['record_details'] or '' %></td>
             <td>
-              <div><%= form.label('returned_date', {}, ['text-muted']) %><br><%= form.textfield('returned_date', form.obj['returned_date'], placeholder: 'YYYY-MM-DD') %></div>
-              <div><%= form.label('received_by', {}, ['text-muted']) %><br><%= form.textfield('received_by', form.obj['received_by']) %></div>
+              <div><%= form.label('dispatch_date', {}, ['text-muted']) %><br><%= form.textfield('dispatch_date', form.obj['dispatch_date'], placeholder: 'YYYY-MM-DD') %></div>
+              <div><%= form.label('dispatched_by', {}, ['text-muted']) %><br><%= form.textfield('dispatched_by', form.obj['dispatched_by']) %></div>
             </td>
             <td>
-              <% if item['overdue'] %><span class="text-danger">Yes</span><% else %>No<% end %>
+              <%= form.label('expiry_date', {}, ['text-muted']) %><br>
+              <%= form.textfield('expiry_date', form.obj['expiry_date'], placeholder: 'YYYY-MM-DD') %>
             </td>
-          <% end %>
-        </tr>
+            <% if @file_issue['issue_type'] === 'PHYSICAL' %>
+              <td>
+                <div><%= form.label('returned_date', {}, ['text-muted']) %><br><%= form.textfield('returned_date', form.obj['returned_date'], placeholder: 'YYYY-MM-DD') %></div>
+                <div><%= form.label('received_by', {}, ['text-muted']) %><br><%= form.textfield('received_by', form.obj['received_by']) %></div>
+              </td>
+              <td>
+                <% if item['overdue'] %><span class="text-danger">Yes</span><% else %>No<% end %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
       <% end %>
-    <% end %>
+    </tbody>
   </table>
 </section>
+
+<% unless form.readonly? %>
+  <%# FIXME I18n %>
+  <div id="requested_representations_dispatch_template"
+       data-title="<%= I18n.t("file_issue._frontend.messages.dispatch_modal_title") %>"><!--
+     <div class="modal-body">
+        <div>
+          <label for="dispatch_date">Dispatch Date</label><br>
+          <input id="dispatch_date" class="form-control" type="text" value="<%= Date.today %>"/>
+        </div>
+        <div>
+          <label for="dispatched_by">Dispatched By</label><br>
+          <input id="dispatched_by" class="form-control" type="text" value="<%= @current_user.name %>"/>
+        </div>
+        <div>
+          <label for="expiry_date">Expiry Date</label><br>
+          <input id="expiry_date" class="form-control" type="text" value="<%= Date.today + (@file_issue['issue_type'] === 'PHYSICAL' ? 90 : 14) %>"/>
+        </div>
+     </div>
+     <div class="modal-footer">
+        <button class="btn btn-primary confirmButton"><%= I18n.t('file_issue._frontend.dispatch_button') %></button>
+        <button class="btn btn-cancel btn-default" data-dismiss="modal"><%= I18n.t "actions.cancel" %></button>
+     </div>
+  --></div>
+
+  <%# FIXME I18n %>
+  <div id="requested_representations_receive_template"
+       data-title="<%= I18n.t("file_issue._frontend.messages.receive_modal_title") %>"><!--
+     <div class="modal-body">
+        <div>
+          <label for="returned_date">Return Date</label><br>
+          <input id="returned_date" class="form-control" type="text" value="<%= Date.today %>"/>
+        </div>
+        <div>
+          <label for="received_by">Received By</label><br>
+          <input id="received_by" class="form-control" type="text" value="<%= @current_user.name %>"/>
+        </div>
+     </div>
+     <div class="modal-footer">
+        <button class="btn btn-primary confirmButton"><%= I18n.t('file_issue._frontend.receive_button') %></button>
+        <button class="btn btn-cancel btn-default" data-dismiss="modal"><%= I18n.t "actions.cancel" %></button>
+     </div>
+  --></div>
+<% end %>
