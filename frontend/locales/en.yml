@@ -221,6 +221,7 @@ en:
     agency_location_display_string: Agency Location
     urgent: Urgent?
     delivery_location: Delivery Location
+    delivery_address: Delivery Address
     checklist_submitted: Request Submitted
     checklist_retrieval_started: Retrieval Started
     checklist_dispatched: Files Dispatched/Uploaded

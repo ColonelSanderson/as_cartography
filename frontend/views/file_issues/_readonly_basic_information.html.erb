@@ -35,6 +35,15 @@
             <%= form.label_and_textfield "request_notes" %>
 
             <%= form.label_and_textfield "delivery_location" %>
+
+            <% if @file_issue.delivery_address %>
+              <div class="form-group">
+                <div class="col-sm-2 control-label"><%= I18n.t('file_issue.delivery_address') %></div>
+                <div class="col-sm-9 label-only">
+                  <div style="white-space: pre"><%= @file_issue.delivery_address %></div>
+                </div>
+              </div>
+            <% end %>
         </section>
     <% end %>
 

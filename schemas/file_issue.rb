@@ -31,6 +31,7 @@
 
       "urgent" => {"type" => "boolean", "readonly" => "true"},
       "delivery_location" => {"type" => "string", "readonly" => "true"},
+      "delivery_address" => {"type" => "string", "readonly" => "true"},
       "delivery_authorizer" => {"type" => "string", "readonly" => "true"},
 
       "status" => {"type" => "string"},

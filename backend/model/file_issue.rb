@@ -110,7 +110,7 @@ class FileIssue < Sequel::Model
           .to_h
 
       agency_locations =
-        mapdb[:agency_location].filter(:agency_id => objs.map(&:agency_id)).map {|row| [row[:agency_id], row[:name]]}.to_h
+        mapdb[:agency_location].filter(:agency_id => objs.map(&:agency_id)).map {|row| [row[:agency_id], {name: row[:name], delivery_address: row[:delivery_address]}]}.to_h
 
       file_issue_items =
         mapdb[:file_issue_item]
@@ -128,7 +128,10 @@ class FileIssue < Sequel::Model
 
       jsons.zip(objs).each do |json, obj|
         json['agency'] = {'ref' => JSONModel(:agent_corporate_entity).uri_for(aspace_agents.fetch(obj.agency_id))}
-        json['agency_location_display_string'] = agency_locations.fetch(obj.agency_location_id, nil)
+        json['agency_location_display_string'] = agency_locations.fetch(obj.agency_location_id, {})[:name]
+        if json['delivery_location'] == 'AGENCY_LOCATION'
+          json['delivery_address'] = agency_locations.fetch(obj.agency_location_id, {})[:delivery_address]
+        end
 
         json['handle_id'] = handles.fetch(obj.id, nil)
         json['handle_id'] = json['handle_id'].to_s if json['handle_id']
