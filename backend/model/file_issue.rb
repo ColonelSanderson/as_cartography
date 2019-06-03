@@ -114,6 +114,7 @@ class FileIssue < Sequel::Model
         token_key: existing_token_keys.fetch(parsed[:id]) { SecureRandom.hex },
         aspace_digital_representation_id: parsed[:id],
         file_issue_id: self.id,
+        dispatch_date: Date.parse(item['dispatch_date']).to_time.to_i,
         expire_date: Date.parse(item['expiry_date']).to_time.to_i
       )
     end
