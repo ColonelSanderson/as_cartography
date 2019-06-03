@@ -8,4 +8,17 @@ Rails.application.config.after_initialize do
   Dir.glob(File.join(File.dirname(__FILE__), "..", "schemas", "*.rb")).each do |schema|
     JSONModel(File.basename(schema, ".rb").intern)
   end
+
+  Plugins.register_plugin_section(
+    Plugins::PluginReadonlySearch.new(
+      'as_cartography',
+      'file_issues',
+      ['physical_representation', 'digital_representation'],
+      {
+        filter_term_proc: proc { |record| { "file_issue_item_uri_u_sstr" => record.uri }.to_json },
+        heading_text: I18n.t("file_issue._plural"),
+        sidebar_label: "N/A",
+      }
+    )
+  )
 end
