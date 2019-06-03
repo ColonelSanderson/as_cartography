@@ -233,7 +233,7 @@ en:
     checklist_retrieval_started: Retrieval Started
     checklist_dispatched: Files Dispatched/Uploaded
     checklist_summary_sent: File Issue Summary Sent
-    checklist_completed: Link Expired/Loan Returned
+    checklist_completed: Loan Returned
     dispatch_date: Dispatch Date
     dispatched_by: Dispatched By
     expiry_date: Expiry Date

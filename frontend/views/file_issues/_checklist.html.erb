@@ -15,7 +15,9 @@
                 <%= form.label_and_boolean 'checklist_summary_sent' %>
             </div>
             <div class="file_issue_checklist_item">
-                <%= form.label_and_boolean 'checklist_completed' %>
+                <% if form.obj['issue_type'] == 'PHYSICAL' %>
+                  <%= form.label_and_boolean 'checklist_completed' %>
+                <% end %>
             </div>
         </div>
     </div>

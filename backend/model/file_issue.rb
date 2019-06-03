@@ -68,6 +68,10 @@ class FileIssue < Sequel::Model
                STATUS_FILE_ISSUE_COMPLETE
              end
 
+    if json[:issue_type] == ISSUE_TYPE_DIGITAL && json[:checklist_summary_sent] && status == STATUS_FILE_ISSUE_ACTIVE
+      status = STATUS_FILE_ISSUE_COMPLETE
+    end
+
     json[:status] = status
 
     # Update the items table to reflect the latest types
