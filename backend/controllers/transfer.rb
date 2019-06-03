@@ -52,11 +52,11 @@ class ArchivesSpaceService < Sinatra::Base
     end
 
     job_hash = {
-      "job_type" => "import_job",
+      "job_type" => "transfer_import_job",
       "jsonmodel_type" => "job",
       "job_params" => "",
       "job" => {
-        "jsonmodel_type" => "import_job",
+        "jsonmodel_type" => "transfer_import_job",
         "filenames" => [ import[:filename] ],
         "import_type" => "agency_transfer",
         "opts" => {
@@ -72,23 +72,6 @@ class ArchivesSpaceService < Sinatra::Base
 
       transfer.import_job_uri = job.uri
       transfer.save
-
-      # bankrupcy declared!
-      Thread.new do
-        RequestContext.open(:repo_id => params[:repo_id]) do
-          # give the insert transaction time to commit
-          sleep 2
-          j = Job[job.id]
-          while !['completed', 'failed', 'canceled'].include?(j.status)
-            sleep 2
-            j.refresh
-          end
-          if j.status == 'completed'
-            transfer.checklist_metadata_imported = 1
-            transfer.save
-          end
-        end
-      end
 
       json_response(:status => "submitted", :job => job.uri)
     end
