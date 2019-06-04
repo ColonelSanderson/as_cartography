@@ -212,6 +212,18 @@ en:
       total: TOTAL
 
   requested_representations:
+    request_type: Request Type
+    representation: Representation
+    warning_digital_representation_not_linked: Requested representation must be linked to a Digital Representation before approval is permitted
+    details: Details
+    toggle_all: Toggle all
+    toggle: Toggle this representation
+    upload_date: Upload Date
+    link_expiry_date: Link Expiry Date
+    dispatch: Dispatch
+    expiry: Expiry
+    returned: Returned
+    overdue: Overdue?
     _plural: Requested Representations
 
   search_results:

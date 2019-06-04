@@ -62,106 +62,109 @@
                 </div>
               </div>
             <% end %>
+        </section>
 
-            <%# FIXME: i18n %>
-            <section id="requested_representations">
-                <h3>Requested Representations</h3>
-
-                <table class="table table-striped">
-                    <tr>
-                        <th>Request Type</th>
-                        <th>Representation</th>
-                        <th>Details</th>
-                        <% unless is_readonly %>
-                            <th><%# Actions %></th>
-                        <% end %>
-                    </tr>
-                    <% (@file_issue_request['requested_representations'] or []).each_with_index do |request, idx| %>
+        <section id="requested_representations" class="subrecord-form-dummy">
+            <h3 class="subrecord-form-heading-label"><%= I18n.t('requested_representations._plural') %></h3>
+            <div class="subrecord-form-container">
+                <div class="subrecord-form-fields">
+                    <table class="table table-striped">
                         <tr>
-                            <td><span class="label label-info"><%= request['request_type'] %></span></td>
-                            <td>
-                                <% if @file_issue_request["digital_request_status"] == 'QUOTE_ACCEPTED' && request['request_type'] == 'DIGITAL' && request['_resolved']['jsonmodel_type'] == 'physical_representation' %>
-                                  <div class="text-warning">
-                                    Requested representation must be linked to a Digital Representation before approval is permitted 
-                                  </div>
-                                <% end %>
-                                <% if is_readonly %>
-                                    <div class="form-group">
-                                        <div class="token-list">
-                                            <span class="label label-info"><%= I18n.t("#{request['_resolved']['jsonmodel_type']}._singular") %></span>
-                                            <%= render_token(:object => request['_resolved'],
-                                                             :label => CGI::escapeHTML(request['_resolved']['display_string']),
-                                                             :type => request['_resolved']['jsonmodel_type'],
-                                                             :uri => request['ref'],
-                                                             :placement => "top",
-                                                             :inside_linker_browse => true) %>
+                            <th><%= I18n.t('requested_representations.request_type') %></th>
+                            <th><%= I18n.t('requested_representations.representation') %></th>
+                            <th><%= I18n.t('requested_representations.details') %></th>
+                            <% unless is_readonly %>
+                                <th><%# Actions %></th>
+                            <% end %>
+                        </tr>
+                        <% (@file_issue_request['requested_representations'] or []).each_with_index do |request, idx| %>
+                            <tr>
+                                <td><span class="label label-info"><%= request['request_type'] %></span></td>
+                                <td>
+                                    <% if @file_issue_request["digital_request_status"] == 'QUOTE_ACCEPTED' && request['request_type'] == 'DIGITAL' && request['_resolved']['jsonmodel_type'] == 'physical_representation' %>
+                                      <div class="text-warning">
+                                        <% I18n.t('requested_representations.warning_digital_representation_not_linked') %>
+                                      </div>
+                                    <% end %>
+                                    <% if is_readonly %>
+                                        <div class="form-group">
+                                            <div class="token-list">
+                                                <span class="label label-info"><%= I18n.t("#{request['_resolved']['jsonmodel_type']}._singular") %></span>
+                                                <%= render_token(:object => request['_resolved'],
+                                                                 :label => CGI::escapeHTML(request['_resolved']['display_string']),
+                                                                 :type => request['_resolved']['jsonmodel_type'],
+                                                                 :uri => request['ref'],
+                                                                 :placement => "top",
+                                                                 :inside_linker_browse => true) %>
+                                            </div>
                                         </div>
-                                    </div>
-                                <% else %>
-                                    <%# FIXME: Need the extra restriction on responsible agency here... %>
-                                    <div class="col-sm-9">
-                                        <div class="form-group required">
-                                            <div class="input-group linker-wrapper">
-                                                <input id="linker_request_<%= idx %>" type="text" class="linker"
-                                                       data-label="<%= I18n.t("file_issue_request.representation") %>"
-                                                       data-label_plural="<%= I18n.t("file_issue_request.representations") %>"
-                                                       data-path="file_issue_request[requested_representations][]"
-                                                       data-name="ref"
-                                                       data-url="<%= url_for(:controller => :search,
-                                                                             :action => :do_search,
-                                                                             :format => :json,
-                                                                             :filter_term => [
-                                                                                 {"controlling_record_u_sstr" => request['_resolved']['controlling_record']['ref']}.to_json,
-                                                                                 {'file_issue_allowed_u_sbool' => true}.to_json
-                                                                             ])
-                                                                 %>"
-                                                       data-browse-url="<%= url_for(:controller => :search,
-                                                                                    :action => :do_search,
-                                                                                    :format => :js,
-                                                                                    :filter_term => [
-                                                                                        {"controlling_record_u_sstr" => request['_resolved']['controlling_record']['ref']}.to_json,
-                                                                                        {'file_issue_allowed_u_sbool' => true}.to_json
-                                                                                    ])
-                                                                        %>"
-                                                       data-selected="<%= ASUtils.to_json(request['_resolved'] || {}) %>"
-                                                       data-format_property="title"
-                                                       data-multiplicity="one"
-                                                       data-types='["physical_representation", "digital_representation"]'/>
-                                                <div class="input-group-btn">
-                                                    <a class="btn btn-default dropdown-toggle last" data-toggle="dropdown" href="javascript:void(0);"><span class="caret"></span></a>
-                                                    <ul class="dropdown-menu">
-                                                        <li><a href="javascript:void(0);" class="linker-browse-btn"><%= I18n.t("actions.browse") %></a></li>
-                                                    </ul>
+                                    <% else %>
+                                        <%# FIXME: Need the extra restriction on responsible agency here... %>
+                                        <div class="col-sm-9">
+                                            <div class="form-group required">
+                                                <div class="input-group linker-wrapper">
+                                                    <input id="linker_request_<%= idx %>" type="text" class="linker"
+                                                           data-label="<%= I18n.t("file_issue_request.representation") %>"
+                                                           data-label_plural="<%= I18n.t("file_issue_request.representations") %>"
+                                                           data-path="file_issue_request[requested_representations][]"
+                                                           data-name="ref"
+                                                           data-url="<%= url_for(:controller => :search,
+                                                                                 :action => :do_search,
+                                                                                 :format => :json,
+                                                                                 :filter_term => [
+                                                                                     {"controlling_record_u_sstr" => request['_resolved']['controlling_record']['ref']}.to_json,
+                                                                                     {'file_issue_allowed_u_sbool' => true}.to_json
+                                                                                 ])
+                                                                     %>"
+                                                           data-browse-url="<%= url_for(:controller => :search,
+                                                                                        :action => :do_search,
+                                                                                        :format => :js,
+                                                                                        :filter_term => [
+                                                                                            {"controlling_record_u_sstr" => request['_resolved']['controlling_record']['ref']}.to_json,
+                                                                                            {'file_issue_allowed_u_sbool' => true}.to_json
+                                                                                        ])
+                                                                            %>"
+                                                           data-selected="<%= ASUtils.to_json(request['_resolved'] || {}) %>"
+                                                           data-format_property="title"
+                                                           data-multiplicity="one"
+                                                           data-types='["physical_representation", "digital_representation"]'/>
+                                                    <div class="input-group-btn">
+                                                        <a class="btn btn-default dropdown-toggle last" data-toggle="dropdown" href="javascript:void(0);"><span class="caret"></span></a>
+                                                        <ul class="dropdown-menu">
+                                                            <li><a href="javascript:void(0);" class="linker-browse-btn"><%= I18n.t("actions.browse") %></a></li>
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                <% end %>
-                            </td>
-                            <td><%= request['record_details'] or '' %></td>
-                            <% unless is_readonly %>
-                                <td class="table-record-actions">
-                                    <div class="btn-group">
-                                        <button class="btn btn-danger">Remove</button>
-                                    </div>
+                                    <% end %>
                                 </td>
-                            <% end %>
-                        </tr>
-                    <% end %>
-                </table>
-            </section>
+                                <td><%= request['record_details'] or '' %></td>
+                                <% unless is_readonly %>
+                                    <td class="table-record-actions">
+                                        <div class="btn-group">
+                                            <button class="btn btn-danger"><%= I18n.t('actions.remove') %></button>
+                                        </div>
+                                    </td>
+                                <% end %>
+                            </tr>
+                        <% end %>
+                    </table>
+                </div>
+            </div>
+        </section>
 
 
-            <% if is_readonly %>
-                <%= render_aspace_partial :partial => "quotes", locals: {form: readonly} %>
-            <% end %>
+        <% if is_readonly %>
+            <%= render_aspace_partial :partial => "quotes", locals: {form: readonly} %>
+        <% end %>
 
 
-            <% if is_readonly %>
-                <%= render_aspace_partial :partial => "shared/conversation_widget", :locals => { handle_id: @file_issue_request.handle_id } %>
+        <% if is_readonly %>
+            <%= render_aspace_partial :partial => "shared/conversation_widget", :locals => { handle_id: @file_issue_request.handle_id } %>
 
-                <%= display_audit_info(@file_issue_request) %>
-            <% end %>
+            <%= display_audit_info(@file_issue_request) %>
+        <% end %>
     <% end %>
 
     <% readonly.emit_template "file_issue_request" %>

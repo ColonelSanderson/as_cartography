@@ -21,19 +21,19 @@
           <tr>
             <% unless form.readonly? %>
               <th style="width: 40px;">
-                <label><input type="checkbox"> <span class="sr-only">Toggle All</span></label>
+                <label><input type="checkbox"> <span class="sr-only"><%= I18n.t('requested_representations.toggle_all') %></span></label>
               </th>
             <% end %>
-            <th>Representation</th>
-            <th>Details</th>
+            <th><%= I18n.t('requested_representations.representation') %></th>
+            <th><%= I18n.t('requested_representations.details') %></th>
             <% if @file_issue['issue_type'] === 'DIGITAL' %>
-              <th style="width: 200px;">Upload Date</th>
-              <th style="width: 200px;">Link Expiry Date</th>
+              <th style="width: 200px;"><%= I18n.t('requested_representations.upload_date') %></th>
+              <th style="width: 200px;"><%= I18n.t('requested_representations.link_expiry_date') %></th>
             <% else %>
-              <th style="width: 140px;">Dispatch</th>
-              <th style="width: 140px;">Expiry</th>
-              <th style="width: 140px;">Returned</th>
-              <th style="width: 40px;">Overdue?</th>
+              <th style="width: 140px;"><%= I18n.t('requested_representations.dispatch') %></th>
+              <th style="width: 140px;"><%= I18n.t('requested_representations.expiry') %></th>
+              <th style="width: 140px;"><%= I18n.t('requested_representations.returned') %></th>
+              <th style="width: 40px;"><%= I18n.t('requested_representations.overdue') %></th>
             <% end %>
           </tr>
         </thead>
@@ -43,7 +43,7 @@
               <tr <% if item['overdue'] %>class="danger"<% end %>>
                 <% unless form.readonly? %>
                   <td>
-                    <label><%= form.checkbox('id') %> <span class="sr-only">Toggle row</span></label>
+                    <label><%= form.checkbox('id') %> <span class="sr-only"><%= I18n.t('requested_representations.toggle') %></span></label>
                   </td>
                 <% end %>
                 <td>

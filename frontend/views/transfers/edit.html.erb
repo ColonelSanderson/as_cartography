@@ -18,79 +18,87 @@
                     <% define_template "transfer_edit", jsonmodel_definition(:transfer) do |form, transfer| %>
                         <section id="transfer_checklist" class="subrecord-form transfer-checklist">
                             <h3 class="subrecord-form-heading-label"><%= I18n.t("transfer._frontend.section.checklist") %></h3>
-                            <div class="transfer_checklist_item">
-                                <input type="checkbox" id="checklist_metadata_received" name="transfer[checklist_metadata_received]" value="true" <% if @transfer.checklist_metadata_received %>checked<% end %>>
-                                <label class="form-check-label" for="checklist_metadata_received"><%= I18n.t("transfer.checklist.metadata_received") %></label>
-                            </div>
+                            <div class="subrecord-form-container">
+                                <div class="subrecord-form-fields">
+                                    <div class="transfer_checklist_item">
+                                        <input type="checkbox" id="checklist_metadata_received" name="transfer[checklist_metadata_received]" value="true" <% if @transfer.checklist_metadata_received %>checked<% end %>>
+                                        <label class="form-check-label" for="checklist_metadata_received"><%= I18n.t("transfer.checklist.metadata_received") %></label>
+                                    </div>
 
-                            <div class="transfer_checklist_item">
-                                <input type="checkbox" id="checklist_rap_received" name="transfer[checklist_rap_received]" value="true" <% if @transfer.checklist_rap_received %>checked<% end %>>
-                                <label class="form-check-label" for="checklist_rap_received"><%= I18n.t("transfer.checklist.rap_received") %></label>
-                            </div>
+                                    <div class="transfer_checklist_item">
+                                        <input type="checkbox" id="checklist_rap_received" name="transfer[checklist_rap_received]" value="true" <% if @transfer.checklist_rap_received %>checked<% end %>>
+                                        <label class="form-check-label" for="checklist_rap_received"><%= I18n.t("transfer.checklist.rap_received") %></label>
+                                    </div>
 
-                            <div class="transfer_checklist_item">
-                                <input type="checkbox" id="checklist_metadata_approved" name="transfer[checklist_metadata_approved]" value="true" <% if @transfer.checklist_metadata_approved %>checked<% end %>>
-                                <label class="form-check-label" for="checklist_metadata_approved"><%= I18n.t("transfer.checklist.metadata_approved") %></label>
-                            </div>
+                                    <div class="transfer_checklist_item">
+                                        <input type="checkbox" id="checklist_metadata_approved" name="transfer[checklist_metadata_approved]" value="true" <% if @transfer.checklist_metadata_approved %>checked<% end %>>
+                                        <label class="form-check-label" for="checklist_metadata_approved"><%= I18n.t("transfer.checklist.metadata_approved") %></label>
+                                    </div>
 
-                            <div class="transfer_checklist_item">
-                                <input type="checkbox" id="checklist_transfer_received" name="transfer[checklist_transfer_received]" value="true" <% if @transfer.checklist_transfer_received %>checked<% end %>>
-                                <label class="form-check-label" for="checklist_transfer_received"><%= I18n.t("transfer.checklist.transfer_received") %></label>
+                                    <div class="transfer_checklist_item">
+                                        <input type="checkbox" id="checklist_transfer_received" name="transfer[checklist_transfer_received]" value="true" <% if @transfer.checklist_transfer_received %>checked<% end %>>
+                                        <label class="form-check-label" for="checklist_transfer_received"><%= I18n.t("transfer.checklist.transfer_received") %></label>
+                                    </div>
+                                </div>
                             </div>
                         </section>
 
                         <% unless ASUtils.wrap(@transfer['files']).empty? %>
-                            <section id="transfer_files_">
+                            <section id="transfer_files_" class="subrecord-form-dummy">
                                 <h3 class="subrecord-form-heading-label"><%= I18n.t("transfer._frontend.section.files") %></h3>
-                                <table class="table table-bordered table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th><%= I18n.t("transfer.files.filename") %></th>
-                                            <th><%= I18n.t("transfer.files.mime_type") %></th>
-                                            <th><%= I18n.t("transfer.files.role") %></th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <% Array(@transfer['files']).each_with_index do |file, idx| %>
-                                            <% form.push("files[]") do |form| %>
-                                                <tr id="<%= "file_#{idx}" %>">
-                                                    <td class="file-filename"><%= file.fetch('filename') %></td>
-                                                    <td class="file-mime-type"><%= file.fetch('mime_type') %></td>
-                                                    <td class="file-role-cell">
-                                                        <%= form.hidden_input('key', file.fetch('key')) %>
-                                                        <%= form.select('role', form.possible_options_for(['files', 'role']), {:class => "file-role", :default => file.fetch('role')}) %>
-                                                    </td>
-                                                    <td class="table-record-actions">
-                                                        <div class="btn-group">
-                                                            <%=
-                                                            link_to(I18n.t("transfer.files.view"),
-                                                                    {
-                                                                        :controller => :transfer_files,
-                                                                        :action => :show,
-                                                                        :key => file.fetch('key'),
-                                                                        :filename => file.fetch('filename'),
-                                                                        :mime_type => file.fetch('mime_type'),
-                                                                    },
-                                                                    {
-                                                                        :class => "btn btn-primary"
-                                                                    })
-                                                            %>
-                                                            <%= render_aspace_partial :partial => "transfers/validate_button", :locals => {file: file} %>
-                                                            <button class="transfer_replace_file btn btn-danger"
-                                                                    data-key="<%= file.fetch('key') %>"
-                                                                    data-filename="<%= file.fetch('filename') %>"
-                                                                    data-row-id="<%= "file_#{idx}" %>"
-                                                                    data-role="<%= file.fetch('role') %>">
-                                                                <%= I18n.t("transfer.files.replace") %>
-                                                            </button>
-                                                        </div>
-                                                    </td>
+                                <div class="subrecord-form-container">
+                                    <div class="subrecord-form-fields">
+                                        <table class="table table-bordered table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th><%= I18n.t("transfer.files.filename") %></th>
+                                                    <th><%= I18n.t("transfer.files.mime_type") %></th>
+                                                    <th><%= I18n.t("transfer.files.role") %></th>
+                                                    <th></th>
                                                 </tr>
-                                            <% end %>
-                                        <% end %>
-                                    </tbody>
-                                </table>
+                                            </thead>
+                                            <tbody>
+                                                <% Array(@transfer['files']).each_with_index do |file, idx| %>
+                                                    <% form.push("files[]") do |form| %>
+                                                        <tr id="<%= "file_#{idx}" %>">
+                                                            <td class="file-filename"><%= file.fetch('filename') %></td>
+                                                            <td class="file-mime-type"><%= file.fetch('mime_type') %></td>
+                                                            <td class="file-role-cell">
+                                                                <%= form.hidden_input('key', file.fetch('key')) %>
+                                                                <%= form.select('role', form.possible_options_for(['files', 'role']), {:class => "file-role", :default => file.fetch('role')}) %>
+                                                            </td>
+                                                            <td class="table-record-actions">
+                                                                <div class="btn-group">
+                                                                    <%=
+                                                                    link_to(I18n.t("transfer.files.view"),
+                                                                            {
+                                                                                :controller => :transfer_files,
+                                                                                :action => :show,
+                                                                                :key => file.fetch('key'),
+                                                                                :filename => file.fetch('filename'),
+                                                                                :mime_type => file.fetch('mime_type'),
+                                                                            },
+                                                                            {
+                                                                                :class => "btn btn-primary"
+                                                                            })
+                                                                    %>
+                                                                    <%= render_aspace_partial :partial => "transfers/validate_button", :locals => {file: file} %>
+                                                                    <button class="transfer_replace_file btn btn-danger"
+                                                                            data-key="<%= file.fetch('key') %>"
+                                                                            data-filename="<%= file.fetch('filename') %>"
+                                                                            data-row-id="<%= "file_#{idx}" %>"
+                                                                            data-role="<%= file.fetch('role') %>">
+                                                                        <%= I18n.t("transfer.files.replace") %>
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    <% end %>
+                                                <% end %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </section>
                         <% end %>
 
