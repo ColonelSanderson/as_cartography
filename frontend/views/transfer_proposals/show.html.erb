@@ -123,10 +123,7 @@
               </section>
             <% end %>
 
-            <section id="conversation" class="conversation">
-              <h3><%= I18n.t("transfer._frontend.section.conversation") %></h3>
-              <div id="conversation-widget"></div>
-            </section>
+            <%= render_aspace_partial :partial => "shared/conversation_widget", :locals => { handle_id: @transfer_proposal.handle_id } %>
 
             <%= display_audit_info(@transfer_proposal) %>
         <% end %>
@@ -139,5 +136,3 @@
   </div>
 </div>
 
-
-<%= render_aspace_partial :partial => "shared/conversation_widget", :locals => { handle_id: @transfer_proposal.handle_id } %>

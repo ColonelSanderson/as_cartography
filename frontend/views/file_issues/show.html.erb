@@ -14,10 +14,7 @@
         <%= render_aspace_partial :partial => "file_issues/requested_representations", locals: {form: readonly} %>
       <% end %>
 
-      <section id="conversation" class="conversation">
-        <h3><%= I18n.t("transfer._frontend.section.conversation") %></h3>
-        <div id="conversation-widget"></div>
-      </section>
+      <%= render_aspace_partial :partial => "shared/conversation_widget", :locals => { handle_id: @file_issue.handle_id } %>
 
       <%= display_audit_info(@file_issue) %>
 
@@ -27,6 +24,3 @@
     </div>
   </div>
 </div>
-
-
-<%= render_aspace_partial :partial => "shared/conversation_widget", :locals => { handle_id: @file_issue.handle_id } %>

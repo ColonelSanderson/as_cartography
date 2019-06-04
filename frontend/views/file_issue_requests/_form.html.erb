@@ -158,10 +158,7 @@
 
 
             <% if is_readonly %>
-                <section id="conversation" class="conversation">
-                    <h3><%= I18n.t("transfer._frontend.section.conversation") %></h3>
-                    <div id="conversation-widget"></div>
-                </section>
+                <%= render_aspace_partial :partial => "shared/conversation_widget", :locals => { handle_id: @file_issue_request.handle_id } %>
 
                 <%= display_audit_info(@file_issue_request) %>
             <% end %>
