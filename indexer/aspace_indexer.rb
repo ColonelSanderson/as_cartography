@@ -13,5 +13,17 @@ class IndexerCommon
       end
     }
 
+    indexer.add_document_prepare_hook {|doc, record|
+      if doc['primary_type'] == 'transfer'
+        doc['title'] = record['record']['display_string']
+      end
+    }
+
+    indexer.add_document_prepare_hook {|doc, record|
+      if doc['primary_type'] == 'transfer_proposal'
+        doc['title'] = record['record']['display_string']
+      end
+    }
+
   end
 end

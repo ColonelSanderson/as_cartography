@@ -82,6 +82,9 @@
           }
         }
       },
+
+      "identifier" => {"type" => "string", "readonly" => "true"},
+      "display_string" => {"type" => "string", "readonly" => "true"},
     },
   }
 }

@@ -20,6 +20,8 @@
                                        :form => form,
                                        :record => @transfer_proposal) %>
 
+            <%= readonly.label_and_textfield "identifier" %>
+
             <div class="form-group">
               <div class="control-label col-sm-2"><%= I18n.t("transfer_proposal.agency") %></div>
               <div class="token-list">

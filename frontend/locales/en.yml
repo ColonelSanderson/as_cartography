@@ -10,6 +10,7 @@ en:
     digital_items_cannot_be_dispatched_until_they_are_linked_to_a_file: "Can't dispatch a digital representation with no file attached"
 
   transfer_proposal:
+    identifier: Proposal ID
     _frontend:
       section:
         basic_information: Basic Information
@@ -100,6 +101,7 @@ en:
     agency: Agency
     agency_location_display_string: Agency Location
     status: Status
+    identifier: Transfer ID
     title: Title
     date_scheduled: Date Scheduled
     date_received: Date Received

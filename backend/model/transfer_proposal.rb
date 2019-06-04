@@ -88,6 +88,9 @@ class TransferProposal < Sequel::Model
             'mime_type' => file[:mime_type],
           }
         }
+
+        json['identifier'] = "P%s" % [obj.id.to_s]
+        json['display_string'] = "%s: %s" % [json['identifier'], json['title']]
       end
     end
 
