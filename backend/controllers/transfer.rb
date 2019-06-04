@@ -46,7 +46,9 @@ class ArchivesSpaceService < Sinatra::Base
     tempfile = ASUtils.tempfile(import[:filename])
 
     begin
-      tempfile.write(import[:data])
+      ByteStorage.get.get_stream(import[:key]) do |chunk|
+        tempfile.write(chunk)
+      end
     ensure
       tempfile.close
     end
