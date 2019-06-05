@@ -8,7 +8,7 @@ function ConversationWidget(opts) {
 
     this.inputElt = $('<div class="conversation_message_input">' +
                       '<label class="label label-primary" for="conversation_message_textarea">' + this.i18n.type_your_message + '</label>' +
-                      '<textarea name="conversation_message_textarea" id="conversation_message_textarea"></textarea>' +
+                      '<textarea name="conversation_message_textarea" id="conversation_message_textarea" class="form-control"></textarea>' +
                       '<button class="btn btn-primary conversation_message_send">' + this.i18n.send_message + '</button>' +
                       '</div>');
 
