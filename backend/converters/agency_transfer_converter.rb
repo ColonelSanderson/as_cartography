@@ -1,3 +1,6 @@
+require 'date'
+require 'time'
+
 class AgencyTransferConverter < Converter
 
   # Each row is a representation, physical or digital
@@ -99,9 +102,9 @@ class AgencyTransferConverter < Converter
 
 
   def run
-    xlsx = Roo::Spreadsheet.open(@input_file, extension: :xlsx)
+    XLSXStreamingReader.new(@input_file).each.each_with_index do |row, idx|
+      next if idx == 0
 
-    xlsx.each_row_streaming(:offset => 1, :pad_cells => true) do |row|
       values = row_values(row)
 
       next if values.select{|v| !v.empty?}.compact.empty?
@@ -131,14 +134,7 @@ class AgencyTransferConverter < Converter
 
 
   def get_output_path
-    output_path = @batch.get_output_path
-
-    p "=================="
-    p output_path
-    p File.read(output_path)
-    p "=================="
-
-    output_path
+    @batch.get_output_path
   end
 
 
@@ -148,11 +144,10 @@ class AgencyTransferConverter < Converter
     # We want a value for every column, even if that value is an empty string.
     # Our row might be shorter than the total number of columns possible.
     (0...@@columns.size).map {|i|
-      if row[i].to_s.strip.empty?
-        # nil/empty string/whitespace
-        ''
+      if row[i].is_a?(Time)
+        row[i].to_date.iso8601
       else
-        row[i].value.to_s.strip
+        row[i].to_s.strip
       end
     }
   end
