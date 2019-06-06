@@ -82,6 +82,7 @@ en:
         import_success: "The transfer metadata was successfully submitted for import."
         import_fail: "The transfer metadata could not be submitted for import: %{error}"
         metadata_valid: Valid
+        validating: Validating...
         metadata_errors: Show Errors
         metadata_errors_title: Metadata validation errors
       import_button_label:

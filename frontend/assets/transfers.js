@@ -29,6 +29,9 @@ Transfers.prototype.setupValidateMetadataButtons = function() {
         // Validate this Import
         var fileKey = button.data('file-key');
 
+        button.text(button.data('validating-label'));
+        button.attr('disabled', 'disabled');
+
         $.ajax({
             url: AS.app_prefix("/transfer_files/validate"),
             type: 'GET',
@@ -38,10 +41,10 @@ Transfers.prototype.setupValidateMetadataButtons = function() {
             },
             success: function (validationResult) {
                 if (validationResult.valid) {
-                    button.attr('disabled', 'disabled');
                     button.removeClass('btn-default').addClass('btn-success');
                     button.text(button.data('valid-label'));
                 } else {
+                    button.prop('disabled', false);
                     button.removeClass('btn-default').addClass('btn-warning').addClass('has-errors');
                     button.text(button.data('not-valid-label'));
                     button.data('validation-errors', validationResult.errors);
