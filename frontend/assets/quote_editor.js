@@ -236,6 +236,11 @@ QuoteEditor.prototype.bindEvents = function() {
 	});
 
     self.section.find('td.editable-quote-field').on('click', function () {
+	// might have had the class removed in the meantime (deleted)
+	if (!$(this).hasClass('editable-quote-field')) {
+	    return;
+	}
+
 	if (self.editing()) {
 	    if (self.editing().parent()[0] == $(this)[0]) {
 		return;
