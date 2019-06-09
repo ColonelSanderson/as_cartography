@@ -145,8 +145,12 @@ QuoteEditor.prototype.validate = function(field, value) {
     return valid;
 }
 
-QuoteEditor.prototype.lines = function() {
-    return this.quote.find('tr.quote-line:not(.quote-line-flagged-for-delete)');
+QuoteEditor.prototype.lines = function(includingDeleted) {
+    if (includingDeleted) {
+	return this.quote.find('tr.quote-line');
+    } else {
+	return this.quote.find('tr.quote-line:not(.quote-line-flagged-for-delete)');
+    }
 }
 
 QuoteEditor.prototype.save = function(cell, value) {
@@ -177,7 +181,7 @@ QuoteEditor.prototype.addLine = function(line) {
 
     this.json['line_items'].push(line_obj);
 
-    this.lines().last().after(line);
+    this.lines(true).last().after(line);
 
     this.edited('Line added');
 }
