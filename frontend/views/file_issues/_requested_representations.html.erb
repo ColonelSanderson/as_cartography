@@ -26,7 +26,7 @@
             <% end %>
             <th><%= I18n.t('requested_representations.representation') %></th>
             <th><%= I18n.t('requested_representations.details') %></th>
-            <% if @file_issue['issue_type'] === 'DIGITAL' %>
+            <% if @file_issue['issue_type'] == 'DIGITAL' %>
               <th style="width: 200px;"><%= I18n.t('requested_representations.upload_date') %></th>
               <th style="width: 200px;"><%= I18n.t('requested_representations.link_expiry_date') %></th>
             <% else %>
@@ -47,7 +47,7 @@
                   </td>
                 <% end %>
                 <td>
-                  <% if item['_resolved']['representation_file'].nil? %>
+                  <% if item['_resolved']['representation_file'].nil? && @file_issue['issue_type'] == 'DIGITAL' %>
                     <div class="text-warning"><%= I18n.t("file_issue._frontend.messages.digital_file_missing") %></div>
                   <% end %>
                   <div class="form-group">
