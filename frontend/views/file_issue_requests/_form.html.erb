@@ -73,17 +73,14 @@
                             <th><%= I18n.t('requested_representations.request_type') %></th>
                             <th><%= I18n.t('requested_representations.representation') %></th>
                             <th><%= I18n.t('requested_representations.details') %></th>
-                            <% unless is_readonly %>
-                                <th><%# Actions %></th>
-                            <% end %>
                         </tr>
                         <% (@file_issue_request['requested_representations'] or []).each_with_index do |request, idx| %>
                             <tr>
                                 <td><span class="label label-info"><%= request['request_type'] %></span></td>
                                 <td>
                                     <% if @file_issue_request["digital_request_status"] == 'QUOTE_ACCEPTED' && request['request_type'] == 'DIGITAL' && request['_resolved']['jsonmodel_type'] == 'physical_representation' %>
-                                      <div class="text-warning">
-                                        <% I18n.t('requested_representations.warning_digital_representation_not_linked') %>
+                                      <div class="alert alert-warning">
+                                        <%= I18n.t('requested_representations.warning_digital_representation_not_linked') %>
                                       </div>
                                     <% end %>
                                     <% if is_readonly %>
@@ -140,13 +137,6 @@
                                     <% end %>
                                 </td>
                                 <td><%= request['record_details'] or '' %></td>
-                                <% unless is_readonly %>
-                                    <td class="table-record-actions">
-                                        <div class="btn-group">
-                                            <button class="btn btn-danger"><%= I18n.t('actions.remove') %></button>
-                                        </div>
-                                    </td>
-                                <% end %>
                             </tr>
                         <% end %>
                     </table>

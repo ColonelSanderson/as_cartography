@@ -220,10 +220,10 @@
     <% else %>
 
         <% if @file_issue_request['requested_representations'].any?{|rep| rep['request_type'] == quote_type.upcase} %>
-            <section id="<%= type %>" class="<%= type %>">
+            <section id="<%= type %>" class="subrecord-form-dummy <%= type %>">
                 <h3><%= I18n.t("file_issue_request._frontend.section.#{type}") %></h3>
 
-                <div style="padding-bottom:40px;">
+                <div class="subrecord-form-container">
                     <div class="btn-group">
                         <%= link_to I18n.t("file_issue_request._frontend.action.generate_#{type}"),
                                     {:controller => :file_issue_requests,
