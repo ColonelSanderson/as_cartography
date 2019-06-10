@@ -47,6 +47,7 @@ class ArchivesSpaceService < Sinatra::Base
     rescue XLSXStreamingReader::XLSXFileNotReadable
       json_response({'valid' => false, 'errors' => ["ERROR - Import file must be a valid XLSX file"]})
     rescue
+      Log.exception($!)
       json_response({'valid' => false, 'errors' => ["SYSTEM ERROR - Could not validate this file"]})
     end
   end
