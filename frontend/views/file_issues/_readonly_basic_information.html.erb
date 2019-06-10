@@ -36,6 +36,8 @@
 
             <%= form.label_and_textfield "delivery_location" %>
 
+            <%= form.label_and_textfield "delivery_authorizer" %>
+
             <% if @file_issue.delivery_location == 'AGENCY_LOCATION' %>
               <div class="form-group">
                 <div class="col-sm-2 control-label"><%= I18n.t('file_issue.delivery_address') %></div>

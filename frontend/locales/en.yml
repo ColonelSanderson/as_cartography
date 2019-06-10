@@ -200,6 +200,7 @@ en:
     urgent: Urgent?
     request_notes: Notes
     delivery_location: Delivery Location
+    delivery_authorizer: Delivery Authoriser
     representation: Representation
     representations: Representations
     digital_processing_estimate: Processing Estimate
@@ -242,6 +243,7 @@ en:
     agency_location_display_string: Agency Location
     urgent: Urgent?
     delivery_location: Delivery Location
+    delivery_authorizer: Delivery Authoriser
     delivery_address: Delivery Address
     delivery_address_not_provided: Not Provided
     checklist_submitted: Request Submitted
