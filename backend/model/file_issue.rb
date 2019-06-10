@@ -244,6 +244,7 @@ class FileIssue < Sequel::Model
                                              .filter(Sequel.~(dispatch_date: nil))
                                              .select(:aspace_record_id)
                                              .map {|row| row[:aspace_record_id].to_i}
+                                             .uniq
 
       DB.open do |aspace_db|
         file_count = aspace_db[:representation_file]
