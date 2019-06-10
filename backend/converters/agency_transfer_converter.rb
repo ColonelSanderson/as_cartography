@@ -169,6 +169,15 @@ class AgencyTransferConverter < Converter
   end
 
 
+  def mint_fresh_container(transfer_id)
+    @minty_fresh ||= TopContainer.create_from_json(JSONModel::JSONModel(:top_container).from_hash(
+                                                     'barcode' => "#{transfer_id}_#{SecureRandom.hex}",
+                                                     'indicator' => transfer_id,
+                                                     'type' => 'box',
+                                                     'current_location' => 'HOME',
+                                                   ))
+  end
+
   def format_item(item)
     item_hash = {
       :uri => "/repositories/12345/archival_objects/import_#{SecureRandom.hex}",
@@ -212,6 +221,11 @@ class AgencyTransferConverter < Converter
         :current_location => 'TFR',
         :normal_location => 'TFR',
       }
+
+      if rep_key == :physical_representations
+        # THINKME: Need a top container.  Spam one in there for now.
+        rep_hash['container'] = {'ref' => mint_fresh_container(@transfer_id.to_s).uri}
+      end
 
       item_hash[rep_key] << rep_hash
     end
