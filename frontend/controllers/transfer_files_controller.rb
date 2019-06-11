@@ -13,7 +13,7 @@ class TransferFilesController < ApplicationController
     self.response_body = Enumerator.new do |stream|
       JSONModel::HTTP.stream("/transfer_files", :key => params[:key]) do |response|
         response.read_body do |chunk|
-          stream << chunk if !chunk.blank?
+          stream << chunk
         end
       end
     end
