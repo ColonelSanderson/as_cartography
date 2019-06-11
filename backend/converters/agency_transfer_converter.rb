@@ -34,26 +34,26 @@ class AgencyTransferConverter < Converter
 
   @@columns =
     [
-     :disposal_class,
-     :title,
-     :description,
-     :agency_control_number,
-     :sequence,
-     :sequence_ref,
-     :attachment_notes,
-     :restricted_access_period,
-     :publish,
-     :start_date,
-     :end_date,
-     :representation_type,
-     :format,
-     :contained_within,
-     :box_number,
-     :remarks,
-     :series,
-     :responsible_agency,
-     :creating_agency,
-     :sensitivity_label,
+     {:label => "Disposal Class", :key => :disposal_class},
+     {:label => "Title", :key => :title},
+     {:label => "Description", :key => :description},
+     {:label => "Agency Control number", :key => :agency_control_number},
+     {:label => "Sequence Number", :key => :sequence},
+     {:label => "Attachment Related to Sequence Number", :key => :sequence_ref},
+     {:label => "Attachment Notes", :key => :attachment_notes},
+     {:label => "Restricted Access Period", :key => :restricted_access_period},
+     {:label => "Publish Metadata?", :key => :publish},
+     {:label => "Start Date (DD/MM/YYYY)", :type => :date, :key => :start_date},
+     {:label => "End Date (DD/MM/YYYY)", :type => :date, :key => :end_date},
+     {:label => "Representation Type", :key => :representation_type},
+     {:label => "Format", :key => :format},
+     {:label => "Contained within", :key => :contained_within},
+     {:label => "Box Number", :key => :box_number},
+     {:label => "Remarks", :key => :remarks},
+     {:label => "Series ID", :key => :series},
+     {:label => "Responsible Agency", :key => :responsible_agency},
+     {:label => "Creating Agency", :key => :creating_agency},
+     {:label => "Sensititvity Label", :key => :sensitivity_label},
     ]
 
 
@@ -102,14 +102,29 @@ class AgencyTransferConverter < Converter
 
 
   def run
+    ordered_column_keys = []
+
     XLSXStreamingReader.new(@input_file).each.each_with_index do |row, idx|
-      next if idx == 0
+      if idx == 0
+        # Our header row.  Map this back to our column definitions.
+        ordered_column_keys = row.map do |r|
+          column = @@columns.find {|c| c[:label] == r.strip}
+
+          if column
+            column[:key]
+          else
+            raise "Unrecognised column: #{r.strip}"
+          end
+        end
+
+        next
+      end
 
       values = row_values(row)
 
       next if values.select{|v| !v.empty?}.compact.empty?
 
-      values_map = Hash[@@columns.zip(values)]
+      values_map = Hash[ordered_column_keys.zip(values)]
 
       if values_map[:sequence_ref].empty?
         # an item
@@ -144,8 +159,13 @@ class AgencyTransferConverter < Converter
     # We want a value for every column, even if that value is an empty string.
     # Our row might be shorter than the total number of columns possible.
     (0...@@columns.size).map {|i|
+      column_definition = @@columns[i]
+
       if row[i].is_a?(Time)
         row[i].to_date.iso8601
+      elsif column_definition[:type] == :date && !row[i].to_s.empty?
+        # If we have a date string in DD/MM/YYYY, accept that too
+        Date.strptime(row[i].to_s, '%d/%m/%Y').iso8601
       else
         row[i].to_s.strip
       end
