@@ -427,6 +427,11 @@ class IndexFeedThread
 
         solr_doc['file_issue_allowed'] = jsonmodel['file_issue_allowed']
 
+        if jsonmodel['agency_assigned_id']
+          solr_doc['agency_assigned_id'] = jsonmodel['agency_assigned_id']
+          solr_doc['agency_assigned_tokens'] = tokenise_id(jsonmodel['agency_assigned_id'])
+        end
+
         if extra_representation_metadata[:containing_record_title]
           solr_doc['keywords'] << extra_representation_metadata[:containing_record_title]
         end
@@ -449,6 +454,20 @@ class IndexFeedThread
       result << solr_doc
     end
 
+    result
+  end
+
+  # Produce as many tokens as might be useful from a given ID
+  def tokenise_id(s)
+    result = [s]
+
+    # Split on common separators
+    result.concat(s.split(/[\-\._\/\\]/))
+
+    # Runs of letters & numbers
+    result.concat(s.scan(/([A-Za-z]+|[0-9]+)/).flatten)
+
+    result.uniq!
     result
   end
 
