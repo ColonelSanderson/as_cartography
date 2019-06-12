@@ -131,6 +131,12 @@ class IndexFeedThread
 
               records = record_type.filter(:id => id_set.map(&:id)).all
 
+              if records.empty?
+                # Shouldn't happen unless things are being deleted out from
+                # under us.  But we trust nobody.
+                next
+              end
+
               # Delete old versions of the records we're about to index
               records.each do |record|
                 mapdb[:index_feed]
@@ -251,12 +257,121 @@ class IndexFeedThread
     result
   end
 
+  # We'll use these values for open-ended ranges.
+  EPOCH_START = '0000-01-01T00:00:00Z'
+  EPOCH_END = '9999-12-31T23:59:59Z'
+
+  DateRange = Struct.new(:start_date, :end_date) do
+    def merge(start_date, end_date)
+      if start_date && (self.start_date == EPOCH_START || self.start_date > start_date)
+        self.start_date = date_pad_start(start_date)
+      end
+
+      if end_date && (self.end_date == EPOCH_END || self.end_date < end_date)
+        self.end_date = date_pad_end(end_date)
+      end
+
+      self
+    end
+
+    def date_pad_start(s)
+      default = ['0000', '01', '01']
+      bits = s.split('-')
+
+      full_date = (0...3).map {|i| bits.fetch(i, default.fetch(i))}.join('-')
+
+      "#{full_date}T00:00:00Z"
+    end
+
+    def date_pad_end(s)
+      default = ['9999', '12', '31']
+      bits = s.split('-')
+
+      full_date = (0...3).map {|i| bits.fetch(i, default.fetch(i))}.join('-')
+
+      "#{full_date}T23:59:59Z"
+    end
+  end
+
+  # Return a map from record ID to DateRange
+  def calculate_dates(sequel_records)
+    return {} if sequel_records.empty?
+
+    result = sequel_records.map {|obj|
+      [obj.id, DateRange.new(EPOCH_START, EPOCH_END)]
+    }.to_h
+
+    if sequel_records.fetch(0).is_a?(AgentCorporateEntity)
+      # Agencies have dates directly attached.
+      ASDate.filter(:agent_corporate_entity_id => sequel_records.map(&:id))
+        .select(:agent_corporate_entity_id, :begin, :end)
+        .each do |date|
+        result[date[:agent_corporate_entity_id]] = result[date[:agent_corporate_entity_id]].merge(date[:begin], date[:end])
+      end
+
+    elsif sequel_records.fetch(0).is_a?(Resource)
+      # Resources do too
+      ASDate.filter(:resource_id => sequel_records.map(&:id))
+        .select(:resource_id, :begin, :end)
+        .each do |date|
+        result[date[:resource_id]] = result[date[:resource_id]].merge(date[:begin], date[:end])
+      end
+
+    elsif sequel_records.fetch(0).is_a?(PhysicalRepresentation) || sequel_records.fetch(0).is_a?(DigitalRepresentation)
+      # Representations don't have dates of their own, but they're connected to
+      # a record that does.  Or, at least, connected to a record who knows
+      # someone that does.
+      ao_dates = calculate_dates(ArchivalObject.filter(:id => sequel_records.map(&:archival_object_id)).all)
+
+      sequel_records.each do |representation|
+        result[representation.id] = ao_dates.fetch(representation.archival_object_id)
+      end
+
+    elsif sequel_records.fetch(0).is_a?(ArchivalObject)
+      # Archival Objects either have dates of their own, or inherit them from
+      # further up the tree.
+
+      # Map from ID to record
+      records_to_process = sequel_records.map {|r| [r.id, r]}.to_h
+
+      # Handle the records with date records attached
+      ASDate.filter(:archival_object_id => records_to_process.keys)
+        .select(:archival_object_id, :begin, :end)
+        .each do |date|
+        result[date[:archival_object_id]] = result[date[:archival_object_id]].merge(date[:begin], date[:end])
+        records_to_process.delete(date[:archival_object_id])
+      end
+
+      # Handle records who inherit dates from their parent AO
+      parent_dates = calculate_dates(ArchivalObject.filter(:id => records_to_process.values.map {|r| r.parent_id}.compact).all)
+
+      # Handle top-level records who inherit dates from the series
+      series_dates = calculate_dates(Resource.filter(:id => records_to_process.values.map {|r| !r.parent_id && r.root_record_id}.compact).all)
+
+      records_to_process.values.each do |ao|
+        if ao.parent_id
+          result[ao.id] = parent_dates.fetch(ao.parent_id)
+        else
+          result[ao.id] = series_dates.fetch(ao.root_record_id)
+        end
+      end
+    else
+      Log.warn("No rule for extracting dates was provided for type: #{sequel_records.fetch(0).class}")
+    end
+
+    result
+  end
+
+
   # Map our jsonmodel into something ready for Solr.  All records in the list
-  # are guaranteed to be the same type.
+  # are guaranteed to be the same type and the list is guaranteed not to be
+  # empty.
   def map_records(sequel_records, jsonmodels)
     result = []
 
     representation_metadata = load_representation_metadata(sequel_records, jsonmodels)
+
+    record_dates = calculate_dates(sequel_records)
 
     jsonmodels.each do |jsonmodel|
       solr_doc = {
@@ -266,6 +381,8 @@ class IndexFeedThread
         'types' => [jsonmodel['jsonmodel_type']],
         'title' => jsonmodel['display_string'] || jsonmodel['title'],
         'qsa_id' => jsonmodel['qsa_id'].to_s,
+        'start_date' => record_dates.fetch(jsonmodel.id).start_date,
+        'end_date' => record_dates.fetch(jsonmodel.id).end_date,
       }
 
       if jsonmodel['jsonmodel_type'] == 'agent_corporate_entity'
