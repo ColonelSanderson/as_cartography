@@ -139,6 +139,7 @@ class IndexFeedThread
 
               # Delete old versions of the records we're about to index
               records.each do |record|
+                mapdb[:index_feed_deletes].filter(:record_uri => record.uri).delete
                 mapdb[:index_feed]
                   .filter(:record_uri => record.uri)
                   .filter { system_mtime < record.system_mtime.to_i }
@@ -147,12 +148,25 @@ class IndexFeedThread
 
               jsonmodels = record_type.sequel_to_jsonmodel(records)
               jsonmodels.zip(records, map_records(records, jsonmodels)).each do |jsonmodel, sequel_record, mapped|
-                mapdb[:index_feed].insert(:record_type => jsonmodel.jsonmodel_type,
-                                          :record_uri => jsonmodel.uri,
-                                          :repo_id => repo.id,
-                                          :record_id => sequel_record.id,
-                                          :system_mtime => sequel_record.system_mtime.to_i,
-                                          :blob => Sequel::SQL::Blob.new(gzip(mapped.to_json)))
+                if jsonmodel['deaccessioned']
+                  begin
+                    mapdb[:index_feed_deletes].insert(:record_uri => jsonmodel.uri)
+                  rescue Sequel::DatabaseError => e
+                    if (e.wrapped_exception && ( e.wrapped_exception.cause or e.wrapped_exception).getSQLState() =~ /^23/)
+                      # Constraint violation.  Not a problem.
+                    else
+                      raise e
+                    end
+                  end
+                else
+                  mapdb[:index_feed].insert(:record_type => jsonmodel.jsonmodel_type,
+                                            :record_uri => jsonmodel.uri,
+                                            :repo_id => repo.id,
+                                            :record_id => sequel_record.id,
+                                            :system_mtime => sequel_record.system_mtime.to_i,
+                                            :blob => Sequel::SQL::Blob.new(gzip(mapped.to_json)))
+                end
+
                 did_something = true
               end
 
