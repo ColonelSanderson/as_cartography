@@ -239,6 +239,7 @@ class IndexFeedThread
       metadata_by_ao_id[ao.id] = {
         :containing_record_title => resolved['display_string'],
         :containing_series_title => resolved['resource']['_resolved']['title'],
+        :containing_series_id => resolved['resource']['_resolved']['uri'],
         :responsible_agency_uri => resolved['responsible_agency'] ? resolved['responsible_agency']['ref'] : nil,
         :recent_responsible_agency_refs => resolved.fetch('recent_responsible_agencies', []),
       }
@@ -254,6 +255,30 @@ class IndexFeedThread
 
     result
   end
+
+  def load_series_metadata(sequel_records, jsonmodels)
+    return {} unless sequel_records.length > 0 && ['resource', 'archival_object'].include?(jsonmodels[0].class.record_type)
+
+    result = {}
+
+    if jsonmodels[0].class.record_type == 'archival_object'
+      # Need to resolve resource records
+      jsonmodels = URIResolver.resolve_references(jsonmodels, ['resource'])
+    else
+      jsonmodels = jsonmodels.map(&:to_hash)
+    end
+
+    jsonmodels.each do |json|
+      if json.fetch('jsonmodel_type') == 'resource'
+        result[json.fetch('uri')] = {:title => json.fetch('title'), :id => json.fetch('uri')}
+      else
+        result[json.fetch('uri')] = {:title => json.fetch('resource').fetch('_resolved').fetch('title'), :id => json.fetch('resource').fetch('ref')}
+      end
+    end
+
+    result
+  end
+
 
   def build_recent_agency_filter(recent_agencies)
     result = []
@@ -383,6 +408,7 @@ class IndexFeedThread
   def map_records(sequel_records, jsonmodels)
     result = []
 
+    series_metadata = load_series_metadata(sequel_records, jsonmodels)
     representation_metadata = load_representation_metadata(sequel_records, jsonmodels)
 
     record_dates = calculate_dates(sequel_records)
@@ -398,8 +424,12 @@ class IndexFeedThread
         'qsaid_sort' => sprintf('%10s', jsonmodel['qsa_id']).gsub(' ', '0'),
         'start_date' => record_dates.fetch(jsonmodel.id).start_date,
         'end_date' => record_dates.fetch(jsonmodel.id).end_date,
-        'series' => 'Coming soon',
       }
+
+      if series_data = series_metadata.fetch(jsonmodel.uri, nil)
+        solr_doc['series'] = series_data.fetch(:title)
+        solr_doc['series_id'] = series_data.fetch(:id)
+      end
 
       if jsonmodel['jsonmodel_type'] == 'agent_corporate_entity'
         solr_doc['title'] = jsonmodel['display_name']['sort_name']
@@ -454,7 +484,12 @@ class IndexFeedThread
         end
 
         if extra_representation_metadata[:containing_series_title]
+          solr_doc['series'] = extra_representation_metadata[:containing_series_title]
           solr_doc['keywords'] << extra_representation_metadata[:containing_series_title]
+        end
+
+        if extra_representation_metadata[:containing_series_id]
+          solr_doc['series_id'] = extra_representation_metadata[:containing_series_id]
         end
 
         if extra_representation_metadata[:responsible_agency_uri]
