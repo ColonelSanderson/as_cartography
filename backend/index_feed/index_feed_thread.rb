@@ -395,8 +395,10 @@ class IndexFeedThread
         'types' => [jsonmodel['jsonmodel_type']],
         'title' => jsonmodel['display_string'] || jsonmodel['title'],
         'qsa_id' => jsonmodel['qsa_id'].to_s,
+        'qsaid_sort' => sprintf('%10s', jsonmodel['qsa_id']).gsub(' ', '0'),
         'start_date' => record_dates.fetch(jsonmodel.id).start_date,
         'end_date' => record_dates.fetch(jsonmodel.id).end_date,
+        'series' => 'Coming soon',
       }
 
       if jsonmodel['jsonmodel_type'] == 'agent_corporate_entity'
@@ -444,6 +446,7 @@ class IndexFeedThread
         if jsonmodel['agency_assigned_id']
           solr_doc['agency_assigned_id'] = jsonmodel['agency_assigned_id']
           solr_doc['agency_assigned_tokens'] = tokenise_id(jsonmodel['agency_assigned_id'])
+          solr_doc['agency_sort'] = produce_sort_id(jsonmodel['agency_assigned_id'])
         end
 
         if extra_representation_metadata[:containing_record_title]
@@ -461,6 +464,10 @@ class IndexFeedThread
         if extra_representation_metadata[:recent_responsible_agency_refs]
           solr_doc['recent_responsible_agency_filter'] = build_recent_agency_filter(extra_representation_metadata[:recent_responsible_agency_refs])
         end
+      end
+
+      if solr_doc['title']
+        solr_doc['title_sort'] = solr_doc['title'].downcase
       end
 
       Log.debug("Generated Solr doc:\n#{solr_doc.pretty_inspect}\n")
@@ -485,6 +492,11 @@ class IndexFeedThread
     result
   end
 
+  def produce_sort_id(s)
+    s.scan(/([A-Za-z]+|[0-9]+)/)
+      .flatten
+      .map {|s| sprintf('%10s', s).gsub(' ', '0')}.join('')
+  end
 
   def gzip(bytestring)
     Zlib::Deflate.deflate(bytestring)
