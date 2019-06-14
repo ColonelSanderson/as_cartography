@@ -89,6 +89,45 @@ class FileIssue < Sequel::Model
         end
       end
 
+      # record movements
+      if self.issue_type == ISSUE_TYPE_PHYSICAL
+        prep_ref = JSONModel.parse_reference(item['ref'])
+        repo_id = JSONModel.parse_reference(prep_ref[:repository])[:id]
+
+        RequestContext.open(:repo_id => repo_id) do
+          prep = PhysicalRepresentation[prep_ref[:id]]
+
+          if item['dispatch_date']
+            prep.move(:location => 'PER',
+                      :user => item['dispatched_by'],
+                      :context => self.uri,
+                      :date => item['dispatch_date'],
+                      :replace => true)
+          else
+            prep.move(:location => 'PER',
+                      :context => self.uri,
+                      :remove => true)
+          end
+        end
+
+        RequestContext.open(:repo_id => repo_id) do
+          prep = PhysicalRepresentation[prep_ref[:id]]
+
+          if item['returned_date']
+            prep.move(:location => 'HOME',
+                      :user => item['received_by'],
+                      :context => self.uri,
+                      :date => item['returned_date'],
+                      :replace => true)
+          else
+            prep.move(:location => 'HOME',
+                      :context => self.uri,
+                      :remove => true)
+          end
+        end
+      end
+
+
       self.db[:file_issue_item]
         .filter(id: item['id'])
         .filter(file_issue_id: self.id)
