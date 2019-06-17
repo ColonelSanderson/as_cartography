@@ -64,7 +64,8 @@
                                                    job["time_#{state_time_map[job['status']]}"],
                                        :type => job['jsonmodel_type'],
                                        :uri => @transfer['import_job']['ref'],
-                                       :placement => "top") %>
+                                       :placement => "top",
+                                       :inside_linker_browse => true) %>
                   </div>
               </div>
             <% end %>
