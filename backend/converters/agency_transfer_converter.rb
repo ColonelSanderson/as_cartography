@@ -240,6 +240,7 @@ class AgencyTransferConverter < Converter
         :contained_within => rep[:contained_within],
         :current_location => 'TFR',
         :normal_location => 'TFR',
+        :agency_assigned_id => rep[:agency_assigned_id],
       }
 
       if rep_key == :physical_representations

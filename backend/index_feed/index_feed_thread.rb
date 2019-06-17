@@ -467,6 +467,12 @@ class IndexFeedThread
       solr_doc['physical_representations_count'] = jsonmodel['physical_representations_count']
       solr_doc['digital_representations_count'] = jsonmodel['digital_representations_count']
 
+      if jsonmodel['agency_assigned_id']
+        solr_doc['agency_assigned_id'] = jsonmodel['agency_assigned_id']
+        solr_doc['agency_assigned_tokens'] = tokenise_id(jsonmodel['agency_assigned_id'])
+        solr_doc['agency_sort'] = produce_sort_id(jsonmodel['agency_assigned_id'])
+      end
+
       # Representations get indexed with keywords containing the titles of their
       # containing record & its containing series.
       if REPRESENTATION_TYPES.include?(jsonmodel.class.record_type)
@@ -477,12 +483,6 @@ class IndexFeedThread
         solr_doc['keywords'] ||= []
 
         solr_doc['file_issue_allowed'] = jsonmodel['file_issue_allowed']
-
-        if jsonmodel['agency_assigned_id']
-          solr_doc['agency_assigned_id'] = jsonmodel['agency_assigned_id']
-          solr_doc['agency_assigned_tokens'] = tokenise_id(jsonmodel['agency_assigned_id'])
-          solr_doc['agency_sort'] = produce_sort_id(jsonmodel['agency_assigned_id'])
-        end
 
         if extra_representation_metadata[:containing_record_title]
           solr_doc['keywords'] << extra_representation_metadata[:containing_record_title]
