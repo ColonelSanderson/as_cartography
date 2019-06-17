@@ -242,6 +242,7 @@ class IndexFeedThread
         :containing_series_id => resolved['resource']['_resolved']['uri'],
         :responsible_agency_uri => resolved['responsible_agency'] ? resolved['responsible_agency']['ref'] : nil,
         :recent_responsible_agency_refs => resolved.fetch('recent_responsible_agencies', []),
+        :creating_agency_uri => resolved['creating_agency'] ? resolved['creating_agency']['ref'] : nil,
       }
     end
 
@@ -439,6 +440,10 @@ class IndexFeedThread
         solr_doc['responsible_agency'] = jsonmodel['responsible_agency']['ref']
       end
 
+      if jsonmodel.has_key?('creating_agency')
+        solr_doc['creating_agency'] = jsonmodel['creating_agency']['ref']
+      end
+
       if jsonmodel.has_key?('recent_responsible_agencies')
         # FIXME: is this field needed?
         solr_doc['recent_responsible_agencies'] = jsonmodel['recent_responsible_agencies'].map{|r| r['ref']}
@@ -499,6 +504,11 @@ class IndexFeedThread
         if extra_representation_metadata[:recent_responsible_agency_refs]
           solr_doc['recent_responsible_agency_filter'] = build_recent_agency_filter(extra_representation_metadata[:recent_responsible_agency_refs])
         end
+
+        if extra_representation_metadata[:creating_agency_uri]
+          solr_doc['creating_agency'] = extra_representation_metadata[:creating_agency_uri]
+        end
+
       end
 
       if solr_doc['title']
