@@ -537,10 +537,20 @@ class IndexFeedThread
     result
   end
 
+  # Produce a sort key that will sort our identifiers in a way that "feels"
+  # right, whatever that means.
+  #
+  # Currently what that means is that common non-numeric prefixes tend to
+  # cluster, and the numeric bits end up sorted numerically and not
+  # lexicographically.
+  #
   def produce_sort_id(s)
     s.scan(/([A-Za-z]+|[0-9]+)/)
       .flatten
-      .map {|s| sprintf('%10s', s).gsub(' ', '0')}.join('')
+      .map {|s|
+      pad = s[0] =~ /^[0-9]/ ? '0' : '!'
+      sprintf('%10s', s).gsub(' ', pad)
+    }.join('')
   end
 
   def gzip(bytestring)
