@@ -7,7 +7,20 @@ class FileIssueRequestsController < ApplicationController
   def index
     respond_to do |format|
       format.html {
-        @search_data = Search.for_type(session[:repo_id], "file_issue_request", {"sort" => "title_sort asc", "facet[]" => Plugins.search_facets_for_type(:file_issue_request)}.merge(params_for_backend_search))
+        params = {"sort" => "title_sort asc", "facet[]" => Plugins.search_facets_for_type(:file_issue_request)}.merge(params_for_backend_search)
+
+        # Exclude drafts
+        raise "Unexpected pre-existing filter" if params['filter']
+        params['filter'] = JSONModel(:advanced_query).from_hash('query' => {
+                                                                  'jsonmodel_type' => 'field_query',
+                                                                  'negated' => true,
+                                                                  'field' => 'file_issue_request_draft_u_sbool',
+                                                                  'value' => 'true',
+                                                                  'literal' => true,
+                                                                })
+                             .to_json
+
+        @search_data = Search.for_type(session[:repo_id], "file_issue_request", params)
       }
       format.csv {
         search_params = params_for_backend_search.merge({ "sort" => "title_sort asc",  "facet[]" => []})

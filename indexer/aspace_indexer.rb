@@ -24,6 +24,10 @@ class IndexerCommon
         doc['title'] = record['record']['display_string']
         doc['transfer_status_u_sstr'] = record['record']['status']
       end
+
+      if doc['primary_type'] == 'file_issue_request'
+        doc['file_issue_request_draft_u_sbool'] = record['record']['draft']
+      end
     }
 
   end

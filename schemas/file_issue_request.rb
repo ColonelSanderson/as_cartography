@@ -27,6 +27,7 @@
       "handle_id" => {"type" => "string", "readonly" => "true"},
       "request_type" => {"type" => "string"},
       "urgent" => {"type" => "boolean", "readonly" => "true"},
+      "draft" => {"type" => "boolean", "readonly" => "true"},
       "delivery_location" => {"type" => "string", "readonly" => "true"},
       "delivery_authorizer" => {"type" => "string", "readonly" => "true"},
       "physical_request_status" => {"type" => "string"},
