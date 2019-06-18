@@ -6,7 +6,20 @@ class TransferProposalsController < ApplicationController
   def index
     respond_to do |format|
       format.html {
-        @search_data = Search.for_type(session[:repo_id], "transfer_proposal", {"sort" => "title_sort asc", "facet[]" => Plugins.search_facets_for_type(:transfer_proposal)}.merge(params_for_backend_search))
+        params = {"sort" => "title_sort asc", "facet[]" => Plugins.search_facets_for_type(:transfer_proposal)}.merge(params_for_backend_search)
+
+        # Exclude inactive transfer proposals.
+        raise "Unexpected pre-existing filter" if params['filter']
+        params['filter'] = JSONModel(:advanced_query).from_hash('query' => {
+                                                                  'jsonmodel_type' => 'field_query',
+                                                                  'negated' => true,
+                                                                  'field' => 'transfer_status_u_sstr',
+                                                                  'value' => 'INACTIVE',
+                                                                  'literal' => true,
+                                                                })
+                             .to_json
+
+        @search_data = Search.for_type(session[:repo_id], "transfer_proposal", params)
       }
       format.csv {
         search_params = params_for_backend_search.merge({ "sort" => "title_sort asc",  "facet[]" => []})
