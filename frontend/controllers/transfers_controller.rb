@@ -39,6 +39,7 @@ class TransfersController < ApplicationController
       :checklist_rap_received,
       :checklist_metadata_approved,
       :checklist_transfer_received,
+      :checklist_transfer_completed,
     ].each do |prop|
       updated[prop] = (params[:transfer][prop] == "true")
     end

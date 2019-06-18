@@ -39,6 +39,11 @@
                                         <input type="checkbox" id="checklist_transfer_received" name="transfer[checklist_transfer_received]" value="true" <% if @transfer.checklist_transfer_received %>checked<% end %>>
                                         <label class="form-check-label" for="checklist_transfer_received"><%= I18n.t("transfer.checklist.transfer_received") %></label>
                                     </div>
+
+                                    <div class="transfer_checklist_item">
+                                        <input type="checkbox" id="checklist_transfer_completed" name="transfer[checklist_transfer_completed]" value="true" <% if @transfer.checklist_transfer_completed %>checked<% end %>>
+                                        <label class="form-check-label" for="checklist_transfer_completed"><%= I18n.t("transfer.checklist.transfer_completed") %></label>
+                                    </div>
                                 </div>
                             </div>
                         </section>

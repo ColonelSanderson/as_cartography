@@ -116,6 +116,7 @@ en:
       metadata_approved: Metadata Approved
       transfer_received: Transfer Received
       metadata_imported: Metadata Imported
+      transfer_completed: Transfer Completed
 
     status_values:
       TRANSFER_PROCESS_INITIATED: 'Initiated'

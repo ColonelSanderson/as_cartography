@@ -46,6 +46,7 @@
       "checklist_metadata_approved" => {"type" => "boolean"},
       "checklist_transfer_received" => {"type" => "boolean"},
       "checklist_metadata_imported" => {"type" => "boolean"},
+      "checklist_transfer_completed" => {"type" => "boolean"},
 
       "handle_id" => {"type" => "string", "readonly" => "true"},
 

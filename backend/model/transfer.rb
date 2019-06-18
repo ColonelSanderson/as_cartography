@@ -49,6 +49,7 @@ class Transfer < Sequel::Model
       :checklist_metadata_approved,
       :checklist_transfer_received,
       :checklist_metadata_imported,
+      :checklist_transfer_completed,
     ]
 
     corresponding_status = [
@@ -56,6 +57,7 @@ class Transfer < Sequel::Model
       TRANSFER_PROCESS_INITIATED,
       TRANSFER_PROCESS_PENDING,
       TRANSFER_PROCESS_PENDING,
+      TRANSFER_PROCESS_IN_PROGRESS,
       TRANSFER_PROCESS_IN_PROGRESS,
       TRANSFER_PROCESS_COMPLETE,
     ]

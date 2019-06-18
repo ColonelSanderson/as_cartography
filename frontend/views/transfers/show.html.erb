@@ -43,6 +43,11 @@
                 <input type="checkbox" disabled  id="checklist_metadata_imported" <% if @transfer.checklist_metadata_imported %>checked<% end %>>
                 <label class="form-check-label" for="checklist_metadata_imported"><%= I18n.t("transfer.checklist.metadata_imported") %></label>
               </div>
+
+              <div class="transfer_checklist_item">
+                <input type="checkbox" disabled  id="checklist_transfer_completed" <% if @transfer.checklist_transfer_completed %>checked<% end %>>
+                <label class="form-check-label" for="checklist_transfer_completed"><%= I18n.t("transfer.checklist.transfer_completed") %></label>
+              </div>
             </div>
           </div>
         </section>
