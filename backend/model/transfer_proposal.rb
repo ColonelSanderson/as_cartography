@@ -10,6 +10,8 @@ class TransferProposal < Sequel::Model
 
   def cancel!
     self.status = CANCELLED_BY_QSA_STATUS
+    self.modified_by = RequestContext.get(:current_username)
+    self.modified_time = java.lang.System.currentTimeMillis
     self.save
   end
 

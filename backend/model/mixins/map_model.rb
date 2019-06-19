@@ -31,23 +31,30 @@ module MAPModel
         value = super
         "MAP user: #{value}"
       elsif key == :last_modified_by
-        self.created_by
+        self.modified_by
       else
         super
       end
     end
 
     def last_modified_by=(user)
-      self.created_by = user
+      self.created_by ||= user
+      self.modified_by = user
     end
 
     def user_mtime=(value)
-      self.create_time = (value.to_f * 1000).to_i
+      self.create_time ||= (value.to_f * 1000).to_i
+      self.modified_time = (value.to_f * 1000).to_i
     end
 
     def system_mtime=(value)
       self[:system_mtime] = value
-      self.create_time = (value.to_f * 1000).to_i
+    end
+
+    def before_create
+      super
+
+      self.create_time = java.lang.System.currentTimeMillis
     end
   end
 

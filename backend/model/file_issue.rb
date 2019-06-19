@@ -162,6 +162,9 @@ class FileIssue < Sequel::Model
       )
     end
 
+    opts['modified_time'] = java.lang.System.currentTimeMillis
+    opts['modified_by'] = RequestContext.get(:current_username)
+
     super
   end
 

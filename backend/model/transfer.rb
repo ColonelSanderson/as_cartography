@@ -24,6 +24,8 @@ class Transfer < Sequel::Model
                           :title => proposal.title,
                           :created_by => RequestContext.get(:current_username),
                           :create_time => java.lang.System.currentTimeMillis,
+                          :modified_by => RequestContext.get(:current_username),
+                          :modified_time => java.lang.System.currentTimeMillis,
                           :status => TRANSFER_PROCESS_INITIATED,
                           :checklist_transfer_proposal_approved => 1,
                           :transfer_proposal_id => proposal_id,
@@ -33,7 +35,9 @@ class Transfer < Sequel::Model
 
     self.db[:transfer_proposal]
       .filter(:id => proposal_id)
-      .update(:status => STATUS_APPROVED)
+      .update(:status => STATUS_APPROVED,
+              :modified_by => RequestContext.get(:current_username),
+              :modified_time => java.lang.System.currentTimeMillis)
 
     created
   end

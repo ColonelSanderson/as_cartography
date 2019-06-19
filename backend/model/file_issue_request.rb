@@ -20,6 +20,9 @@ class FileIssueRequest < Sequel::Model
       self.digital_request_status = CANCELLED_BY_QSA_STATUS
     end
 
+    self.modified_by = RequestContext.get(:current_username)
+    self.modified_time = java.lang.System.currentTimeMillis
+
     self.save
   end
 
@@ -34,6 +37,9 @@ class FileIssueRequest < Sequel::Model
       self.digital_request_status = FILE_ISSUE_CREATED_STATUS
     end
 
+    self.modified_by = RequestContext.get(:current_username)
+    self.modified_time = java.lang.System.currentTimeMillis
+
     self.save
   end
 
@@ -45,7 +51,8 @@ class FileIssueRequest < Sequel::Model
     )
 
     # Exclude protected values
-    [:lock_version, :created_by, :create_time, :system_mtime, :id].each do |prop|
+    [:lock_version, :created_by, :create_time, :modified_by, :modified_time,
+     :system_mtime, :id].each do |prop|
       spawn_values.delete(prop)
     end
 
@@ -67,6 +74,22 @@ class FileIssueRequest < Sequel::Model
         )
       end
     end
+  end
+
+  def generate_quote(quote_type)
+    json = FileIssueRequest.to_jsonmodel(self)
+
+    type = quote_type.start_with?('p') ? :physical : :digital
+
+    generator = type == :physical ? FileIssuePhysicalQuoteGenerator : FileIssueDigitalQuoteGenerator
+
+    quote = generator.quote_for(json)
+
+    json["#{type}_quote"] = {'ref' => quote.uri}
+
+    cleaned = JSONModel(:file_issue_request).from_hash(json.to_hash)
+
+    self.update_from_json(cleaned)
   end
 
 

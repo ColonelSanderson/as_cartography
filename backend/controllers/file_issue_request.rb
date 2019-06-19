@@ -39,12 +39,10 @@ class ArchivesSpaceService < Sinatra::Base
     .permissions([])
     .returns([200, :updated]) \
   do
-    json = FileIssueRequest.to_jsonmodel(params[:id])
-    type = params[:type].start_with?('p') ? :physical : :digital
-    generator = type == :physical ? FileIssuePhysicalQuoteGenerator : FileIssueDigitalQuoteGenerator
-    quote = generator.quote_for(json)
-    json["#{type}_quote"] = {'ref' => quote.uri}
-    handle_update(FileIssueRequest, params[:id], json)
+    obj = FileIssueRequest.get_or_die(params[:id])
+    obj.generate_quote(params[:type])
+
+    json_response({:message => 'Quote generated'})
   end
 
   Endpoint.post('/file_issue_requests/:id/issue_quote/:type')
