@@ -260,8 +260,8 @@ en:
     _frontend:
       action:
         save: Save File Issue
-        mark_dispatched: Mark as Dispatched
-        mark_received: Mark as Received
+        mark_dispatched: Bulk Set Dispatched
+        mark_received: Bulk Set Received
         dispatch_button: Apply to Dispatch fields
         receive_button: Apply to Returned fields
       section:
