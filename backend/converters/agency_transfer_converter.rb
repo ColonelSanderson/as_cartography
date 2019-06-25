@@ -24,7 +24,8 @@ class AgencyTransferConverter < Converter
   #   representation_type       Physical                       physical_representation or digital_representation
   #   format                    Magnetic Media, Cassette Tape  representation.format
   #   contained_within          Physical - Other               representation.contained_within
-  #   box_number                5                              NOT IMPORTED - IGNORE
+  #   box_number                5                              create top_containers with indicator: SID-TID-B{box-number}
+  #                                                            when box_number == 0: SID-TID-B0-RID
   #   remarks                                                  NOT IMPORTED - IGNORE
   #   series                    123                            resource.qsa_id
   #   responsible_agency        456                            agent_corporate_entity.qsa_id control
@@ -189,14 +190,42 @@ class AgencyTransferConverter < Converter
   end
 
 
-  def mint_fresh_container(transfer_id)
-    @minty_fresh ||= TopContainer.create_from_json(JSONModel::JSONModel(:top_container).from_hash(
-                                                     'barcode' => "#{transfer_id}_#{SecureRandom.hex}",
-                                                     'indicator' => transfer_id,
-                                                     'type' => 'box',
-                                                     'current_location' => 'HOME',
-                                                   ))
+  def container_for(series, transfer, box_number)
+    @containers ||= {}
+
+    box = box_number.to_s
+
+    # when a representation is not contained its box_number will be zero
+    # we append the representation id to uniquify, but it doesn't exist yet
+    # so we prepopulate with a fakey, so be manually corrected by QSA
+    @fake_rep_no ||= 1
+    if box == '0'
+      box += "-Rep#{@fake_rep_no}"
+      @fake_rep_no += 1
+    end
+
+    indicator = "S#{series}-T#{transfer}-B#{box}"
+
+    return @containers[box] if @containers[box]
+
+    hash = {
+      'indicator' => indicator,
+      'type' => 'box',
+      'current_location' => 'SORTRM',
+      'movements' =>
+      [
+         {
+           'user' => Thread.current[:request_context][:current_username],
+           'move_date' => Time.now.getlocal.iso8601,
+           'functional_location' => 'SORTRM',
+           'move_context' => {'ref' => "/transfers/#{transfer}"}
+         }
+      ]
+    }
+
+    @containers[box] = TopContainer.create_from_json(JSONModel::JSONModel(:top_container).from_hash(hash))
   end
+
 
   def format_item(item)
     item_hash = {
@@ -238,14 +267,23 @@ class AgencyTransferConverter < Converter
         :access_category => rep[:restricted_access_period],
         :format => rep[:format].empty? ? item[:format] : rep[:format],
         :contained_within => rep[:contained_within],
-        :current_location => 'TFR',
-        :normal_location => 'TFR',
+        :current_location => 'HOME',
+        :normal_location => 'HOME',
         :agency_assigned_id => rep[:agency_control_number],
       }
 
       if rep_key == :physical_representations
-        # THINKME: Need a top container.  Spam one in there for now.
-        rep_hash['container'] = {'ref' => mint_fresh_container(@transfer_id.to_s).uri}
+        rep_hash['container'] = {'ref' => container_for(item[:series], @transfer_id, rep[:box_number]).uri}
+
+        rep_hash['movements'] =
+          [
+           {
+             'user' => Thread.current[:request_context][:current_username],
+             'move_date' => Time.now.getlocal.iso8601,
+             'functional_location' => 'HOME',
+             'move_context' => {'ref' => "/transfers/#{@transfer_id}"}
+           }
+          ]
       end
 
       item_hash[rep_key] << rep_hash
