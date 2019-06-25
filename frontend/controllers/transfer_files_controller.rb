@@ -20,7 +20,7 @@ class TransferFilesController < ApplicationController
   end
 
   def validate
-    render :json => JSONModel::HTTP.get_json("/transfer_files/validate", :key => params[:key])
+    render :json => JSONModel::HTTP.get_json("/transfer_files/validate", :key => params[:key], :repo_id => session[:repo_id])
   end
 
 end

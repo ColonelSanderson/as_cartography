@@ -16,7 +16,8 @@ class ArchivesSpaceService < Sinatra::Base
 
   Endpoint.get('/transfer_files/validate')
     .description("Validate an import metadata file")
-    .params(["key", String, "The file key to validate"])
+    .params(["key", String, "The file key to validate"],
+            ["repo_id", :repo_id, "The active repository"])
     .permissions([])
     .returns([200, "{valid: [boolean], errors: [string]}"]) \
   do
@@ -29,16 +30,7 @@ class ArchivesSpaceService < Sinatra::Base
 
         import_file.close
 
-        errors = []
-        import_validator = MapValidator.new
-        import_validator.run_validations(import_file.path, import_validator.sample_validations)
-        import_validator.notifications.notification_list.each do |notification|
-          if notification.source.to_s.empty?
-            errors << "#{notification.type} - #{notification.message}"
-          else
-            errors << "#{notification.type} - [#{notification.source}] #{notification.message}"
-          end
-        end
+        errors = Validator.validate(import_file.path, params[:repo_id])
 
         json_response({'valid' => errors.empty?, 'errors' => errors})
       ensure
