@@ -37,6 +37,8 @@
 
             <%= form.label_and_textfield "delivery_authorizer" %>
 
+            <%= form.label_and_boolean "preapprove_quotes" %>
+
             <% if @file_issue_request['file_issue_digital'] %>
               <div class="form-group">
                 <div class="control-label col-sm-2"><%= I18n.t("file_issue_request.file_issue_digital") %></div>

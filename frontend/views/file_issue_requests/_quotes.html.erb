@@ -6,6 +6,7 @@
             <h3 class="subrecord-form-heading-label"><%= I18n.t("file_issue_request._frontend.section.#{type}") %></h3>
             <div class="subrecord-form-container">
                 <div style="padding-bottom:40px;">
+                    <% if @file_issue_request['preapprove_quotes'] %><div class="pull-left"><span class="label label-info"><%= I18n.t("file_issue_request._frontend.messages.quote_preapproved") %></span>&#160;</div><% end %>
                     <% if quote['issued_date'] %>
                         <% if @file_issue_request['version'] != @file_issue_request["#{quote_type}_quote_for_version"] %>
                             <div class="alert alert-warning">
@@ -224,6 +225,7 @@
                 <h3><%= I18n.t("file_issue_request._frontend.section.#{type}") %></h3>
 
                 <div class="subrecord-form-container">
+                    <% if @file_issue_request['preapprove_quotes'] %><p><span class="label label-info"><%= I18n.t("file_issue_request._frontend.messages.quote_preapproved") %></span></p><% end %>
                     <div class="btn-group">
                         <%= link_to I18n.t("file_issue_request._frontend.action.generate_#{type}"),
                                     {:controller => :file_issue_requests,

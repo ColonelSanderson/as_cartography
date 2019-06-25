@@ -57,7 +57,11 @@ class ArchivesSpaceService < Sinatra::Base
     ServiceQuote[JSONModel.parse_reference(json["#{params[:type]}_quote"]['ref'])[:id]].issue
 
     fir = FileIssueRequest[params[:id]]
-    fir["#{params[:type]}_request_status"] = 'QUOTE_PROVIDED'
+    if fir.preapprove_quotes == 1
+      fir["#{params[:type]}_request_status"] = 'QUOTE_ACCEPTED'
+    else
+      fir["#{params[:type]}_request_status"] = 'QUOTE_PROVIDED'
+    end
     fir["#{params[:type]}_quote_for_version"] = fir[:version]
     fir.save
 

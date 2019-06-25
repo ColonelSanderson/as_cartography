@@ -161,6 +161,7 @@ en:
         digital_quote: Quote for Digital Items
       messages:
         updated: File Issue Request updated
+        quote_preapproved: QUOTE PREAPPROVED
         quote_generation_success: Quote generated
         quote_generation_fail: Quote generation failed
         quote_issue_success: Quote issued
@@ -199,6 +200,7 @@ en:
     physical_request_status: Physical Request Status
     digital_request_status: Digital Request Status
     urgent: Urgent?
+    preapprove_quotes: Preapprove Quotes?
     request_notes: Notes
     delivery_location: Delivery Location
     delivery_authorizer: Delivery Authoriser
