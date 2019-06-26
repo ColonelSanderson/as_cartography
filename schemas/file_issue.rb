@@ -58,6 +58,8 @@
             "returned_date" => {"type" => "date"},
             "received_by" => {"type" => "string"},
             "overdue" => {"type" => "boolean", "readonly" => "true"},
+            "not_returned" => {"type" => "boolean"},
+            "not_returned_note" => {"type" => "string"},
             "_resolved" => {
               "type" => "object",
               "readonly" => "true"

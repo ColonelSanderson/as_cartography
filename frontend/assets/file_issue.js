@@ -79,9 +79,9 @@ FileIssue.prototype.setupRepresentationListForm = function() {
 
             $table.find('tbody :checkbox:checked').each(function() {
                 var $tr = $(this).closest('tr');
-                $tr.find(':input[name*=dispatch_date]').val(dispatchDate);
-                $tr.find(':input[name*=dispatched_by]').val(dispatchedBy);
-                $tr.find(':input[name*=expiry_date]').val(expiryDate);
+                $tr.find(':input[name*=dispatch_date]').val(dispatchDate).trigger('change');
+                $tr.find(':input[name*=dispatched_by]').val(dispatchedBy).trigger('change');
+                $tr.find(':input[name*=expiry_date]').val(expiryDate).trigger('change');
                 $modal.modal('hide');
             });
         });
@@ -101,16 +101,47 @@ FileIssue.prototype.setupRepresentationListForm = function() {
 
             $table.find('tbody :checkbox:checked').each(function() {
                 var $tr = $(this).closest('tr');
-                $tr.find(':input[name*=returned_date]').val(returnedDate);
-                $tr.find(':input[name*=received_by]').val(receivedBy);
+                $tr.find(':input[name*=returned_date]').val(returnedDate).trigger('change');
+                $tr.find(':input[name*=received_by]').val(receivedBy).trigger('change');
                 $modal.modal('hide');
             });
         });
     }
 
+    function toggleNotReturnedFields($tr) {
+        var $receivedDate = $tr.find(':input[id$=_returned_date_]');
+        var $notReturned = $tr.find(':checkbox[id$=_not_returned_]');
+        if ($receivedDate.val().trim() != '') {
+            $tr.find('.not-returned-fields').hide();
+            $tr.find('.not-returned-fields :input').prop('disabled', true);
+        } else if ($notReturned.is(':checked')) {
+            $tr.find('.returned-fields').hide();
+            $tr.find('.returned-fields :input').prop('disabled', true);
+            $tr.find('.not-returned-note').show();
+            $tr.find('.not-returned-fields :input').prop('disabled', false);
+        } else {
+            $tr.find('.not-returned-fields').show();
+            $tr.find('.not-returned-fields :input').prop('disabled', false);
+            $tr.find('.returned-fields').show();
+            $tr.find('.returned-fields :input').prop('disabled', false);
+            $tr.find('.not-returned-note').hide();
+            $tr.find('.not-returned-note :input').prop('disabled', true);
+        }
+    }
+
+    function setupNotReturnedFields() {
+        $table.find('tbody tr').each(function() {
+            toggleNotReturnedFields($(this));
+        });
+
+        $table.find('tbody tr .not-returned-fields :input, tbody tr .returned-fields :input').on('change', function() {
+            toggleNotReturnedFields($(this).closest('tr'));
+        });
+    }
+
     if ($table.length > 0) {
         $table.find('thead :checkbox').on('click', toggleAll);
-        $table.find('tbody :checkbox').on('change', function(event) {
+        $table.find('tbody :checkbox[id$=_id_]').on('change', function(event) {
             if ($(event.currentTarget).is(':checked')) {
                 $(this).closest('tr').addClass('info');
             } else {
@@ -124,14 +155,18 @@ FileIssue.prototype.setupRepresentationListForm = function() {
         });
         $table.find('tbody td').on('click', function(event) {
             if ($(event.target).is('td')) {
-                var $checkbox = $(this).closest('tr').find(':checkbox');
+                var $checkbox = $(this).closest('tr').find(':checkbox[id$=_id_]');
                 $checkbox.prop('checked', !$checkbox.is(':checked'));
                 $checkbox.trigger('change');
+            } else {
+                event.stopImmediatePropagation();
             }
         });
 
         $('#file_issue_requested_representations_ #dispatch').on('click', showDispatchModal);
         $('#file_issue_requested_representations_ #receive').on('click', showReceiveModal);
+
+        setupNotReturnedFields();
     }
 };
 

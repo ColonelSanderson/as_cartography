@@ -6,7 +6,7 @@ en:
     cannot_check_dispatched_until_all_items_have_a_dispatch_date: "Cannot check dispatched until all items have a dispatch date"
     dispatch_date_is_required_when_item_has_expiry_or_returned_date: "Dispatch date is required when item has expiry or returned date"
     expiry_date_is_required_when_item_has_dispatch_date: "Expiry date is required when item has dispatch date"
-    cannot_check_completed_until_all_items_have_a_returned_date: "Cannot check completed until all items have a returned date"
+    cannot_check_completed_until_all_items_have_a_returned_date_or_marked_as_not_returned: "Cannot check completed until all items have a returned date or marked as not returned"
     digital_items_cannot_be_dispatched_until_they_are_linked_to_a_file: "Can't dispatch a digital representation with no file attached"
 
   transfer_proposal:
@@ -220,7 +220,7 @@ en:
     request_type: Request Type
     representation: Representation
     warning_digital_representation_not_linked: Requested representation must be linked to a Digital Representation before approval is permitted
-    details: Details
+    details: Record Details
     toggle_all: Toggle all
     toggle: Toggle this representation
     upload_date: Upload Date
@@ -249,12 +249,14 @@ en:
     delivery_address_not_provided: Not Provided
     checklist_submitted: Request Submitted
     checklist_dispatched: Files Dispatched/Uploaded
-    checklist_completed: Loan Returned
+    checklist_completed: Loan Returned/Closed
     dispatch_date: Dispatch Date
     dispatched_by: Dispatched By
     expiry_date: Expiry Date
     returned_date: Returned Date
     received_by: Received By
+    not_returned: Not Returned?
+    not_returned_note: Not Returned Note
     _frontend:
       action:
         save: Save File Issue

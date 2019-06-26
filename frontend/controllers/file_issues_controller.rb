@@ -47,6 +47,8 @@ class FileIssuesController < ApplicationController
       requested_representation['expiry_date'] = form['expiry_date']
       requested_representation['returned_date'] = form['returned_date']
       requested_representation['received_by'] = form['received_by']
+      requested_representation['not_returned'] = form['not_returned'] == "1"
+      requested_representation['not_returned_note'] = form['not_returned_note']
     end
 
     params[:file_issue] = updated

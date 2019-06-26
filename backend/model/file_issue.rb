@@ -130,7 +130,9 @@ class FileIssue < Sequel::Model
                 dispatched_by: item['dispatched_by'],
                 expiry_date: item['expiry_date'],
                 returned_date: item['returned_date'],
-                received_by: item['received_by'])
+                received_by: item['received_by'],
+                not_returned: item['not_returned'] ? 1 : 0,
+                not_returned_note: item['not_returned_note'])
     end
 
     # Create any digital file issue tokens, reusing token keys if they've
@@ -219,6 +221,8 @@ class FileIssue < Sequel::Model
             'returned_date' => item[:returned_date],
             'received_by' => item[:received_by],
             'overdue' => item_is_overdue?(item),
+            'not_returned' => item[:not_returned] == 1,
+            'not_returned_note' => item[:not_returned_note],
           }
         }
 
@@ -247,10 +251,10 @@ class FileIssue < Sequel::Model
     if self.issue_type == ISSUE_TYPE_PHYSICAL && self.checklist_completed == 1
       not_yet_returned_count = self.db[:file_issue_item]
                                    .filter(file_issue_id: self.id)
-                                   .filter(returned_date: nil)
+                                   .filter(Sequel.&(returned_date: nil, not_returned: 0))
                                    .count
       if not_yet_returned_count > 0
-        errors.add(:checklist, "Cannot check completed until all items have a returned date")
+        errors.add(:checklist, "Cannot check completed until all items have a returned date or marked as not returned")
       end
     end
 
@@ -299,6 +303,7 @@ class FileIssue < Sequel::Model
     return false if item[:returned_date]
     return false unless item[:dispatch_date]
     return false unless item[:expiry_date]
+    return false if item[:not_returned]
 
     item[:expiry_date] < Date.today
   end

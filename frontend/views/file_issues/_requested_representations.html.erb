@@ -25,7 +25,6 @@
               </th>
             <% end %>
             <th><%= I18n.t('requested_representations.representation') %></th>
-            <th><%= I18n.t('requested_representations.details') %></th>
             <% if @file_issue['issue_type'] == 'DIGITAL' %>
               <th style="width: 200px;"><%= I18n.t('requested_representations.upload_date') %></th>
               <th style="width: 200px;"><%= I18n.t('requested_representations.link_expiry_date') %></th>
@@ -61,8 +60,11 @@
                                        :inside_linker_browse => true) %>
                     </div>
                   </div>
+                  <% if item['record_details'] %>
+                    <small class="text-muted"><%= I18n.t('requested_representations.details') %></small>
+                    <textarea class="form-control" readonly><%= item['record_details'] %></textarea>
+                  <% end %>
                 </td>
-                <td><%= item['record_details'] or '' %></td>
                 <td>
                   <div><%= form.label('dispatch_date', {}, ['text-muted']) %><br><%= form.textfield('dispatch_date', form.obj['dispatch_date'], placeholder: 'YYYY-MM-DD') %></div>
                   <div><%= form.label('dispatched_by', {}, ['text-muted']) %><br><%= form.textfield('dispatched_by', form.obj['dispatched_by']) %></div>
@@ -73,8 +75,26 @@
                 </td>
                 <% if @file_issue['issue_type'] === 'PHYSICAL' %>
                   <td>
-                    <div><%= form.label('returned_date', {}, ['text-muted']) %><br><%= form.textfield('returned_date', form.obj['returned_date'], placeholder: 'YYYY-MM-DD') %></div>
-                    <div><%= form.label('received_by', {}, ['text-muted']) %><br><%= form.textfield('received_by', form.obj['received_by']) %></div>
+                    <% if form.readonly? %>
+                      <% if form.obj['not_returned'] %>
+                        <span class="label label-warning">Not Returned</span>
+                        <% if form.obj['not_returned_note'] %>
+                          <div><label class="text-muted"><%= I18n.t('file_issue.not_returned_note') %></label><br><%= form.textarea('not_returned_note', form.obj['not_returned_note']) %></div>
+                        <% end %>
+                      <% else %>
+                        <div><%= form.label('returned_date', {}, ['text-muted']) %><br><%= form.textfield('returned_date', form.obj['returned_date'], placeholder: 'YYYY-MM-DD') %></div>
+                        <div><%= form.label('received_by', {}, ['text-muted']) %><br><%= form.textfield('received_by', form.obj['received_by']) %></div>
+                      <% end %>
+                    <% else %>
+                    <div class="returned-fields">
+                      <div><%= form.label('returned_date', {}, ['text-muted']) %><br><%= form.textfield('returned_date', form.obj['returned_date'], placeholder: 'YYYY-MM-DD') %></div>
+                      <div><%= form.label('received_by', {}, ['text-muted']) %><br><%= form.textfield('received_by', form.obj['received_by']) %></div>
+                    </div>
+                    <div class="not-returned-fields">
+                      <div><label class="text-muted"><%= form.checkbox('not_returned') %> <%= I18n.t('file_issue.not_returned') %></label></div>
+                      <div class="not-returned-note"><%= form.label('not_returned_note', {}, ['text-muted']) %><br><%= form.textarea('not_returned_note', form.obj['not_returned_note']) %></div>
+                    </div>
+                    <% end %>
                   </td>
                   <td>
                     <% if item['overdue'] %><span class="text-danger">Yes</span><% else %>No<% end %>
