@@ -14,7 +14,6 @@
                              :id => "file_issue_request_form"}.merge(update_monitor_params(@file_issue_request))) do |f| %>
         <%= form_context :file_issue_request, @file_issue_request do |form| %>
           <%= render_aspace_partial :partial => "file_issue_requests/form", locals: {is_readonly: false, form: form} %>
-          <%= render_aspace_partial :partial => "file_issue_requests/estimates", locals: {form: form} %>
 
           <div class="form-actions">
             <button type="submit" class="btn btn-primary"><%= I18n.t("file_issue_request._frontend.action.save") %></button>

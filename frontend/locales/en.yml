@@ -206,8 +206,6 @@ en:
     delivery_authorizer: Delivery Authoriser
     representation: Representation
     representations: Representations
-    digital_processing_estimate: Processing Estimate
-    physical_processing_estimate: Processing Estimate
     file_issue_digital: Digital File Issue
     file_issue_physical: Physical File Issue
     quote:

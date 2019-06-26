@@ -165,8 +165,6 @@
                     </tr>
                 </table>
 
-                <%= form.label_and_textarea "#{quote_type}_processing_estimate" %>
-
                 <% unless quote['issued_date'] %>
                     <div class="quote-json" style="display:none;">
                         <%= quote.to_json %>
@@ -234,8 +232,6 @@
                                      :id => @file_issue_request.id},
                                     :class => "btn btn-sm btn-success", :method => :post %>
                     </div>
-
-                    <%= form.label_and_textarea "#{quote_type}_processing_estimate" %>
                 </div>
             </section>
         <% end %>

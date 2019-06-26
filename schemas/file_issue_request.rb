@@ -33,8 +33,6 @@
       "delivery_authorizer" => {"type" => "string", "readonly" => "true"},
       "physical_request_status" => {"type" => "string"},
       "digital_request_status" => {"type" => "string"},
-      "digital_processing_estimate" => {"type" => "string"},
-      "physical_processing_estimate" => {"type" => "string"},
       "request_notes" => {"type" => "string", "readonly" => "true"},
 
       "requested_representations" => {

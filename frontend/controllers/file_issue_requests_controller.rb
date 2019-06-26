@@ -50,10 +50,6 @@ class FileIssueRequestsController < ApplicationController
       requested_representation['ref'] = new_ref
     end
 
-    # Apply any estimates
-    updated[:digital_processing_estimate] = params[:file_issue_request][:digital_processing_estimate]
-    updated[:physical_processing_estimate] = params[:file_issue_request][:physical_processing_estimate]
-
     params[:file_issue_request] = updated
 
     handle_crud(:instance => :file_issue_request,
