@@ -13,7 +13,6 @@ class FileIssue < Sequel::Model
   self.strict_param_setting = false
 
   STATUS_FILE_ISSUE_INITIATED = 'INITIATED'
-  STATUS_RETRIEVAL_IN_PROGRESS = 'IN_PROGRESS'
   STATUS_FILE_ISSUE_ACTIVE = 'ACTIVE'
   STATUS_FILE_ISSUE_COMPLETE = 'COMPLETE'
 
@@ -29,16 +28,12 @@ class FileIssue < Sequel::Model
 
     checklist_items = [
       :checklist_submitted,
-      :checklist_retrieval_started,
       :checklist_dispatched,
-      :checklist_summary_sent,
       :checklist_completed,
     ]
 
     corresponding_status = [
       STATUS_FILE_ISSUE_INITIATED,
-      STATUS_RETRIEVAL_IN_PROGRESS,
-      STATUS_FILE_ISSUE_ACTIVE,
       STATUS_FILE_ISSUE_ACTIVE,
       STATUS_FILE_ISSUE_COMPLETE,
     ]

@@ -248,9 +248,7 @@ en:
     delivery_address: Delivery Address
     delivery_address_not_provided: Not Provided
     checklist_submitted: Request Submitted
-    checklist_retrieval_started: Retrieval Started
     checklist_dispatched: Files Dispatched/Uploaded
-    checklist_summary_sent: File Issue Summary Sent
     checklist_completed: Loan Returned
     dispatch_date: Dispatch Date
     dispatched_by: Dispatched By

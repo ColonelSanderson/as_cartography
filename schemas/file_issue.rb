@@ -37,9 +37,7 @@
       "status" => {"type" => "string"},
 
       "checklist_submitted" => {"type" => "boolean"},
-      "checklist_retrieval_started" => {"type" => "boolean"},
       "checklist_dispatched" => {"type" => "boolean"},
-      "checklist_summary_sent" => {"type" => "boolean"},
       "checklist_completed" => {"type" => "boolean"},
 
       "requested_representations" => {

@@ -34,9 +34,7 @@ class FileIssuesController < ApplicationController
     # Apply checklist updates
     updated[:checklist_submitted] = true # always true!
     [
-      :checklist_retrieval_started,
       :checklist_dispatched,
-      :checklist_summary_sent,
       :checklist_completed,
     ].each do |prop|
       updated[prop] = (params[:file_issue][prop] == "1")
