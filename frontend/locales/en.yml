@@ -281,3 +281,19 @@ en:
         digital_file_missing: No digital file attached to representation
     _plural: File Issues
     _singular: File Issue
+
+  search_request:
+    agency: Agency
+    agency_location_display_string: Agency Location
+    status: Status
+    details: Details
+    representations: Representations
+    quote: Quote
+    _frontend:
+      approve_button: Approve Request
+      cancel_button: Cancel Request
+      section:
+        basic_information: Basic Information
+        representations: Representations
+    _plural: Search Requests
+    _singular: Search Request

@@ -1,0 +1,14 @@
+<%= render(:layout => '/shared/sidebar',
+           :locals => {
+               :record_type => 'search_request',
+               :record => @search_request,
+               :suppress_submit_buttons => true,
+           }) do |sidebar| %>
+    <%= sidebar.render_for_view_and_edit(:subrecord_type => 'representations', :property => :none, :title => I18n.t('search_request.representations')) %>
+
+    <% if is_readonly && @search_request.quote %>
+      <%= sidebar.render_for_view_only(:subrecord_type => 'quote', :property => :none, :title => I18n.t('search_request.quote')) %>
+    <% end %>
+
+    <%= sidebar.render_for_view_only(:subrecord_type => 'conversation', :property => :none) %>
+<% end %>

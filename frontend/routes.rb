@@ -20,9 +20,14 @@ ArchivesSpace::Application.routes.draw do
 
   match 'file_issues/:id' => 'file_issues#update', :via => [:post]
 
+  match 'search_requests/:id' => 'search_requests#update', :via => [:post]
+  match 'search_requests/approve' => 'search_requests#approve', :via => [:post]
+  match 'search_requests/cancel' => 'search_requests#cancel', :via => [:post]
+
   resources :transfer_proposals
   resources :transfers
   resources :transfer_files
   resources :file_issue_requests
   resources :file_issues
+  resources :search_requests
 end

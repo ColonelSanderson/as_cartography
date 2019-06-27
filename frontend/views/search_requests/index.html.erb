@@ -1,0 +1,31 @@
+<%= setup_context(:title => I18n.t("search_request._plural")) %>
+
+<%
+  @show_multiselect_column = false
+  @display_identifier = false
+  @display_context = false
+  add_column(I18n.t("search_request.agency"),
+             proc {|record|
+                   parsed = ASUtils.json_parse(record['json'])
+                   parsed.fetch('agency', {}).fetch('_resolved', {}).fetch('display_name', {}).fetch('sort_name', '')
+             })
+%>
+
+<div class="row">
+  <div class="col-md-3">
+    <div class="sidebar">
+      <%= render_aspace_partial :partial => "search/filter" %>
+    </div>
+  </div>
+  <div class="col-md-9">
+    <div class="record-pane">
+      <%= link_to_help :topic => "search" %>
+
+      <h2><%= I18n.t("search_request._plural") %></h2>
+
+      <%= render_aspace_partial :partial => "shared/flash_messages" %>
+
+      <%= render_aspace_partial :partial => "search/listing" %>
+    </div>
+  </div>
+</div>

@@ -3,6 +3,7 @@ class IndexerCommon
   @@record_types << :transfer
   @@record_types << :file_issue_request
   @@record_types << :file_issue
+  @@record_types << :search_request
   @@resolved_attributes << 'agency'
 
   add_indexer_initialize_hook do |indexer|
@@ -27,6 +28,14 @@ class IndexerCommon
 
       if doc['primary_type'] == 'file_issue_request'
         doc['file_issue_request_draft_u_sbool'] = record['record']['draft']
+      end
+    }
+
+    indexer.add_document_prepare_hook {|doc, record|
+      if doc['primary_type'] == 'search_request'
+        doc['title'] = record['record']['display_string']
+        doc['search_request_draft_u_sbool'] = record['record']['draft']
+        doc['search_request_status_u_sstr'] = record['record']['status']
       end
     }
 

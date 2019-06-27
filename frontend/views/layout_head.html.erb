@@ -2,6 +2,7 @@
 <%= javascript_include_tag "#{AppConfig[:frontend_proxy_prefix]}assets/conversation.js" %>
 <%= javascript_include_tag "#{AppConfig[:frontend_proxy_prefix]}assets/file_issue.js" %>
 <%= javascript_include_tag "#{AppConfig[:frontend_proxy_prefix]}assets/quote_editor.js" %>
+<%= javascript_include_tag "#{AppConfig[:frontend_proxy_prefix]}assets/search_request.js" %>
 <link href="<%= "#{AppConfig[:frontend_proxy_prefix]}assets/styles/style.css" %>" media="all" rel="stylesheet" type="text/css">
 <link href="<%= "#{AppConfig[:frontend_proxy_prefix]}assets/styles/conversation.css" %>" media="all" rel="stylesheet" type="text/css">
 <link href="<%= "#{AppConfig[:frontend_proxy_prefix]}assets/styles/quote_editor.css" %>" media="all" rel="stylesheet" type="text/css">
@@ -16,4 +17,9 @@
   <li class="divider"></li>
   <li><%= link_to I18n.t("file_issue_request._plural"), :controller => :file_issue_requests, :action => :index, :sort => 'create_time desc'  %></li>
   <li><%= link_to I18n.t("file_issue._plural"), :controller => :file_issues, :action => :index, :sort => 'create_time desc' %></li>
+</script>
+
+<script type="text/template" id="MAPSearchRequestBrowseActions">
+  <li class="divider"></li>
+  <li><%= link_to I18n.t("search_request._plural"), :controller => :search_requests, :action => :index, :sort => 'create_time desc'  %></li>
 </script>
