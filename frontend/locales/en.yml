@@ -256,6 +256,7 @@ en:
     issue_type: Issue Type
     status: Status
     agency_location_display_string: Agency Location
+    created_by: Agency Contact
     urgent: Urgent?
     delivery_location: Delivery Location
     delivery_authorizer: Delivery Authoriser
