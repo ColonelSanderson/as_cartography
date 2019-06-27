@@ -20,7 +20,7 @@ class TransferProposal < Sequel::Model
 
     MAPDB.open do |mapdb|
       agency_locations =
-        mapdb[:agency_location].filter(:agency_id => objs.map(&:agency_id)).map {|row| [row[:agency_id], row[:name]]}.to_h
+        mapdb[:agency_location].filter(:agency_id => objs.map(&:agency_id)).map {|row| [row[:id], row[:name]]}.to_h
 
       proposal_series =
         mapdb[:transfer_proposal_series]

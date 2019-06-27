@@ -120,7 +120,7 @@ class Transfer < Sequel::Model
       agency_locations =
         mapdb[:agency_location]
           .filter(:agency_id => objs.map(&:agency_id))
-          .map {|row| [row[:agency_id], row[:name]]}
+          .map {|row| [row[:id], row[:name]]}
           .to_h
 
       transfer_handles =

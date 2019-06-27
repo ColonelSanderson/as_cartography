@@ -143,7 +143,7 @@ class FileIssueRequest < Sequel::Model
           .to_h
 
       agency_locations =
-        mapdb[:agency_location].filter(:agency_id => objs.map(&:agency_id)).map {|row| [row[:agency_id], row[:name]]}.to_h
+        mapdb[:agency_location].filter(:agency_id => objs.map(&:agency_id)).map {|row| [row[:id], row[:name]]}.to_h
 
       file_issue_request_items =
         mapdb[:file_issue_request_item]
