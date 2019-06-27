@@ -16,3 +16,11 @@
     border: none;
     text-align: left;
 }
+
+.fir-browse-content {
+    white-space: nowrap;
+}
+
+.fir-browse-id {
+    font-weight: bold;
+}

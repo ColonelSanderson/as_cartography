@@ -1,5 +1,8 @@
 <%= readonly_context :file_issue_request, @file_issue_request do |readonly| %>
-    <h2><%= @file_issue_request.title %>  <span class="label label-info"><%= I18n.t("file_issue_request._singular") %></span></h2>
+    <h2>
+      <%= @file_issue_request.title %>  <span class="label label-info"><%= I18n.t("file_issue_request._singular") %></span>
+      <%= @file_issue_request.urgent ? urgent_flag : '' %>
+    </h2>
 
     <%= render_aspace_partial :partial => "shared/flash_messages" %>
 
@@ -12,22 +15,29 @@
                                        :record => @file_issue_request) %>
 
             <div class="form-group">
-                <div class="control-label col-sm-2"><%= I18n.t("file_issue_request.agency") %></div>
-                <div class="token-list">
-                    <%= render_token(:object => @file_issue_request['agency']['_resolved'],
-                                     :label => CGI::escapeHTML(@file_issue_request['agency']['_resolved']['title']),
-                                     :type => @file_issue_request['agency']['_resolved']['jsonmodel_type'],
-                                     :uri => @file_issue_request['agency']['ref'],
-                                     :placement => "top",
-                                     :inside_linker_browse => true) %>
+                <label class="control-label col-sm-2"><%= I18n.t("file_issue_request.agency") %></label>
+                <div class="label-only col-sm-9">
+                  <div class="token-list">
+                      <%= render_token(:object => @file_issue_request['agency']['_resolved'],
+                                       :label => CGI::escapeHTML(@file_issue_request['agency']['_resolved']['title']),
+                                       :type => @file_issue_request['agency']['_resolved']['jsonmodel_type'],
+                                       :uri => @file_issue_request['agency']['ref'],
+                                       :placement => "top",
+                                       :inside_linker_browse => true) %>
+                  </div>
                 </div>
             </div>
 
             <%= form.label_and_textfield "agency_location_display_string" %>
+            <%= form.label_and_textfield "created_by" %>
 
-            <%= form.label_and_textfield "physical_request_status" %>
 
-            <%= form.label_and_textfield "digital_request_status" %>
+            <% ["digital_request_status", "physical_request_status"].each do |status| %>
+              <div class="form-group">
+                <label class="control-label col-sm-2"><%= I18n.t("file_issue_request.#{status}") %></label>
+                <div class="label-only col-sm-9"><%= status_label(@file_issue_request[status]) %></div>
+              </div>
+            <% end %>
 
             <%= form.label_and_boolean "urgent" %>
 
@@ -39,33 +49,26 @@
 
             <%= form.label_and_boolean "preapprove_quotes" %>
 
-            <% if @file_issue_request['file_issue_digital'] %>
-              <div class="form-group">
-                <div class="control-label col-sm-2"><%= I18n.t("file_issue_request.file_issue_digital") %></div>
-                <div class="token-list">
-                  <%= render_token(:object => @file_issue_request['file_issue_digital']['_resolved'],
-                                   :label => CGI::escapeHTML(@file_issue_request['file_issue_digital']['_resolved']['title']),
-                                   :type => @file_issue_request['file_issue_digital']['_resolved']['jsonmodel_type'],
-                                   :uri => @file_issue_request['file_issue_digital']['ref'],
-                                   :placement => "top",
-                                   :inside_linker_browse => true) %>
+            <% ["file_issue_digital", "file_issue_physical"].each do |issue| %>
+
+              <% if @file_issue_request[issue] %>
+                <div class="form-group">
+                  <label class="control-label col-sm-2"><%= I18n.t("file_issue_request.#{issue}") %></label>
+                  <div class="label-only col-sm-9">
+                    <div class="token-list">
+                      <% fi = @file_issue_request[issue] %>
+                      <%= render_token(:object => fi['_resolved'],
+                                       :label => CGI::escapeHTML(fi['_resolved']['title']),
+                                       :type => fi['_resolved']['jsonmodel_type'],
+                                       :uri => fi['ref'],
+                                       :placement => "top",
+                                       :inside_linker_browse => false) %>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              <% end %>
             <% end %>
 
-            <% if @file_issue_request['file_issue_physical'] %>
-              <div class="form-group">
-                <div class="control-label col-sm-2"><%= I18n.t("file_issue_request.file_issue_physical") %></div>
-                <div class="token-list">
-                  <%= render_token(:object => @file_issue_request['file_issue_physical']['_resolved'],
-                                   :label => CGI::escapeHTML(@file_issue_request['file_issue_physical']['_resolved']['title']),
-                                   :type => @file_issue_request['file_issue_physical']['_resolved']['jsonmodel_type'],
-                                   :uri => @file_issue_request['file_issue_physical']['ref'],
-                                   :placement => "top",
-                                   :inside_linker_browse => true) %>
-                </div>
-              </div>
-            <% end %>
         </section>
 
         <section id="requested_representations" class="subrecord-form-dummy">

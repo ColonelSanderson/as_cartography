@@ -50,6 +50,23 @@
                 </div>
               </div>
             <% end %>
+
+            <div class="form-group">
+              <label class="control-label col-sm-2"><%= I18n.t("file_issue.file_issue_request") %></label>
+              <div class="label-only col-sm-9">
+                <div class="token-list">
+                  <% fir = @file_issue.file_issue_request %>
+                  <%= render_token(:object => fir['_resolved'],
+                                   :label => CGI::escapeHTML(fir['_resolved']['title']),
+                                   :type => fir['_resolved']['jsonmodel_type'],
+                                   :uri => fir['ref'],
+                                   :placement => "top",
+                                   :inside_linker_browse => false) %>
+                </div>
+              </div>
+            </div>
+
+
         </section>
     <% end %>
 

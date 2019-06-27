@@ -2,11 +2,63 @@
 
 <%
   @show_multiselect_column = false
+  @no_title = true
+
+  add_column(urgent_flag,
+             proc {|record|
+               parsed = ASUtils.json_parse(record['json'])
+               parsed['urgent'] ? I18n.t('file_issue_request.is_urgent').html_safe : ''
+
+               urgent_flag if parsed['urgent']
+
+             }, :sortable => true, :sort_by => 'fir-urgent')
+
+  add_column(I18n.t("file_issue_request.id"),
+             proc {|record|
+               "<span class=\"fir-browse-content fir-browse-id\">#{record['title']}</span>".html_safe
+             },  :class => '', :sortable => true, :sort_by => 'identifier')
+
+  add_column(I18n.t("file_issue_request.agency_id"),
+             proc {|record|
+                   parsed = ASUtils.json_parse(record['json'])
+                   agency = parsed.fetch('agency', {}).fetch('_resolved', {})
+
+                   out = "<span class=\"fir-browse-content fir-browse-id\">"
+                   out += 'A' + agency.fetch('qsa_id', '').to_s
+                   out += "</span>"
+
+                   out.html_safe
+
+             },  :class => '', :sortable => true, :sort_by => 'identifier')
+
   add_column(I18n.t("file_issue_request.agency"),
              proc {|record|
                    parsed = ASUtils.json_parse(record['json'])
-                   parsed.fetch('agency', {}).fetch('_resolved', {}).fetch('display_name', {}).fetch('sort_name', '')
+                   agency = parsed.fetch('agency', {}).fetch('_resolved', {})
+                   out = agency.fetch('display_name', {}).fetch('sort_name', '')
+                   out += '<ul><li> Location: ' + parsed["agency_location_display_string"] + '</li>'
+                   out += '<li> Contact: ' + record["created_by"] + '</li></ul>'
+
+                   out.html_safe
+
+             }, :sortable => true, :sort_by => 'fir-agency')
+
+  add_column(I18n.t("file_issue_request.request_status"),
+             proc {|record|
+               parsed = ASUtils.json_parse(record['json'])
+
+               out = "<span class=\"fir-browse-content\">"
+
+               out += ['digital', 'physical'].reject{|type| parsed["#{type}_request_status"] == 'NONE_REQUESTED' }
+                        .map{|type| "#{I18n.t("file_issue_request.#{type}")}:" +
+                                    " <div class=\"pull-right\">#{status_label(parsed["#{type}_request_status"])}</div>"}
+                        .join('<br>')
+
+               out += '</span>'
+
+               out.html_safe
              })
+
 %>
 
 <div class="row">

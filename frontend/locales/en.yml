@@ -195,11 +195,18 @@ en:
       back_button: Back
     _plural: File Issue Requests
     _singular: File Issue Request
+    id: ID
     agency_location_display_string: Agency Location
-    agency: Agency
-    physical_request_status: Physical Request Status
-    digital_request_status: Digital Request Status
+    created_by: Agency Contact
+    agency: Agency Details
+    agency_id: Agency
+    request_status: Status
+    physical_request_status: Physical Status
+    digital_request_status: Digital Status
+    digital: Digital
+    physical: Physical
     urgent: Urgent?
+    is_urgent: "<span style=\"color:red\">URGENT</span>"
     preapprove_quotes: Pre-approve Quotes?
     request_notes: Notes
     delivery_location: Delivery Location
@@ -257,6 +264,7 @@ en:
     received_by: Received By
     not_returned: Not Returned?
     not_returned_note: Not Returned Note
+    file_issue_request: File Issue Request
     _frontend:
       action:
         save: Save File Issue

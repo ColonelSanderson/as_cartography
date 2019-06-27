@@ -146,4 +146,26 @@ class FileIssueRequestsController < ApplicationController
 
     redirect_to :controller => :file_issue_requests, :action => :show, :id => params[:id]
   end
+
+
+  helper_method :status_label
+  def status_label(status)
+    @status_map ||= {
+      'NONE_REQUESTED' => 'info',
+      'QUOTE_REQUESTED' => 'warning',
+      'QUOTE_PROVIDED' => 'info',
+      'QUOTE_ACCEPTED' => 'primary',
+      'FILE_ISSUE_CREATED' => 'success',
+      'CANCELLED_BY_QSA' => 'danger',
+      'CANCELLED_BY_AGENCY' => 'danger',
+    }
+
+    "<span class=\"label label-#{@status_map[status]}\">#{status}</span>".html_safe
+  end
+
+
+  helper_method :urgent_flag
+  def urgent_flag
+    "<span class=\"glyphicon glyphicon-flag\" style=\"color:red;\"></span>".html_safe
+  end
 end
