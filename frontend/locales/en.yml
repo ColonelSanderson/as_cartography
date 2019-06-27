@@ -249,6 +249,7 @@ en:
       current: current
     filter:
       controlling_record_u_sstr: Controlling Record
+      search_request_status_u_sstr: Status
 
   file_issue:
     agency: Agency

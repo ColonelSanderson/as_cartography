@@ -20,7 +20,7 @@ class SearchRequestsController < ApplicationController
                                                                 })
                              .to_json
 
-        @search_data = Search.for_type(session[:repo_id], "search_request", params)
+        @search_data = Search.for_type(session[:repo_id], "search_request", params.merge('facet[]' => ['search_request_status_u_sstr']))
       }
       format.csv {
         search_params = params_for_backend_search.merge({ "sort" => "title_sort asc",  "facet[]" => []})
