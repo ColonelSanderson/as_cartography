@@ -7,7 +7,7 @@ class FileIssueRequestsController < ApplicationController
   def index
     respond_to do |format|
       format.html {
-        params = {"sort" => "title_sort asc", "facet[]" => Plugins.search_facets_for_type(:file_issue_request)}.merge(params_for_backend_search)
+        params = {"sort" => "file_issue_request_urgent_u_ssort desc, create_time desc", "facet[]" => Plugins.search_facets_for_type(:file_issue_request)}.merge(params_for_backend_search)
 
         # Exclude drafts
         raise "Unexpected pre-existing filter" if params['filter']

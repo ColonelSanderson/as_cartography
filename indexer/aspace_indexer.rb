@@ -28,6 +28,10 @@ class IndexerCommon
 
       if doc['primary_type'] == 'file_issue_request'
         doc['file_issue_request_draft_u_sbool'] = record['record']['draft']
+        doc['file_issue_request_urgent_u_ssort'] = record['record']['urgent'] ? 'z' : 'a'
+        doc['file_issue_request_title_u_ssort'] = record['record']['title']
+        doc['file_issue_request_agency_id_u_ssort'] = record['record']['agency']['_resolved']['qsa_id']
+        doc['file_issue_request_agency_name_u_ssort'] = record['record']['agency']['_resolved']['display_name']['sort_name']
       end
     }
 

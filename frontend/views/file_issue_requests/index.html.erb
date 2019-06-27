@@ -1,7 +1,6 @@
 <%= setup_context(:title => I18n.t("file_issue_request._plural")) %>
 
 <%
-  @show_multiselect_column = false
   @no_title = true
 
   add_column(urgent_flag,
@@ -11,12 +10,12 @@
 
                urgent_flag if parsed['urgent']
 
-             }, :sortable => true, :sort_by => 'fir-urgent')
+             }, :sortable => true, :sort_by => 'file_issue_request_urgent_u_ssort')
 
   add_column(I18n.t("file_issue_request.id"),
              proc {|record|
                "<span class=\"fir-browse-content fir-browse-id\">#{record['title']}</span>".html_safe
-             },  :class => '', :sortable => true, :sort_by => 'identifier')
+             }, :sortable => true, :sort_by => 'file_issue_request_title_u_ssort')
 
   add_column(I18n.t("file_issue_request.agency_id"),
              proc {|record|
@@ -29,7 +28,7 @@
 
                    out.html_safe
 
-             },  :class => '', :sortable => true, :sort_by => 'identifier')
+             }, :sortable => true, :sort_by => 'file_issue_request_agency_id_u_ssort')
 
   add_column(I18n.t("file_issue_request.agency"),
              proc {|record|
@@ -41,7 +40,7 @@
 
                    out.html_safe
 
-             }, :sortable => true, :sort_by => 'fir-agency')
+             }, :sortable => true, :sort_by => 'file_issue_request_agency_name_u_ssort')
 
   add_column(I18n.t("file_issue_request.request_status"),
              proc {|record|

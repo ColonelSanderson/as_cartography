@@ -238,6 +238,12 @@ en:
     overdue: Overdue?
     _plural: Requested Representations
 
+  search_sorting:
+    file_issue_request_urgent_u_ssort: Urgency
+    file_issue_request_title_u_ssort: Request ID
+    file_issue_request_agency_id_u_ssort: Agency ID
+    file_issue_request_agency_name_u_ssort: Agency Name
+
   search_results:
     controlling_record:
       current: current
