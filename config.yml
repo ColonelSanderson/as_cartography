@@ -1,2 +1,5 @@
 depends_on_plugins:
   - as_runcorn
+
+recommends_plugins:
+  - as_history
