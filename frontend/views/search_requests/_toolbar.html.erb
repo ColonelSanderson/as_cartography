@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-md-12">
         <div class="record-toolbar search-request-toolbar">
-            <% if !['edit', 'update'].include?(controller.action_name) %>
+            <% if !['edit', 'update'].include?(controller.action_name) && @search_request.status == 'OPEN' %>
                 <div class="btn-group pull-left">
                     <%= link_to I18n.t("actions.edit"), {:controller => :search_requests, :action => :edit, :id => @search_request.id}, :class => "btn btn-sm btn-primary" %>
                 </div>
@@ -14,29 +14,54 @@
                 </div>
             <% end %>
 
-          <div class="btn-group pull-right">
             <% if ['SUBMITTED', 'OPEN'].include?(@search_request.status) %>
-              <%= form_tag({:controller => "search_requests",
-                            :action => "cancel"},
-                           :method => "post",
-                           :id => "cancel_search_request") do %>
-                <%= hidden_field_tag "search_request_id", @search_request.id %>
-                <button class="btn btn-danger btn-default btn-sm"><%= I18n.t("search_request._frontend.cancel_button") %></button>
-              <% end %>
-            <% end %>
-          </div>
-
-            <div class="btn-group pull-right">
-              <% if @search_request.status == "SUBMITTED" %>
+              <div class="btn-group pull-right">
                 <%= form_tag({:controller => "search_requests",
-                              :action => "approve"},
+                              :action => "cancel",
+                              :id => @search_request.id},
                              :method => "post",
-                             :id => "approve_search_request") do %>
-                  <%= hidden_field_tag "search_request_id", @search_request.id %>
-                  <button class="btn btn-primary btn-default btn-sm"><i class="fa fa-check"></i>&nbsp;<%= I18n.t("search_request._frontend.approve_button") %></button>
+                             :id => 'cancel_search_request'
+                             ) do %>
+                  <button class="btn btn-danger btn-default btn-sm"><%= I18n.t("search_request._frontend.cancel_button") %></button>
                 <% end %>
+              </div>
+            <% end %>
+
+            <% if @search_request.status == "SUBMITTED" %>
+              <div class="btn-group pull-right">
+                  <%= form_tag({:controller => "search_requests",
+                                :action => "approve",
+                                :id => @search_request.id},
+                               :method => "post",
+                               :id => 'approve_search_request') do %>
+                    <button class="btn btn-primary btn-default btn-sm"><i class="fa fa-check"></i>&nbsp;<%= I18n.t("search_request._frontend.approve_button") %></button>
+                <% end %>
+              </div>
+            <% end %>
+
+            <% if @search_request.status == "OPEN" %>
+              <div class="btn-group pull-right">
+                <%= form_tag({:controller => "search_requests",
+                              :action => "close",
+                              :id => @search_request.id},
+                             :method => "post",
+                             :id => 'close_search_request') do %>
+                  <button class="btn btn-primary btn-default btn-sm"><i class="fa fa-check"></i>&nbsp;<%= I18n.t("search_request._frontend.close_button") %></button>
+                <% end %>
+              </div>
+            <% end %>
+
+          <% if @search_request.status == "CLOSED" %>
+            <div class="btn-group pull-right">
+              <%= form_tag({:controller => "search_requests",
+                            :action => "reopen",
+                            :id => @search_request.id},
+                           :method => "post",
+                           :id => 'reopen_search_request') do %>
+                <button class="btn btn-primary btn-default btn-sm"><%= I18n.t("search_request._frontend.reopen_button") %></button>
               <% end %>
             </div>
+          <% end %>
 
             <div class="clearfix"></div>
         </div>
@@ -60,7 +85,29 @@
       <p><%= I18n.t('search_request._frontend.messages.confirm_cancel_message') %></p>
    </div>
    <div class="modal-footer">
-      <button class="btn btn-primary confirmButton"><%= I18n.t('search_request._frontend.cancel_button') %></button>
+      <button class="btn btn-danger confirmButton"><%= I18n.t('search_request._frontend.cancel_button') %></button>
+      <button class="btn btn-cancel btn-default" data-dismiss="modal"><%= I18n.t "search_request._frontend.back_button" %></button>
+   </div>
+--></div>
+
+<div id="search_request_confirm_close_template"
+     data-title="<%= I18n.t("search_request._frontend.messages.confirm_close_title") %>"><!--
+   <div class="modal-body">
+      <p><%= I18n.t('search_request._frontend.messages.confirm_close_message') %></p>
+   </div>
+   <div class="modal-footer">
+      <button class="btn btn-primary confirmButton"><%= I18n.t('search_request._frontend.close_button') %></button>
+      <button class="btn btn-cancel btn-default" data-dismiss="modal"><%= I18n.t "search_request._frontend.back_button" %></button>
+   </div>
+--></div>
+
+<div id="search_request_confirm_reopen_template"
+     data-title="<%= I18n.t("search_request._frontend.messages.confirm_reopen_title") %>"><!--
+   <div class="modal-body">
+      <p><%= I18n.t('search_request._frontend.messages.confirm_reopen_message') %></p>
+   </div>
+   <div class="modal-footer">
+      <button class="btn btn-primary confirmButton"><%= I18n.t('search_request._frontend.reopen_button') %></button>
       <button class="btn btn-cancel btn-default" data-dismiss="modal"><%= I18n.t "search_request._frontend.back_button" %></button>
    </div>
 --></div>

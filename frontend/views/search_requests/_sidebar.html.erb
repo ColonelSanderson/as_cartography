@@ -7,7 +7,7 @@
     <%= sidebar.render_for_view_and_edit(:subrecord_type => 'representations', :property => :none, :title => I18n.t('search_request.representations')) %>
 
     <% if is_readonly && @search_request.quote %>
-      <%= sidebar.render_for_view_only(:subrecord_type => 'quote', :property => :none, :title => I18n.t('search_request.quote')) %>
+      <%= sidebar.render_for_view_only(:subrecord_type => 'quote', :property => :none, :title => I18n.t('search_request.service_fee')) %>
     <% end %>
 
     <%= sidebar.render_for_view_only(:subrecord_type => 'conversation', :property => :none) %>

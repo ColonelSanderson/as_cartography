@@ -32,4 +32,78 @@ class ArchivesSpaceService < Sinatra::Base
     handle_update(SearchRequest, params[:id], params[:search_request])
   end
 
+  Endpoint.post('/search_requests/:id/cancel')
+    .description("Cancel a given request")
+    .params(["id", :id])
+    .permissions([])
+    .returns([200, "cancel succeeded"]) \
+  do
+    MAPDB.transaction do
+      SearchRequest.get_or_die(params[:id]).cancel!
+      json_response('status' => 'cancelled')
+    end
+  end
+
+  Endpoint.post('/search_requests/:id/approve')
+    .description("Approve a given request")
+    .params(["id", :id])
+    .permissions([])
+    .returns([200, "approve succeeded"]) \
+  do
+    MAPDB.transaction do
+      SearchRequest.get_or_die(params[:id]).approve!
+      json_response('status' => 'approved')
+    end
+  end
+
+  Endpoint.post('/search_requests/:id/close')
+         .description("Close a given request")
+         .params(["id", :id])
+         .permissions([])
+         .returns([200, "close succeeded"]) \
+  do
+    MAPDB.transaction do
+      SearchRequest.get_or_die(params[:id]).close!
+      json_response('status' => 'closed')
+    end
+  end
+
+  Endpoint.post('/search_requests/:id/reopen')
+    .description("Reopen a given request")
+    .params(["id", :id])
+    .permissions([])
+    .returns([200, "reopen succeeded"]) \
+  do
+    MAPDB.transaction do
+      SearchRequest.get_or_die(params[:id]).reopen!
+      json_response('status' => 'reopened')
+    end
+  end
+
+  Endpoint.post('/search_requests/:id/issue_quote')
+    .description("Issue a quote")
+    .params(["id", :id])
+    .permissions([])
+    .returns([200, :updated]) \
+  do
+    obj = SearchRequest.get_or_die(params[:id])
+
+    obj.issue_quote!
+
+    json_response({:message => 'Quote issued'})
+  end
+
+  Endpoint.post('/search_requests/:id/withdraw_quote')
+    .description("Withdraw a previously issued quote")
+    .params(["id", :id])
+    .permissions([])
+    .returns([200, :updated]) \
+  do
+    obj = SearchRequest.get_or_die(params[:id])
+
+    obj.withdraw_quote!
+
+    json_response({:message => 'Quote issued'})
+
+  end
 end

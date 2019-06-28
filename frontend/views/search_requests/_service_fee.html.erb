@@ -1,0 +1,182 @@
+<% if @search_request['quote'] %>
+    <% quote = @search_request['quote']['_resolved'] %>
+    <section id="quote" class="subrecord-form-dummy">
+        <h3 class="subrecord-form-heading-label"><%= I18n.t("search_request.service_fee") %></h3>
+        <div class="subrecord-form-container">
+            <div style="padding-bottom:40px;">
+                <% if quote['issued_date'] %>
+                    <div class="pull-left">
+                        <span class="label label-success">
+                            <%= I18n.t("search_request._frontend.messages.quote_issued_on", :date => quote['issued_date']) %>
+                        </span>
+                    </div>
+                    <div class="btn-group pull-right">
+                      <%= link_to I18n.t("search_request._frontend.action.withdraw_quote"),
+                                  {:controller => :search_requests,
+                                   :action => :withdraw_quote,
+                                   :id => @search_request.id},
+                                  :class => "btn btn-sm btn-warning", :method => :post %>
+                    </div>
+                <% else %>
+                    <div class="pull-left">
+                        <span class="label label-warning">
+                            <%= I18n.t("search_request._frontend.messages.quote_not_issued") %>
+                        </span>
+                    </div>
+
+                    <div class="btn-group pull-right">
+                        <div class="pull-left quote-message"> </div>
+
+                        <%= link_to I18n.t("search_request._frontend.action.issue_quote"),
+                                    {:controller => :search_requests,
+                                     :action => :issue_quote,
+                                     :id => @search_request.id},
+                                    :class => "btn btn-sm btn-success quote-button quote-issue-button", :method => :post %>
+
+                        <%= link_to I18n.t("search_request._frontend.action.revert_quote"),
+                                    {:controller => :search_requests,
+                                     :action => :show,
+                                     :id => @search_request.id},
+                                    :class => "btn btn-sm btn-info quote-button quote-revert-button",
+                                    :style => "display:none;" %>
+
+                        <%= form_tag({ :controller => :search_requests,
+                                       :action => :save_quote,
+                                       :id => @search_request.id}, {:style => "display:inline-block;"}) do |f| %>
+                            <button type="submit" class="btn btn-sm btn-primary quote-button quote-save-button" style="display:none;">
+                                <%= I18n.t("search_request._frontend.action.save_quote") %>
+                            </button>
+                            <input type="hidden" name="quote_json"/>
+                        <% end %>
+                    </div>
+                <% end %>
+            </div>
+
+            <table class="table table-striped table-bordered" id="quote-table">
+                <tr>
+                    <% unless quote['issued_date'] %>
+                        <th></th>
+                    <% end %>
+                    <th><%= I18n.t("search_request.quote.unit_description") %></th>
+                    <th style="text-align:right"><%= I18n.t("search_request.quote.unit_cost") %></th>
+                    <th style="width:100px;"><%= I18n.t("search_request.quote.unit_type") %></th>
+                    <th style="text-align:center"><%= I18n.t("search_request.quote.number_of_units") %></th>
+                    <th style="text-align:right"><%= I18n.t("search_request.quote.cost") %></th>
+                </tr>
+
+                <% quote['line_items'].each do |line| %>
+                    <% if quote['issued_date'] %>
+                        <tr>
+                            <td>
+                                <%= line['description'] %>
+                            </td>
+                            <td style="text-align:right">
+                                <%= line['charge_per_unit_display'] %>
+                            </td>
+                            <td>
+                                <%= I18n.t("enumerations.runcorn_charge_quantity_unit.#{line['charge_quantity_unit']}") %>
+                            </td>
+                            <td style="text-align:center">
+                                <%= line['quantity'] %>
+                            </td>
+                            <td style="text-align:right"><%= line['charge_display'] %></td>
+                        </tr>
+                    <% else %>
+                        <tr class="quote-line">
+                            <td>
+                                <button class="btn btn-xs btn-danger quote-line-button quote-line-delete-button"
+                                        title="Remove this line from the quote">
+                                    x
+                                </button>
+                            </td>
+                            <td class="editable-quote-field"
+                                data-field="description" data-value="<%= line['description'] %>">
+                                <%= line['description'] %>
+                            </td>
+                            <td class="editable-quote-field" style="text-align:right"
+                                data-field="charge_per_unit_cents"
+                                data-value="<%= line['charge_per_unit_cents'] %>">
+                                <%= line['charge_per_unit_display'] %>
+                            </td>
+                            <td class="editable-quote-field"
+                                data-field="charge_quantity_unit"
+                                data-value="<%= line['charge_quantity_unit'] %>">
+                                <%= I18n.t("enumerations.runcorn_charge_quantity_unit.#{line['charge_quantity_unit']}") %>
+                            </td>
+                            <td class="editable-quote-field" style="text-align:center"
+                                data-field="quantity"
+                                data-value="<%= line['quantity'] %>">
+                                <%= line['quantity'] %>
+                            </td>
+                            <td class="quote-cost" style="text-align:right"><%= line['charge_display'] %></td>
+                        </tr>
+                    <% end %>
+                <% end %>
+                <tr>
+                    <% unless quote['issued_date'] %>
+                        <th>
+                            <button class="btn btn-xs btn-success quote-line-button quote-line-add-button"
+                                    title="Add a line to the quote">
+                                +
+                            </button>
+                        </th>
+                    <% end %>
+                    <th><%= I18n.t("search_request.quote.total") %></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th class="quote-cost quote-total" style="text-align:right"><%= quote['total_charge_display'] %></th>
+                </tr>
+            </table>
+
+            <% unless quote['issued_date'] %>
+                <div class="quote-json" style="display:none;">
+                    <%= quote.to_json %>
+                </div>
+
+                <div class="quote-new-line" style="display:none;">
+                    <table>
+                        <tr class="quote-line">
+                            <td></td>
+                            <td class="editable-quote-field"
+                                data-field="description" data-value="-- Add a description --">
+                                -- Add a description --
+                            </td>
+                            <td class="editable-quote-field" style="text-align:right"
+                                data-field="charge_per_unit_cents"
+                                data-value="0">
+                                $0.00
+                            </td>
+                            <td class="editable-quote-field"
+                                data-field="charge_quantity_unit"
+                                data-value="order">
+                                <%= I18n.t("enumerations.runcorn_charge_quantity_unit.order") %>
+                            </td>
+                            <td class="editable-quote-field" style="text-align:center"
+                                data-field="quantity"
+                                data-value="1">
+                                1
+                            </td>
+                            <td class="quote-cost" style="text-align:right">$0.00</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="quote-form-elements" style="display:none;">
+                    <input class="form-control quote-form-element" name="description"/>
+                    <input class="form-control quote-form-element" name="charge_per_unit_cents" style="max-width:80px;text-align:right"/>
+                    <select class="form-control quote-form-element" name="charge_quantity_unit">
+                        <% JSONModel.enum_values('runcorn_charge_quantity_unit').each do |v| %>
+                            <option value="<%= v %>"><%= I18n.t('enumerations.runcorn_charge_quantity_unit.' + v) %></option>
+                        <% end %>
+                    </select>
+                    <input class="form-control quote-form-element" name="quantity" style="max-width:60px;text-align:center"/>
+                </div>
+
+                <script>
+                    new QuoteEditor({quote: '#quote-table'});
+                </script>
+            <% end %>
+        </div>
+    </section>
+<% end %>

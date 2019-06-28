@@ -2,7 +2,7 @@ class SearchRequestsController < ApplicationController
 
   RESOLVES = ['agency', 'representations', 'quote']
 
-  set_access_control  "view_repository" => [:index, :show, :edit, :update, :cancel, :approve, :save_quote]
+  set_access_control  "view_repository" => [:index, :show, :edit, :update, :cancel, :approve, :close, :reopen, :save_quote, :issue_quote, :withdraw_quote]
 
   def index
     respond_to do |format|
@@ -62,8 +62,7 @@ class SearchRequestsController < ApplicationController
   end
 
   def cancel
-    response = JSONModel::HTTP.post_form(JSONModel(:search_request).uri_for("#{params[:search_request_id]}/cancel"),
-                                        'cancel_target' => params[:cancel_target])
+    response = JSONModel::HTTP.post_form(JSONModel(:search_request).uri_for("#{params[:id]}/cancel"))
 
     if response.code == '200'
       flash[:info] = I18n.t('search_request._frontend.messages.cancel_succeeded')
@@ -71,12 +70,11 @@ class SearchRequestsController < ApplicationController
       flash[:error] = I18n.t('search_request._frontend.errors.cancel_failed')
     end
 
-    redirect_to(:controller => :search_requests, :action => :show, :id => params[:search_request_id])
+    redirect_to(:controller => :search_requests, :action => :show, :id => params[:id])
   end
 
   def approve
-    response = JSONModel::HTTP.post_form(JSONModel(:search_request).uri_for("#{params[:search_request_id]}/approve"),
-                                        'approve_target' => params[:approve_target])
+    response = JSONModel::HTTP.post_form(JSONModel(:search_request).uri_for("#{params[:id]}/approve"))
 
     if response.code == '200'
       flash[:info] = I18n.t('search_request._frontend.messages.approve_succeeded')
@@ -84,7 +82,31 @@ class SearchRequestsController < ApplicationController
       flash[:error] = I18n.t('search_request._frontend.errors.approve_failed')
     end
 
-    redirect_to(:controller => :search_requests, :action => :show, :id => params[:search_request_id])
+    redirect_to(:controller => :search_requests, :action => :show, :id => params[:id])
+  end
+
+  def close
+    response = JSONModel::HTTP.post_form(JSONModel(:search_request).uri_for("#{params[:id]}/close"))
+
+    if response.code == '200'
+      flash[:info] = I18n.t('search_request._frontend.messages.close_succeeded')
+    else
+      flash[:error] = I18n.t('search_request._frontend.errors.close_failed')
+    end
+
+    redirect_to(:controller => :search_requests, :action => :show, :id => params[:id])
+  end
+
+  def reopen
+    response = JSONModel::HTTP.post_form(JSONModel(:search_request).uri_for("#{params[:id]}/reopen"))
+
+    if response.code == '200'
+      flash[:info] = I18n.t('search_request._frontend.messages.reopen_succeeded')
+    else
+      flash[:error] = I18n.t('search_request._frontend.errors.reopen_failed')
+    end
+
+    redirect_to(:controller => :search_requests, :action => :show, :id => params[:id])
   end
 
   def current_record
@@ -104,6 +126,30 @@ class SearchRequestsController < ApplicationController
       flash[:error] = I18n.t("search_request._frontend.messages.quote_save_error", response.body)
     end
     
+    redirect_to :controller => :search_requests, :action => :show, :id => params[:id]
+  end
+
+  def issue_quote
+    response = JSONModel::HTTP.post_form("/search_requests/#{params[:id]}/issue_quote", {})
+
+    if response.code == '200'
+      flash[:success] = I18n.t("search_request._frontend.messages.quote_issue_success")
+    else
+      flash[:error] = I18n.t("search_request._frontend.messages.quote_issue_error", response.body)
+    end
+
+    redirect_to :controller => :search_requests, :action => :show, :id => params[:id]
+  end
+
+  def withdraw_quote
+    response = JSONModel::HTTP.post_form("/search_requests/#{params[:id]}/withdraw_quote", {})
+
+    if response.code == '200'
+      flash[:success] = I18n.t("search_request._frontend.messages.quote_withdraw_success")
+    else
+      flash[:error] = I18n.t("search_request._frontend.messages.quote_withdraw_error", response.body)
+    end
+
     redirect_to :controller => :search_requests, :action => :show, :id => params[:id]
   end
 end

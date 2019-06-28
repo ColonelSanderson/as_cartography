@@ -16,17 +16,21 @@ class SearchRequest < Sequel::Model
     self.status = STATUS_CANCELLED_BY_QSA
     self.modified_by = RequestContext.get(:current_username)
     self.modified_time = java.lang.System.currentTimeMillis
-    self.lock_version = self.lock_version + 1
+
+    if self.aspace_quote_id
+      ServiceQuote[self.aspace_quote_id].withdraw
+    end
 
     self.save
   end
 
   def approve!
+    generate_quote!
+
+    self.refresh
     self.status = STATUS_OPEN
     self.modified_by = RequestContext.get(:current_username)
     self.modified_time = java.lang.System.currentTimeMillis
-    self.lock_version = self.lock_version + 1
-
     self.save
   end
 
@@ -34,26 +38,37 @@ class SearchRequest < Sequel::Model
     self.status = STATUS_CLOSED
     self.modified_by = RequestContext.get(:current_username)
     self.modified_time = java.lang.System.currentTimeMillis
-    self.lock_version = self.lock_version + 1
+
+    if self.aspace_quote_id
+      quote = ServiceQuote[self.aspace_quote_id]
+      if quote.issued_date.nil?
+        ServiceQuote[self.aspace_quote_id].issue
+      end
+    end
 
     self.save
   end
 
-  # def generate_quote(quote_type)
-  #   json = FileIssueRequest.to_jsonmodel(self)
-  # 
-  #   type = quote_type.start_with?('p') ? :physical : :digital
-  # 
-  #   generator = type == :physical ? FileIssuePhysicalQuoteGenerator : FileIssueDigitalQuoteGenerator
-  # 
-  #   quote = generator.quote_for(json)
-  # 
-  #   json["#{type}_quote"] = {'ref' => quote.uri}
-  # 
-  #   cleaned = JSONModel(:file_issue_request).from_hash(json.to_hash)
-  # 
-  #   self.update_from_json(cleaned)
-  # end
+  def reopen!
+    self.status = STATUS_OPEN
+    self.modified_by = RequestContext.get(:current_username)
+    self.modified_time = java.lang.System.currentTimeMillis
+
+    self.save
+  end
+
+  def generate_quote!
+    json = SearchRequest.to_jsonmodel(self)
+
+    generator = SearchRequestQuoteGenerator
+    quote = generator.quote_for(json)
+
+    json["quote"] = {'ref' => quote.uri}
+
+    cleaned = JSONModel(:search_request).from_hash(json.to_hash)
+
+    self.update_from_json(cleaned)
+  end
 
 
   def update_from_json(json, opts = {}, apply_nested_records = true)
@@ -68,6 +83,12 @@ class SearchRequest < Sequel::Model
           .insert(:search_request_id => self.id,
                   :aspace_record_type => record_type,
                   :aspace_record_id => record_id)
+      end
+
+      if json['quote']
+        mapdb[:search_request]
+          .filter(:id => self.id)
+          .update(:aspace_quote_id => JSONModel.parse_reference(json['quote']['ref'])[:id])
       end
 
       super
@@ -123,9 +144,9 @@ class SearchRequest < Sequel::Model
           }
         }
 
-        # if obj.aspace_quote_id
-        #   json['quote'] = {'ref' => "/service_quotes/#{obj.aspace_quote_id}"}
-        # end
+        if obj.aspace_quote_id
+          json['quote'] = {'ref' => "/service_quotes/#{obj.aspace_quote_id}"}
+        end
 
         json['display_string'] = "SR%s" % [obj.id.to_s]
         json['identifier'] = "SR%s" % [obj.id.to_s]
@@ -151,4 +172,19 @@ class SearchRequest < Sequel::Model
     repo_id_by_item_id
   end
 
+  def issue_quote!
+    ServiceQuote[self.aspace_quote_id].issue
+
+    self.modified_by = RequestContext.get(:current_username)
+    self.modified_time = java.lang.System.currentTimeMillis
+    self.save
+  end
+
+  def withdraw_quote!
+    ServiceQuote[self.aspace_quote_id].withdraw
+
+    self.modified_by = RequestContext.get(:current_username)
+    self.modified_time = java.lang.System.currentTimeMillis
+    self.save
+  end
 end

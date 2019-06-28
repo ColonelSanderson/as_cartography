@@ -296,12 +296,52 @@ en:
     status: Status
     details: Details
     representations: Representations
-    quote: Quote
+    service_fee: Service Fee
+    quote:
+      unit_description: Unit description
+      unit_cost: Unit cost
+      unit_type: Unit type
+      number_of_units: No. of Units
+      cost: Cost
+      total: TOTAL
     _frontend:
+      action:
+        issue_quote: Issue Service Fee
+        revert_quote: Revert Service Fee
+        save_quote: Save Service Fee
+        withdraw_quote: Withdraw Service Fee
       approve_button: Approve Request
       cancel_button: Cancel Request
+      close_button: Close Request
+      reopen_button: Reopen Request
+      back_button: Back
       section:
         basic_information: Basic Information
         representations: Representations
+      messages:
+        confirm_approve_title: Approve Search Request
+        confirm_approve_message: Are you sure you want to approve this search request? Approving this will generate a service fee and transition the request to OPEN.
+        confirm_cancel_title: Cancel Search Request
+        confirm_cancel_message: Are you sure want to cancel this search request?
+        cancel_succeeded: Search Request cancelled
+        cancel_failed: Cancel of search request failed
+        approve_succeeded: Search Request approved
+        approve_failed: Approval of search request failed
+        confirm_close_title: Close Search Request
+        confirm_close_message: Are you sure you want to close this search request? Closing this request will issue a previously unissued Service Fee. 
+        close_succeeded: Search Request closed
+        close_failed: Failed to close search request
+        confirm_reopen_title: Reopen Search Request
+        confirm_reopen_message: Are you sure you want to reopen this search request?
+        reopen_succeeded: Search Request reopened
+        reopen_failed: Failed to reopen search request
+        quote_not_issued: SERVICE FEE NOT ISSUED
+        quote_issue_success: Service Fee issued
+        quote_issue_fail: Service Fee issue failed
+        quote_withdraw_success: Service Fee withdrawn
+        quote_withdraw_fail: Service Fee withdrawal failed
+        quote_save_success: Service Fee saved
+        quote_save_fail: Service Fee save failed
+        quote_issued_on: ISSUED ON %{date}
     _plural: Search Requests
     _singular: Search Request

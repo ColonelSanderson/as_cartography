@@ -21,8 +21,14 @@ ArchivesSpace::Application.routes.draw do
   match 'file_issues/:id' => 'file_issues#update', :via => [:post]
 
   match 'search_requests/:id' => 'search_requests#update', :via => [:post]
-  match 'search_requests/approve' => 'search_requests#approve', :via => [:post]
-  match 'search_requests/cancel' => 'search_requests#cancel', :via => [:post]
+  match 'search_requests/:id/approve' => 'search_requests#approve', :via => [:post]
+  match 'search_requests/:id/cancel' => 'search_requests#cancel', :via => [:post]
+  match 'search_requests/:id/close' => 'search_requests#close', :via => [:post]
+  match 'search_requests/:id/reopen' => 'search_requests#reopen', :via => [:post]
+  match 'search_requests/:id/issue_quote' => 'search_requests#issue_quote', :via => [:post]
+  match 'search_requests/:id/withdraw_quote' => 'search_requests#withdraw_quote', :via => [:post]
+  match 'search_requests/:id/save_quote' => 'search_requests#save_quote', :via => [:post]
+
 
   resources :transfer_proposals
   resources :transfers
