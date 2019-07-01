@@ -299,6 +299,8 @@ en:
     filename: Filename
     mime_type: Mime Type
     service_fee: Service Fee
+    date_details: Date Details
+    purpose: Purpose
     quote:
       unit_description: Unit description
       unit_cost: Unit cost

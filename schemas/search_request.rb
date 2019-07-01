@@ -29,6 +29,10 @@
 
       "details" => {"type" => "string"},
 
+      "date_details" => {"type" => "string"},
+
+      "purpose" => {"type" => "string"},
+
       "status" => {"type" => "string"},
 
       "files" => {
