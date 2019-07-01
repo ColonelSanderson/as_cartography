@@ -8,6 +8,32 @@ class TransferProposal < Sequel::Model
 
   CANCELLED_BY_QSA_STATUS = 'CANCELLED_BY_QSA'
 
+
+  def update_from_json(json, opts = {}, apply_nested_records = true)
+    self.db[:transfer_proposal_series].filter(:transfer_proposal_id => self.id).delete
+
+    json[:series].each do |series|
+
+      hash = series.map{|k,v| [k.intern, v]}.to_h
+
+      hash[:series_title] = hash[:title]
+      hash.delete(:title)
+
+      hash[:composition].each do |comp|
+        hash[:"composition_#{comp}"] = 1
+      end
+      hash.delete(:composition)
+
+      hash[:transfer_proposal_id] = self.id
+
+      self.db[:transfer_proposal_series].insert(hash)
+    end
+
+    super
+  end
+
+
+
   def cancel!
     self.status = CANCELLED_BY_QSA_STATUS
     self.modified_by = RequestContext.get(:current_username)

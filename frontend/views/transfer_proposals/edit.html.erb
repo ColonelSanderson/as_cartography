@@ -1,0 +1,29 @@
+<%= setup_context :object => @transfer_proposal, :title => @transfer_proposal.title %>
+
+<%= form_for(@transfer_proposal,
+             :as => "transfer_proposal",
+             :url => {:action => :update},
+             :html => {:class => 'form-horizontal aspace-record-form',
+                       :id => "transfer_proposal_form"}.merge(update_monitor_params(@transfer_proposal))) do |f| %>
+
+  <div class="row">
+    <div class="col-md-3">
+      <%= render_aspace_partial :partial => "sidebar", locals: {is_readonly: false} %>
+    </div>
+    <div class="col-md-9">
+      <%= render_aspace_partial :partial => "toolbar" %>
+      <div class="record-pane">
+        <%= form_context :transfer_proposal, @transfer_proposal do |form| %>
+          <%= render_aspace_partial :partial => "transfer_proposals/form", locals: {is_readonly: false, form: form} %>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary"><%= I18n.t("transfer_proposal._frontend.action.save") %></button>
+            <%= link_to I18n.t("actions.cancel"), {:controller => :transfer_proposals, :action => :show, :id => @transfer_proposal.id}, :class => "btn btn-cancel btn-default" %>
+          </div>
+
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+<% end %>

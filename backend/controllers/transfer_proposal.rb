@@ -22,6 +22,16 @@ class ArchivesSpaceService < Sinatra::Base
     json_response(resolve_references(json, params[:resolve]))
   end
 
+  Endpoint.post('/transfer_proposals/:id')
+    .description("Update a Transfer Proposal")
+    .params(["id", :id],
+            ["transfer_proposal", JSONModel(:transfer_proposal), "The updated record", :body => true])
+    .permissions([])
+    .returns([200, :updated]) \
+  do
+    handle_update(TransferProposal, params[:id], params[:transfer_proposal])
+  end
+
   Endpoint.post('/transfer_proposals/:id/approve')
     .description("Create a new transfer from a given proposal")
     .params(["id", :id])

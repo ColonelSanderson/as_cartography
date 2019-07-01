@@ -12,6 +12,8 @@ en:
   transfer_proposal:
     identifier: Proposal ID
     _frontend:
+      action:
+        save: Save Transfer Proposal
       section:
         basic_information: Basic Information
         series: Series
@@ -20,6 +22,7 @@ en:
         approval_failed: Failed to approve transfer
         cancel_failed: Failed to cancel transfer
       messages:
+        updated: Transfer Proposal updated
         approve_succeeded: New transfer created
         cancel_succeeded: Transfer cancelled
         confirm_approve_title: Approving Transfer Proposal

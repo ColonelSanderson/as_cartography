@@ -4,6 +4,6 @@
                :record => @transfer_proposal,
            }) do |sidebar| %>
     <%= sidebar.render_for_view_only(:subrecord_type => 'files', :property => 'files') %>
-    <%= sidebar.render_for_view_only(:subrecord_type => 'series', :property => 'series') %>
+    <%= sidebar.render_for_view_and_edit(:subrecord_type => 'series', :property => 'series') %>
     <%= sidebar.render_for_view_only(:subrecord_type => 'conversation', :property => :none) %>
 <% end %>

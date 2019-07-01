@@ -1,6 +1,8 @@
 class TransferProposalsController < ApplicationController
 
-  set_access_control  "view_repository" => [:index, :show, :approve, :cancel]
+  RESOLVES = ['agency', 'transfer']
+
+  set_access_control  "view_repository" => [:index, :show, :edit, :update, :approve, :cancel]
 
 
   def index
@@ -58,9 +60,39 @@ class TransferProposalsController < ApplicationController
 
 
   def show
-    @transfer_proposal = JSONModel(:transfer_proposal).find(params[:id], find_opts.merge('resolve[]' => ['agency', 'transfer']))
+    @transfer_proposal = JSONModel(:transfer_proposal).find(params[:id], find_opts.merge('resolve[]' => RESOLVES))
   end
 
+
+  def edit
+    @transfer_proposal = JSONModel(:transfer_proposal).find(params[:id], find_opts.merge('resolve[]' => RESOLVES))
+  end
+
+
+  def update
+    # Fetch the current version
+    updated = JSONModel(:transfer_proposal).find(params[:id], find_opts.merge('resolve[]' => RESOLVES))
+
+    # Apply metadata changes
+    [:title, :estimated_quantity, :lock_version].each do |prop|
+      updated[prop] = params[:transfer_proposal][prop]
+    end
+
+    updated[:series] = [updated[:series].first.merge(params[:transfer_proposal][:series].to_hash)]
+
+    params[:transfer_proposal] = updated
+
+    handle_crud(:instance => :transfer_proposal,
+                :model => JSONModel(:transfer_proposal),
+                :obj => JSONModel(:transfer_proposal).find(params[:id], find_opts.merge('resolve[]' => RESOLVES)),
+                :on_invalid => ->(){
+                  render action: "edit"
+                },
+                :on_valid => ->(id){
+                  flash[:success] = I18n.t("transfer_proposal._frontend.messages.updated", JSONModelI18nWrapper.new(:transfer => @transfer_proposal))
+                  redirect_to :controller => :transfer_proposals, :action => :show, :id => id
+                })
+  end
 
   def current_record
     @transfer_proposal

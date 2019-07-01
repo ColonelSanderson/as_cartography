@@ -2,145 +2,14 @@
 
 <div class="row">
   <div class="col-md-3">
-    <%= render_aspace_partial :partial => "sidebar" %>
+           <%= render_aspace_partial :partial => "sidebar", locals: {is_readonly: true} %>
   </div>
   <div class="col-md-9">
     <%= render_aspace_partial :partial => "toolbar" %>
     <div class="record-pane">
       <%= readonly_context :transfer_proposal, @transfer_proposal do |readonly| %>
-        <h2><%= @transfer_proposal.title %>  <span class="label label-info"><%= I18n.t("transfer_proposal._singular") %></span></h2>
-
-        <%= render_aspace_partial :partial => "shared/flash_messages" %>
-
-        <% define_template "transfer_proposal", jsonmodel_definition(:transfer_proposal) do |form, transfer_proposal| %>
-          <section id="basic_information">
-            <h3><%= I18n.t("transfer_proposal._frontend.section.basic_information") %></h3>
-
-            <%= render_plugin_partials("top_of_basic_information_transfer_proposal",
-                                       :form => form,
-                                       :record => @transfer_proposal) %>
-
-            <%= readonly.label_and_textfield "identifier" %>
-
-            <div class="form-group">
-              <div class="control-label col-sm-2"><%= I18n.t("transfer_proposal.agency") %></div>
-              <div class="token-list">
-                <%= render_token(:object => @transfer_proposal['agency']['_resolved'],
-                                 :label => CGI::escapeHTML(@transfer_proposal['agency']['_resolved']['title']),
-                                 :type => @transfer_proposal['agency']['_resolved']['jsonmodel_type'],
-                                 :uri => @transfer_proposal['agency']['ref'],
-                                 :placement => "top",
-                                 :inside_linker_browse => true) %>
-              </div>
-            </div>
-
-            <%= form.label_and_textfield "agency_location_display_string" %>
-
-            <%= form.label_and_textfield "title" %>
-            <%= form.label_and_textfield "estimated_quantity" %>
-            <%= form.label_and_textfield "status" %>
-
-            <% if @transfer_proposal['transfer'] %>
-              <div class="form-group">
-                <div class="control-label col-sm-2"><%= I18n.t("transfer._singular") %></div>
-                <div class="token-list">
-                  <%= render_token(:object => @transfer_proposal['transfer']['_resolved'],
-                                   :label => CGI::escapeHTML(@transfer_proposal['transfer']['_resolved']['title']),
-                                   :type => @transfer_proposal['transfer']['_resolved']['jsonmodel_type'],
-                                   :uri => @transfer_proposal['transfer']['ref'],
-                                   :placement => "top",
-                                   :inside_linker_browse => true) %>
-                </div>
-              </div>
-            <% end %>
-
-
-            <% unless ASUtils.wrap(@transfer_proposal['files']).empty? %>
-              <section id="transfer_proposal_files_" class="subrecord-form-dummy">
-                <h3 class="subrecord-form-heading-label"><%= I18n.t("transfer_proposal._frontend.section.files") %></h3>
-                <div class="subrecord-form-container">
-                  <div class="subrecord-form-fields">
-                    <table class="table table-bordered table-striped">
-                      <thead>
-                        <tr>
-                          <th><%= I18n.t("transfer_proposal.files.filename") %></th>
-                          <th><%= I18n.t("transfer_proposal.files.mime_type") %></th>
-                          <th><%= I18n.t("transfer_proposal.files.role") %></th>
-                          <th></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <% ASUtils.wrap(@transfer_proposal['files']).each do |file| %>
-                          <tr>
-                            <td><%= file.fetch('filename') %></td>
-                            <td><%= file.fetch('mime_type') %></td>
-                            <td><%= file.fetch('role') %></td>
-                            <td class="table-record-actions">
-                              <div class="btn-group">
-                                <%=
-                                link_to(I18n.t("transfer_proposal.files.view"),
-                                        {
-                                          :controller => :transfer_files,
-                                          :action => :show,
-                                          :key => file.fetch('key'),
-                                          :filename => file.fetch('filename'),
-                                          :mime_type => file.fetch('mime_type'),
-                                        },
-                                        {
-                                          :class => "btn btn-primary"
-                                        })
-                                %>
-                              </div>
-                            </td>
-                          </tr>
-                        <% end %>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </section>
-            <% end %>
-
-            <% unless ASUtils.wrap(@transfer_proposal['series']).empty? %>
-              <section id="transfer_proposal_series_" class="subrecord-form-dummy">
-                <h3 class="subrecord-form-heading-label"><%= I18n.t("transfer_proposal._frontend.section.series") %></h3>
-                <div class="subrecord-form-container">
-                  <% ASUtils.wrap(@transfer_proposal['series']).each do |series| %>
-                    <div class="subrecord-form-fields">
-                      <h4><%= series['title'] %></h4>
-                      <% form.push("series", series) do |form| %>
-                        <%= form.label_and_textfield "disposal_class" %>
-                        <%= form.label_and_textfield "date_range" %>
-                        <%= form.label_and_textfield "accrual_details" %>
-                        <%= form.label_and_textfield "creating_agency" %>
-                        <%= form.label_and_textfield "mandate" %>
-                        <%= form.label_and_textfield "function" %>
-                        <% if series['system_of_arrangement'] %>
-                          <%= form.label_with_field "system_of_arrangement", I18n.t("transfer_proposal.system_of_arrangement_types.#{series['system_of_arrangement']}") %>
-                        <% end %>
-                        <%=
-                        form.label_with_field "composition",
-                           ASUtils.wrap(series['composition'])
-                           .map {|composition| I18n.t("transfer_proposal.composition_types.#{composition}")}
-                           .join("; ")
-                        %>
-                      <% end %>
-                    </div>
-                  <% end %>
-                </div>
-              </section>
-            <% end %>
-
-            <%= render_aspace_partial :partial => "shared/conversation_widget", :locals => { handle_id: @transfer_proposal.handle_id } %>
-
-            <%= display_audit_info(@transfer_proposal) %>
-        <% end %>
-
-        <%= readonly.emit_template "transfer_proposal" %>
-
-        <%= show_plugins_for(@transfer_proposal, readonly) %>
+        <%= render_aspace_partial :partial => "transfer_proposals/form", :locals => {:form => readonly, is_readonly: true} %>
       <% end %>
     </div>
   </div>
 </div>
-

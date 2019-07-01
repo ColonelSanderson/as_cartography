@@ -1,4 +1,18 @@
 <div class="record-toolbar transfers-toolbar">
+  <% if !['edit', 'update'].include?(controller.action_name) %>
+    <div class="btn-group pull-left">
+      <%= link_to I18n.t("actions.edit"), {:controller => :transfer_proposals, :action => :edit, :id => @transfer_proposal.id}, :class => "btn btn-sm btn-primary" %>
+    </div>
+  <% end %>
+
+  <% if ['edit', 'update'].include?(controller.action_name) %>
+    <div class="pull-left revert-changes">
+      <%= link_to I18n.t("actions.revert"), {:controller => :transfer_proposals, :action => :edit, :id => @transfer_proposal.id}, :class => "btn btn-sm btn-default" %>
+      <%= I18n.t("actions.toolbar_disabled_message") %>
+    </div>
+  <% end %>
+
+
   <% unless @transfer_proposal['transfer'] || ['CANCELLED_BY_AGENCY', 'CANCELLED_BY_QSA'].include?(@transfer_proposal['status']) %>
     <div class="btn-group btn-toolbar pull-right">
       <%= form_tag({:controller => "transfer_proposals",
