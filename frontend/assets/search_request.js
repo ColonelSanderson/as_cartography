@@ -3,6 +3,7 @@ function SearchRequest() {
 
     this.setupNavigation();
     this.setupApprovalConfirmation();
+    this.setupFilesForm();
 };
 
 
@@ -58,6 +59,59 @@ SearchRequest.prototype.showConfirmation = function(form, templateId) {
     });
 };
 
+SearchRequest.prototype.setupFilesForm = function() {
+    var $section = $('#search_request_files');
+    var index = $('#search_request_files').find('tbody tr').length;
+
+    function handleUploadClick(e) {
+        e.preventDefault();
+        var button = $(this);
+        var buttonLabel = button.text();
+        var uploadingLabel = button.data('uploading-label');
+        var errorLabel = button.data('uploading-error-label');
+        var container = button.closest('.form-group');
+
+        var fileInput = $('<input type="file" style="display: none;"></input>');
+
+        fileInput.on('change', function () {
+            button.prop('disabled', true);
+            button.text(uploadingLabel);
+
+            var formData = new FormData();
+            formData.append('file', this.files[0]);
+
+            $(fileInput).remove();
+
+            var promise = $.ajax({
+                type: "POST",
+                url: AS.app_prefix('/search_requests/' + $('form#search_request_form').data('id') + '/upload'),
+                data: formData,
+                processData: false,
+                contentType: false,
+            });
+
+            promise
+                .done(function (data) {
+                    index = index + 1;
+                    button.prop('disabled', false).text(buttonLabel);
+                    $section.find('table tbody').append(AS.renderTemplate('search_request_file_template', {file: data, index: index}));
+                })
+                .fail(function () {
+                    button.removeClass('btn-primary').addClass('btn-danger').text(errorLabel).prop('disabled', false);
+                });
+        });
+
+        $(document.body).append(fileInput);
+        fileInput.click();
+    }
+
+    function handleRemoveClick(e) {
+        $(this).closest('tr').remove();
+    }
+
+    $section.on('click', '#searchRequestFileUpload', handleUploadClick);
+    $section.on('click', '.search-request-file-remove', handleRemoveClick);
+};
 
 
 $(document).ready(function() {

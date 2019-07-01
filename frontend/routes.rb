@@ -28,6 +28,8 @@ ArchivesSpace::Application.routes.draw do
   match 'search_requests/:id/issue_quote' => 'search_requests#issue_quote', :via => [:post]
   match 'search_requests/:id/withdraw_quote' => 'search_requests#withdraw_quote', :via => [:post]
   match 'search_requests/:id/save_quote' => 'search_requests#save_quote', :via => [:post]
+  match('search_requests/:id/download/:key' => 'search_requests#download_file', :via => [:get])
+  match('search_requests/:id/upload' => 'search_requests#upload_file', :via => [:post])
 
 
   resources :transfer_proposals

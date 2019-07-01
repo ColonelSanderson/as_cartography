@@ -36,11 +36,65 @@
             </div>
         </section>
 
-        <section id="representations" class="subrecord-form-dummy">
-          <h3 class="subrecord-form-heading-label"><%= I18n.t('search_request.representations') %></h3>
+        <section id="search_request_files" class="subrecord-form-dummy">
+          <h3 class="subrecord-form-heading-label"><%= I18n.t('search_request.files') %></h3>
           <div class="subrecord-form-container">
             <div class="subrecord-form-fields">
-              TODO
+              <% if is_readonly %>
+                <% if @search_request.files.empty? %>
+                  <div class="alert alert-info"><%= I18n.t('search_request._frontend.messages.no_files') %></div>
+                <% else %>
+                  <table class="table table-condensed table-bordered">
+                    <thead>
+                    <tr>
+                      <th><%= I18n.t('search_request.filename') %></th>
+                      <th width="240px"><%= I18n.t('search_request.mime_type') %></th>
+                      <th width="120px"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <% @search_request.files.each_with_index do |file| %>
+                      <% form.push("files[]") do %>
+                        <tr>
+                          <td><%= file['filename'] %>
+                          </td>
+                          <td><%= file['mime_type'] %></td>
+                          <td>
+                            <%= link_to I18n.t('search_request._frontend.action.download'), {:controller => :search_requests, :id => @search_request.id, :action => :download_file, :key => file.fetch('key'), :filename => file.fetch('filename')}, :target => '_blank', :class => 'btn btn-sm btn-primary' %>
+                        </tr>
+                      <% end %>
+                    <% end %>
+                    </tbody>
+                  </table>
+                <% end %>
+              <% else %>
+                <p><a href="javascript:void(0);" class="btn btn-sm btn-primary" id="searchRequestFileUpload" data-uploading-label="<%= I18n.t('search_request._frontend.messages.uploading') %>" data-uploading-error-label="<%= I18n.t('search_request._frontend.messages.uploading_error') %>"><%= I18n.t('search_request._frontend.action.upload') %></a></p>
+
+                <table class="table table-condensed table-bordered">
+                  <thead>
+                    <tr>
+                      <th><%= I18n.t('search_request.filename') %></th>
+                      <th width="240px"><%= I18n.t('search_request.mime_type') %></th>
+                      <th width="120px"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% @search_request.files.each_with_index do |file, index| %>
+                      <% form.push("files[]") do %>
+                      <tr>
+                        <td><%= file['filename'] %>
+                          <%= form.hidden_input "filename", file['filename'] %>
+                          <%= form.hidden_input "key", file['key'] %>
+                          <%= form.hidden_input "mime_type", file['mime_type'] %>
+                        </td>
+                        <td><%= file['mime_type'] %></td>
+                        <td><a href="javascript:void(0)" class="btn btn-sm btn-danger search-request-file-remove"><%= I18n.t('search_request._frontend.action.remove_upload') %></a></td>
+                      </tr>
+                      <% end %>
+                    <% end %>
+                  </tbody>
+                </table>
+              <% end %>
             </div>
           </div>
         </section>
@@ -62,8 +116,15 @@
     <%= show_plugins_for(@search_request, readonly) %>
 <% end %>
 
-<script>
- $(function() {
-     $(".linker:not(.initialised)").linker();
- });
-</script>
+<div id="search_request_file_template"><!--
+  <tr>
+    <td>
+      ${file.filename}
+      <input type="hidden" name="search_request[files][][filename]" value="${file.filename}">
+      <input type="hidden" name="search_request[files][][key]" value="${file.key}">
+      <input type="hidden" name="search_request[files][][mime_type]" value="${file.mime_type}">
+    </td>
+    <td>${file.mime_type}</td>
+    <td><a href="javascript:void(0)" class="btn btn-sm btn-danger search-request-file-remove">Remove</a></td>
+  </tr>
+--></div>

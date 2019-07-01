@@ -73,16 +73,38 @@ class SearchRequest < Sequel::Model
 
   def update_from_json(json, opts = {}, apply_nested_records = true)
     MAPDB.open do |mapdb|
-      mapdb[:search_request_item].filter(:search_request_id => self.id).delete
-      json['representations'].map {|rep| rep['ref']}.each do |ref|
-        parsed_ref = JSONModel.parse_reference(ref)
-        record_type = parsed_ref[:type]
-        record_id = parsed_ref[:id]
+      existing_file_keys = db[:search_request_file].filter(:search_request_id => self.id).map{|row|
+        row[:key]
+      }
 
-        mapdb[:search_request_item]
+      files_to_add = []
+      file_keys_to_keep = []
+
+      json['files'].each do |incoming_file|
+        if existing_file_keys.include?(incoming_file.fetch('key'))
+          file_keys_to_keep << incoming_file.fetch('key')
+        else
+          files_to_add << incoming_file
+        end
+      end
+
+      file_keys_to_remove = existing_file_keys - file_keys_to_keep
+
+      if file_keys_to_remove.length > 0
+        db[:search_request_file]
+          .filter(:search_request_id => self.id)
+          .filter(:key => file_keys_to_remove)
+          .delete
+      end
+
+      files_to_add.each do |file|
+        db[:search_request_file]
           .insert(:search_request_id => self.id,
-                  :aspace_record_type => record_type,
-                  :aspace_record_id => record_id)
+                  :key => file.fetch('key'),
+                  :filename => file.fetch('filename'),
+                  :mime_type => file.fetch('mime_type'),
+                  :created_by => RequestContext.get(:current_username),
+                  :create_time => java.lang.System.currentTimeMillis)
       end
 
       if json['quote']
@@ -109,9 +131,9 @@ class SearchRequest < Sequel::Model
       agency_locations =
         mapdb[:agency_location].filter(:agency_id => objs.map(&:agency_id)).map {|row| [row[:id], row[:name]]}.to_h
 
-      search_request_items =
-        mapdb[:search_request_item]
-          .filter(Sequel.qualify(:search_request_item, :search_request_id) => objs.map(&:id))
+      search_request_files =
+        mapdb[:search_request_file]
+          .filter(Sequel.qualify(:search_request_file, :search_request_id) => objs.map(&:id))
           .all
           .group_by {|row| row[:search_request_id]}
 
@@ -121,8 +143,6 @@ class SearchRequest < Sequel::Model
           .map {|row| [row[:search_request_id], row[:id]]}
           .to_h
 
-      repo_id_by_item = repo_ids_for_items(search_request_items)
-
       jsons.zip(objs).each do |json, obj|
         json['agency'] = {'ref' => JSONModel(:agent_corporate_entity).uri_for(aspace_agents.fetch(obj.agency_id))}
         json['agency_location_display_string'] = agency_locations.fetch(obj.agency_location_id, nil)
@@ -130,17 +150,14 @@ class SearchRequest < Sequel::Model
         json['handle_id'] = handles.fetch(obj.id, nil)
         json['handle_id'] = json['handle_id'].to_s if json['handle_id']
 
-        representations = search_request_items.fetch(obj.id, [])
-
-        json['requested_representations'] = representations
-                                              .sort_by {|row| row[:id]}
-                                              .map {|item|
+        json['files'] = search_request_files.fetch(obj.id, [])
+                          .sort_by {|row| row[:create_time]}
+                          .map {|file|
           {
-            'ref' => JSONModel(item[:aspace_record_type].intern)
-                       .uri_for(item[:aspace_record_id],
-                                :repo_id => repo_id_by_item.fetch(item[:id])),
-            'request_type' => item[:request_type],
-            'record_details' => item[:record_details],
+            'key' => file[:key],
+            'filename' => file[:filename],
+            'role' => file[:role],
+            'mime_type' => file[:mime_type],
           }
         }
 
@@ -154,22 +171,6 @@ class SearchRequest < Sequel::Model
     end
 
     jsons
-  end
-
-  def self.repo_ids_for_items(search_request_items)
-    repo_id_by_item_id = {}
-    aspace_models = {}
-
-    search_request_items.values.flatten.each do |item|
-      aspace_record_type = item[:aspace_record_type]
-      aspace_record_id = item[:aspace_record_id]
-
-      aspace_models[aspace_record_type] ||= ASModel.all_models.find {|m| m.my_jsonmodel(true) && (m.my_jsonmodel(true).record_type == aspace_record_type)}
-
-      repo_id_by_item_id[item[:id]] = aspace_models.fetch(aspace_record_type).any_repo[aspace_record_id][:repo_id]
-    end
-
-    repo_id_by_item_id
   end
 
   def issue_quote!

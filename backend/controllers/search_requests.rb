@@ -106,4 +106,29 @@ class ArchivesSpaceService < Sinatra::Base
     json_response({:message => 'Quote issued'})
 
   end
+
+  Endpoint.post("/search_requests/:id/upload_file")
+    .description("Upload a search request file")
+    .params(["file", UploadFile, "The file stream"])
+    .permissions([])
+    .returns([200, '{"key": "<opaque key>"}']) \
+  do
+    key = SearchRequestFileStore.new.store_file(params[:file])
+
+    json_response({"key" => key})
+  end
+
+  Endpoint.get("/search_requests/:id/view_file")
+    .description("Fetch a search request file")
+    .params(["id", :id])
+    .params(["key", String, "The key returned by a previous call to upload_file"])
+    .permissions([])
+    .returns([200, 'application/octet-stream']) \
+  do
+    [
+      200,
+      {"Content-Type" => "application/octet-stream"},
+      SearchRequestFileStore.new.to_enum(:get_file, params[:key])
+    ]
+  end
 end

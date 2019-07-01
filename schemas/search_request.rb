@@ -31,21 +31,14 @@
 
       "status" => {"type" => "string"},
 
-      "representations" => {
+      "files" => {
         "type" => "array",
         "items" => {
           "type" => "object",
-          "subtype" => "ref",
           "properties" => {
-            "ref" => {
-              "type" => [{"type" => "JSONModel(:physical_representation) uri"},
-                         {"type" => "JSONModel(:digital_representation) uri"}],
-            },
-            "id" => {"type" => "integer"},
-            "_resolved" => {
-              "type" => "object",
-              "readonly" => "true"
-            }
+            "key" => {"type" => "string"},
+            "filename" => {"type" => "string"},
+            "mime_type" => {"type" => "string"},
           }
         }
       },

@@ -1,8 +1,8 @@
 class SearchRequestsController < ApplicationController
 
-  RESOLVES = ['agency', 'representations', 'quote']
+  RESOLVES = ['agency', 'quote']
 
-  set_access_control  "view_repository" => [:index, :show, :edit, :update, :cancel, :approve, :close, :reopen, :save_quote, :issue_quote, :withdraw_quote]
+  set_access_control  "view_repository" => [:index, :show, :edit, :update, :cancel, :approve, :close, :reopen, :save_quote, :issue_quote, :withdraw_quote, :download_file, :upload_file]
 
   def index
     respond_to do |format|
@@ -43,9 +43,13 @@ class SearchRequestsController < ApplicationController
     # Fetch the current version
     updated = JSONModel(:search_request).find(params[:id], find_opts.merge('resolve[]' => RESOLVES))
 
-    updated.representations = params[:search_request][:representations].map {|elt| elt.fetch('ref')}.map do |ref|
-      {'ref' => ref}
-    end
+    updated.files = params[:search_request][:files].map {|file|
+      {
+        'filename': file.fetch(:filename),
+        'key': file.fetch(:key),
+        'mime_type': file.fetch(:mime_type),
+      }
+    }
 
     params[:search_request] = updated
 
@@ -151,5 +155,41 @@ class SearchRequestsController < ApplicationController
     end
 
     redirect_to :controller => :search_requests, :action => :show, :id => params[:id]
+  end
+
+  def download_file
+    self.response.headers["Content-Type"] = params[:mime_type]
+    self.response.headers["Content-Disposition"] = "attachment; filename=#{params[:filename]}"
+    self.response.headers['Last-Modified'] = Time.now.ctime
+
+    self.response_body = Enumerator.new do |stream|
+      JSONModel::HTTP.stream("/search_requests/#{params[:id]}/view_file",
+                             :key => params[:key]) do |response|
+        response.read_body do |chunk|
+          stream << chunk
+        end
+      end
+    end
+  end
+
+  def upload_file
+    response = JSONModel::HTTP.post_form("/search_requests/#{params[:id]}/upload_file",
+                                         {
+                                           :file => UploadIO.new(params[:file].tempfile,
+                                                                 params[:file].content_type,
+                                                                 params[:file].original_filename),
+                                         },
+                                         :multipart_form_data)
+
+    raise unless response.code == '200'
+
+    json = ASUtils.json_parse(response.body)
+
+    render :json => {
+      "status" => "success",
+      "filename" => params[:file].original_filename,
+      "mime_type" => params[:file].content_type,
+      "key" => json['key'],
+    }, :status => '200'
   end
 end

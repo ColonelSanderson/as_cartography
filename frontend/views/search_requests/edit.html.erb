@@ -1,0 +1,28 @@
+<%= setup_context :object => @search_request, :title => @search_request.display_string %>
+
+<div class="row">
+  <div class="col-md-3">
+    <%= render_aspace_partial :partial => "sidebar", locals: {is_readonly: false} %>
+  </div>
+  <div class="col-md-9">
+    <%= render_aspace_partial :partial => "toolbar" %>
+    <div class="record-pane">
+      <%= form_for(@search_request,
+                   :as => "search_request",
+                   :url => {:action => :update},
+                   :html => {:class => 'form-horizontal aspace-record-form',
+                             :'data-id' => @search_request.id,
+                             :id => "search_request_form"}.merge(update_monitor_params(@search_request))) do |f| %>
+        <%= form_context :search_request, @search_request do |form| %>
+          <%= render_aspace_partial :partial => "search_requests/form", locals: {is_readonly: false, form: form} %>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary"><%= I18n.t("search_request._frontend.action.save") %></button>
+            <%= link_to I18n.t("actions.cancel"), {:controller => :search_requests, :action => :show, :id => @search_request.id}, :class => "btn btn-cancel btn-default" %>
+          </div>
+
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>

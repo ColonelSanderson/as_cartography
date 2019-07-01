@@ -295,7 +295,9 @@ en:
     agency_location_display_string: Agency Location
     status: Status
     details: Details
-    representations: Representations
+    files: Files
+    filename: Filename
+    mime_type: Mime Type
     service_fee: Service Fee
     quote:
       unit_description: Unit description
@@ -310,6 +312,10 @@ en:
         revert_quote: Revert Service Fee
         save_quote: Save Service Fee
         withdraw_quote: Withdraw Service Fee
+        save: Save Search Request
+        upload: Upload
+        download: Download
+        remove_upload: Remove
       approve_button: Approve Request
       cancel_button: Cancel Request
       close_button: Close Request
@@ -319,6 +325,8 @@ en:
         basic_information: Basic Information
         representations: Representations
       messages:
+        uploading: Uploading...
+        uploading_error: Error uploading file
         confirm_approve_title: Approve Search Request
         confirm_approve_message: Are you sure you want to approve this search request? Approving this will generate a service fee and transition the request to OPEN.
         confirm_cancel_title: Cancel Search Request
@@ -343,5 +351,7 @@ en:
         quote_save_success: Service Fee saved
         quote_save_fail: Service Fee save failed
         quote_issued_on: ISSUED ON %{date}
+        updated: Search Request updated
+        no_files: No files attached.
     _plural: Search Requests
     _singular: Search Request
