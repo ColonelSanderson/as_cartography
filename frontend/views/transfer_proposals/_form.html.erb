@@ -5,7 +5,7 @@
     <%= render_aspace_partial :partial => "shared/flash_messages" %>
 
     <% define_template "transfer_proposal", jsonmodel_definition(:transfer_proposal) do |form, transfer_proposal| %>
-<%= readonly_context :transfer_proposal, @transfer_proposal do |readonly| %>
+      <%= readonly_context :transfer_proposal, @transfer_proposal do |readonly| %>
         <section id="basic_information">
             <h3><%= I18n.t("transfer_proposal._frontend.section.basic_information") %></h3>
 
@@ -31,12 +31,10 @@
             </div>
             <% end %>
 
-            <%# readonly.label_and_textfield "agency_location_display_string" %>
             <%= form.label_and_readonly "agency_location_display_string" %>
-
             <%= form.label_and_textfield "title" %>
             <%= form.label_and_textfield "estimated_quantity" %>
-            <%= readonly.label_and_textfield "status" %>
+            <%= form.label_and_readonly "status" %>
 
             <% if @transfer_proposal['transfer'] %>
               <div class="form-group">
@@ -119,14 +117,33 @@
                     <%= form.label_and_textfield "mandate" %>
                     <%= form.label_and_textfield "function" %>
                     <% if series['system_of_arrangement'] %>
-                      <%= form.label_with_field "system_of_arrangement", I18n.t("transfer_proposal.system_of_arrangement_types.#{series['system_of_arrangement']}") %>
+                      <% if is_readonly %>
+                        <%= form.label_with_field "system_of_arrangement", I18n.t("transfer_proposal.system_of_arrangement_types.#{series['system_of_arrangement']}") %>
+                      <% else %>
+                        <%= form.label_and_select('system_of_arrangement', enums[:system_of_arrangement]) %>
+                      <% end %>
                     <% end %>
-                    <%=
-                    form.label_with_field "composition",
-                       ASUtils.wrap(series['composition'])
-                       .map {|composition| I18n.t("transfer_proposal.composition_types.#{composition}")}
-                       .join("; ")
-                    %>
+
+                    <% if is_readonly %>
+                      <%=
+                      form.label_with_field "composition",
+                         ASUtils.wrap(series['composition'])
+                         .map {|composition| I18n.t("transfer_proposal.composition_types.#{composition}")}
+                         .join("; ")
+                      %>
+                    <% else %>
+                      <div class="form-group">
+                        <label class="control-label col-sm-2"><%= I18n.t('transfer_proposal.composition') %></label>
+                        <div class="label-only col-sm-9">
+                          <% enums[:composition].each do |label, field| %>
+                            <% checked = series['composition'].include?(field) ? 'checked="checked"' : '' %>
+                            <span style="margin-right:30px;">
+                              <input type="checkbox" <%= checked %> name="transfer_proposal[series][][composition_<%= field %>]"></input> <%= label %>
+                            </span>
+                          <% end %>
+                        </div>
+                      </div>
+                    <% end %>
                   <% end %>
                 </div>
               <% end %>
@@ -139,14 +156,12 @@
 
             <%= display_audit_info(@transfer_proposal) %>
         <% end %>
-<% end %>
+      <% end %>
     <% end %>
 
     <% form.emit_template "transfer_proposal" %>
-    <%# readonly.emit_template "transfer_proposal" %>
 
     <%= show_plugins_for(@transfer_proposal, form) %>
-    <%# show_plugins_for(@transfer_proposal, readonly) %>
 
 <script>
  $(function() {

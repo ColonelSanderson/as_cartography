@@ -81,7 +81,12 @@ class TransferProposalsController < ApplicationController
       updated[prop] = params[:transfer_proposal][prop]
     end
 
-    updated[:series] = updated[:series].zip(params[:transfer_proposal][:series]).map{|old, new| old.merge(new)}
+    # special handling for composition
+    updated[:series] = updated[:series].zip(params[:transfer_proposal][:series]).map do |old, new|
+      h = old.merge(new)
+      h['composition'] = ['digital', 'physical', 'hybrid'].select{|c| h["composition_#{c}"]}
+      h
+    end
 
     params[:transfer_proposal] = updated
 
@@ -101,4 +106,14 @@ class TransferProposalsController < ApplicationController
     @transfer_proposal
   end
 
+
+  helper_method :enums
+  def enums
+    return @enums if @enums
+    @enums = {}
+    [:system_of_arrangement, :composition].each do |enum|
+      @enums[enum] = I18n.backend.send(:translations)[:en][:transfer_proposal][:"#{enum}_types"].map{|k,v| [v,k.to_s]}.to_h
+    end
+    @enums
+  end
 end
