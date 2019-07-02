@@ -35,6 +35,8 @@
 
       "status" => {"type" => "string"},
 
+      "draft" => {"type" => "boolean", "readonly" => "true"},
+
       "files" => {
         "type" => "array",
         "items" => {
