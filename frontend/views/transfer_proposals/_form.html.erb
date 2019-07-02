@@ -110,7 +110,7 @@
               <% ASUtils.wrap(@transfer_proposal['series']).each do |series| %>
                 <div class="subrecord-form-fields">
                   <h4><%= series['title'] %></h4>
-                  <% form.push("series", series) do |form| %>
+                  <% form.push("series[]", series) do |form| %>
                     <%= form.label_and_textfield "title" %>
                     <%= form.label_and_textfield "disposal_class" %>
                     <%= form.label_and_textfield "date_range" %>

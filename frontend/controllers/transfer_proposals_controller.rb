@@ -78,7 +78,7 @@ class TransferProposalsController < ApplicationController
       updated[prop] = params[:transfer_proposal][prop]
     end
 
-    updated[:series] = [updated[:series].first.merge(params[:transfer_proposal][:series].to_hash)]
+    updated[:series] = updated[:series].zip(params[:transfer_proposal][:series]).map{|old, new| old.merge(new)}
 
     params[:transfer_proposal] = updated
 
