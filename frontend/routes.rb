@@ -1,9 +1,9 @@
 ArchivesSpace::Application.routes.draw do
   match 'transfer_files/validate' => 'transfer_files#validate', :via => [:get]
 
-  match 'transfer_proposals/:id' => 'transfer_proposals#update', :via => [:post]
   match 'transfer_proposals/approve' => 'transfer_proposals#approve', :via => [:post]
   match 'transfer_proposals/cancel' => 'transfer_proposals#cancel', :via => [:post]
+  match 'transfer_proposals/:id' => 'transfer_proposals#update', :via => [:post]
   match 'transfers/:id' => 'transfers#update', :via => [:post]
   match 'transfer_file/replace' => 'transfers#replace_file', :via => [:post]
   match 'transfers/:id/import' => 'transfers#import', :via => [:post]

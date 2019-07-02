@@ -19,19 +19,21 @@ class Transfer < Sequel::Model
   def self.create_from_proposal(proposal_id)
     proposal = TransferProposal[proposal_id]
 
-    created = self.create(:agency_id => proposal.agency_id,
+    created_id = self.db[:transfer]
+                  .insert(:agency_id => proposal.agency_id,
                           :agency_location_id => proposal.agency_location_id,
                           :title => proposal.title,
-                          :created_by => RequestContext.get(:current_username),
+                          :created_by => proposal[:created_by_orig],
                           :create_time => java.lang.System.currentTimeMillis,
                           :modified_by => RequestContext.get(:current_username),
                           :modified_time => java.lang.System.currentTimeMillis,
                           :status => TRANSFER_PROCESS_INITIATED,
                           :checklist_transfer_proposal_approved => 1,
                           :transfer_proposal_id => proposal_id,
+                          :lock_version => 1,
                           :system_mtime => Time.now)
 
-    self.db[:handle].insert(:transfer_id => created.id)
+    self.db[:handle].insert(:transfer_id => created_id)
 
     self.db[:transfer_proposal]
       .filter(:id => proposal_id)
@@ -39,7 +41,7 @@ class Transfer < Sequel::Model
               :modified_by => RequestContext.get(:current_username),
               :modified_time => java.lang.System.currentTimeMillis)
 
-    created
+    Transfer[created_id]
   end
 
   def update_from_json(json, opts = {}, apply_nested_records = true)

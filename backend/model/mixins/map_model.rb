@@ -30,6 +30,8 @@ module MAPModel
       elsif key == :created_by
         value = super
         "MAP user: #{value}"
+      elsif key == :created_by_orig
+        super(:created_by)
       elsif key == :last_modified_by
         self.modified_by
       else

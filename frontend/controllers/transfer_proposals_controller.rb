@@ -33,7 +33,8 @@ class TransferProposalsController < ApplicationController
 
 
   def approve
-    response = JSONModel::HTTP.post_form(JSONModel(:transfer_proposal).uri_for("#{params[:proposal_id]}/approve"))
+    proposal_uri = JSONModel(:transfer_proposal).uri_for(params[:proposal_id])
+    response = JSONModel::HTTP.post_form("#{proposal_uri}/approve")
 
     if response.code == '200'
       flash[:info] = I18n.t('transfer_proposal._frontend.messages.approve_succeeded')
@@ -42,6 +43,8 @@ class TransferProposalsController < ApplicationController
       redirect_to(resolver.view_uri)
     else
       flash[:error] = I18n.t('transfer_proposal._frontend.errors.approval_failed')
+      resolver = Resolver.new(proposal_uri)
+      redirect_to(resolver.view_uri)
     end
   end
 
