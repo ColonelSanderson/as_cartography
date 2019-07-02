@@ -116,4 +116,18 @@ class TransferProposalsController < ApplicationController
     end
     @enums
   end
+
+
+  helper_method :status_label
+  def status_label(status)
+    @status_map ||= {
+      'INACTIVE' => 'info',
+      'ACTIVE' => 'warning',
+      'APPROVED' => 'success',
+      'CANCELLED_BY_QSA' => 'danger',
+      'CANCELLED_BY_AGENCY' => 'danger'
+    }
+
+    "<span class=\"label label-#{@status_map[status]}\">#{status}</span>".html_safe
+  end
 end

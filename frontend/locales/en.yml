@@ -36,7 +36,10 @@ en:
     _plural: Transfer Proposals
     _singular: Transfer Proposal
     accrual_details: Accrual Details
+    id: ID
     agency: Agency
+    agency_id: Agency
+    agency_details: Agency Details
     agency_location_display_string: Agency Location
     composition: Composition
     composition_types:
@@ -246,6 +249,11 @@ en:
     file_issue_request_title_u_ssort: Request ID
     file_issue_request_agency_id_u_ssort: Agency ID
     file_issue_request_agency_name_u_ssort: Agency Name
+    transfer_proposal_title_u_ssort: Title
+    transfer_proposal_status_u_ssort: Proposal Status
+    transfer_proposal_id_u_ssort: Proposal ID
+    transfer_proposal_agency_id_u_ssort: Agency ID
+    transfer_proposal_agency_name_u_ssort: Agency Name
 
   search_results:
     controlling_record:

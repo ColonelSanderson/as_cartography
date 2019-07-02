@@ -34,7 +34,11 @@
             <%= form.label_and_readonly "agency_location_display_string" %>
             <%= form.label_and_textfield "title" %>
             <%= form.label_and_textfield "estimated_quantity" %>
-            <%= form.label_and_readonly "status" %>
+
+            <div class="form-group">
+              <label class="control-label col-sm-2"><%= I18n.t("transfer_proposal.status") %></label>
+              <div class="label-only col-sm-9"><%= status_label(@transfer_proposal['status']) %></div>
+            </div>
 
             <% if @transfer_proposal['transfer'] %>
               <div class="form-group">

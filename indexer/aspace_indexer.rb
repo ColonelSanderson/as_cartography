@@ -24,6 +24,11 @@ class IndexerCommon
       if doc['primary_type'] == 'transfer_proposal'
         doc['title'] = record['record']['display_string']
         doc['transfer_status_u_sstr'] = record['record']['status']
+        doc['transfer_proposal_title_u_ssort'] = record['record']['title']
+        doc['transfer_proposal_id_u_ssort'] = record['record']['identifier']
+        doc['transfer_proposal_status_u_ssort'] = record['record']['status']
+        doc['transfer_proposal_agency_id_u_ssort'] = record['record']['agency']['_resolved']['qsa_id']
+        doc['transfer_proposal_agency_name_u_ssort'] = record['record']['agency']['_resolved']['display_name']['sort_name']
       end
 
       if doc['primary_type'] == 'file_issue_request'
