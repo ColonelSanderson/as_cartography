@@ -509,6 +509,8 @@ class IndexFeedThread
           solr_doc['creating_agency'] = extra_representation_metadata[:creating_agency_uri]
         end
 
+        solr_doc['current_location'] = jsonmodel['current_location']
+
       end
 
       if solr_doc['title']
