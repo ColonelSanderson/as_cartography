@@ -1,0 +1,1 @@
+DigitalRepresentation.include(RepresentationDeletion)
