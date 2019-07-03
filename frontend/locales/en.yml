@@ -35,6 +35,7 @@ en:
 
     _plural: Transfer Proposals
     _singular: Transfer Proposal
+    accrual: Accrual?
     accrual_details: Accrual Details
     id: ID
     agency: Agency
@@ -63,6 +64,7 @@ en:
       unknown: Unknown
       other: Other
     title: Title
+    description: Description
     files:
       filename: File name
       mime_type: File type

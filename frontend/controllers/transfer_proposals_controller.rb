@@ -77,15 +77,22 @@ class TransferProposalsController < ApplicationController
     updated = JSONModel(:transfer_proposal).find(params[:id], find_opts.merge('resolve[]' => RESOLVES))
 
     # Apply metadata changes
-    [:title, :estimated_quantity, :lock_version].each do |prop|
+    [:title, :description, :estimated_quantity, :lock_version].each do |prop|
       updated[prop] = params[:transfer_proposal][prop]
     end
 
-    # special handling for composition
-    updated[:series] = updated[:series].zip(params[:transfer_proposal][:series]).map do |old, new|
-      h = old.merge(new)
-      h['composition'] = ['digital', 'physical', 'hybrid'].select{|c| h["composition_#{c}"]}
-      h
+    updated[:series].zip(params[:transfer_proposal][:series]).each do |old, new|
+      old[:title] = new[:title]
+      old[:description] = new[:description]
+      old[:disposal_class] = new[:disposal_class]
+      old[:date_range] = new[:date_range]
+      old[:accrual] = new[:accrual] == '1'
+      old[:accrual_details] = new[:accrual_details]
+      old[:creating_agency] = new[:creating_agency]
+      old[:mandate] = new[:mandate]
+      old[:function] = new[:function]
+      old[:system_of_arrangement] = new[:system_of_arrangement]
+      old[:composition] = ['digital', 'physical', 'hybrid'].select{|c| new[:"composition_#{c}"]}
     end
 
     params[:transfer_proposal] = updated

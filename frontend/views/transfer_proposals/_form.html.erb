@@ -32,7 +32,9 @@
             <% end %>
 
             <%= form.label_and_readonly "agency_location_display_string" %>
-            <%= form.label_and_textfield "title" %>
+
+            <%= form.label_and_textfield "title", :required => true %>
+            <%= form.label_and_textarea "description" %>
             <%= form.label_and_textfield "estimated_quantity" %>
 
             <div class="form-group">
@@ -113,13 +115,15 @@
                 <div class="subrecord-form-fields">
                   <h4><%= series['title'] %></h4>
                   <% form.push("series[]", series) do |form| %>
-                    <%= form.label_and_textfield "title" %>
-                    <%= form.label_and_textfield "disposal_class" %>
+                    <%= form.label_and_textarea "title", :required => true %>
+                    <%= form.label_and_textarea "description", :required => true %>
+                    <%= form.label_and_textfield "disposal_class", :required => true %>
                     <%= form.label_and_textfield "date_range" %>
-                    <%= form.label_and_textfield "accrual_details" %>
-                    <%= form.label_and_textfield "creating_agency" %>
-                    <%= form.label_and_textfield "mandate" %>
-                    <%= form.label_and_textfield "function" %>
+                    <%= form.label_and_boolean "accrual" %>
+                    <%= form.label_and_textarea "accrual_details" %>
+                    <%= form.label_and_textarea "creating_agency" %>
+                    <%= form.label_and_textarea "mandate" %>
+                    <%= form.label_and_textarea "function" %>
                     <% if series['system_of_arrangement'] %>
                       <% if is_readonly %>
                         <%= form.label_with_field "system_of_arrangement", I18n.t("transfer_proposal.system_of_arrangement_types.#{series['system_of_arrangement']}") %>

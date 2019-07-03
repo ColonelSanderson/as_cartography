@@ -8,6 +8,7 @@
       "uri" => {"type" => "string"},
 
       "title" => {"type" => "string"},
+      "description" => {"type" => "string"},
 
       "agency" => {
         "type" => "object",
@@ -29,8 +30,10 @@
           "type" => "object",
           "properties" => {
             "title" => {"type" => "string"},
+            "description" => {"type" => "string"},
             "disposal_class" => {"type" => "string"},
             "date_range" => {"type" => "string"},
+            "accrual" => {"type" => "boolean"},
             "accrual_details" => {"type" => "string"},
             "creating_agency" => {"type" => "string"},
             "mandate" => {"type" => "string"},

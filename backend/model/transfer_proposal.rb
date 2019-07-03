@@ -87,8 +87,10 @@ class TransferProposal < Sequel::Model
         json['series'] = proposal_series.fetch(obj.id, []).map {|series_row|
           {
             'title' => series_row[:series_title],
+            'description' => series_row[:description],
             'disposal_class' => series_row[:disposal_class],
             'date_range' => series_row[:date_range],
+            'accrual' => series_row[:accrual] == 1,
             'accrual_details' => series_row[:accrual_details],
             'creating_agency' => series_row[:creating_agency],
             'mandate' => series_row[:mandate],
