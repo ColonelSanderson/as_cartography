@@ -7,7 +7,9 @@ class FileIssuesController < ApplicationController
   def index
     respond_to do |format|
       format.html {
-        @search_data = Search.for_type(session[:repo_id], "file_issue", {"sort" => "title_sort asc", "facet[]" => Plugins.search_facets_for_type(:file_issue)}.merge(params_for_backend_search))
+        params = {"sort" => "file_issue_urgent_u_ssort desc, create_time desc", "facet[]" => Plugins.search_facets_for_type(:file_issue)}.merge(params_for_backend_search)
+
+        @search_data = Search.for_type(session[:repo_id], "file_issue", params)
       }
       format.csv {
         search_params = params_for_backend_search.merge({ "sort" => "title_sort asc",  "facet[]" => []})
@@ -68,5 +70,23 @@ class FileIssuesController < ApplicationController
 
   def current_record
     @file_issue
+  end
+
+
+  helper_method :status_label
+  def status_label(status)
+    @status_map ||= {
+      'INITIATED' => 'info',
+      'ACTIVE' => 'warning',
+      'COMPLETE' => 'success',
+    }
+
+    "<span class=\"label label-#{@status_map[status]}\">#{status}</span>".html_safe
+  end
+
+
+  helper_method :urgent_flag
+  def urgent_flag
+    "<span class=\"glyphicon glyphicon-flag\" style=\"color:red;\"></span>".html_safe
   end
 end

@@ -47,6 +47,14 @@ class IndexerCommon
         doc['file_issue_request_agency_id_u_ssort'] = record['record']['agency']['_resolved']['qsa_id']
         doc['file_issue_request_agency_name_u_ssort'] = record['record']['agency']['_resolved']['display_name']['sort_name']
       end
+
+      if doc['primary_type'] == 'file_issue'
+        doc['file_issue_urgent_u_ssort'] = record['record']['urgent'] ? 'z' : 'a'
+        doc['file_issue_title_u_ssort'] = record['record']['title']
+        doc['file_issue_agency_id_u_ssort'] = record['record']['agency']['_resolved']['qsa_id']
+        doc['file_issue_status_u_ssort'] = record['record']['status']
+        doc['file_issue_agency_name_u_ssort'] = record['record']['agency']['_resolved']['display_name']['sort_name']
+      end
     }
 
     indexer.add_document_prepare_hook {|doc, record|

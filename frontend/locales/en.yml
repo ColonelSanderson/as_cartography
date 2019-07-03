@@ -207,7 +207,8 @@ en:
     id: ID
     agency_location_display_string: Agency Location
     created_by: Agency Contact
-    agency: Agency Details
+    agency: Agency
+    agency_details: Agency Details
     agency_id: Agency
     request_status: Status
     physical_request_status: Physical Status
@@ -252,6 +253,11 @@ en:
     file_issue_request_title_u_ssort: Request ID
     file_issue_request_agency_id_u_ssort: Agency ID
     file_issue_request_agency_name_u_ssort: Agency Name
+    file_issue_urgent_u_ssort: Urgency
+    file_issue_title_u_ssort: Issue ID
+    file_issue_status_u_ssort: Issue Status
+    file_issue_agency_id_u_ssort: Agency ID
+    file_issue_agency_name_u_ssort: Agency Name
     transfer_proposal_title_u_ssort: Title
     transfer_proposal_status_u_ssort: Proposal Status
     transfer_proposal_id_u_ssort: Proposal ID
@@ -271,7 +277,10 @@ en:
       search_request_status_u_sstr: Status
 
   file_issue:
+    id: ID
     agency: Agency
+    agency_details: Agency Details
+    agency_id: Agency
     issue_type: Issue Type
     status: Status
     agency_location_display_string: Agency Location
