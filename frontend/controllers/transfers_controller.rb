@@ -120,4 +120,17 @@ class TransfersController < ApplicationController
   def current_record
     @transfer
   end
+
+
+  helper_method :status_label
+  def status_label(status)
+    @status_map ||= {
+      'TRANSFER_PROCESS_INITIATED' => 'info',
+      'TRANSFER_PROCESS_PENDING' => 'danger',
+      'TRANSFER_PROCESS_IN_PROGRESS' => 'warning',
+      'TRANSFER_PROCESS_COMPLETE' => 'success',
+    }
+
+    "<span class=\"label label-#{@status_map[status]}\">#{status}</span>".html_safe
+  end
 end

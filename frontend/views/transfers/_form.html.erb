@@ -14,13 +14,15 @@
             <%= readonly.label_and_textfield "identifier" %>
 
             <div class="form-group">
-                <div class="control-label col-sm-2"><%= I18n.t("transfer.agency") %></div>
-                <div class="token-list">
-                    <%= render_token(:object => @transfer['agency']['_resolved'],
-                                     :label => @transfer['agency']['_resolved']['title'],
-                                     :type => @transfer['agency']['_resolved']['jsonmodel_type'],
-                                     :uri => @transfer['agency']['ref'],
-                                     :placement => "top") %>
+                <label class="control-label col-sm-2"><%= I18n.t("transfer.agency") %></label>
+                <div class="label-only col-sm-9">
+                  <div class="token-list">
+                      <%= render_token(:object => @transfer['agency']['_resolved'],
+                                       :label => @transfer['agency']['_resolved']['title'],
+                                       :type => @transfer['agency']['_resolved']['jsonmodel_type'],
+                                       :uri => @transfer['agency']['ref'],
+                                       :placement => "top") %>
+                  </div>
                 </div>
             </div>
 
@@ -33,19 +35,21 @@
             <%= form.label_and_textfield "quantity_received" %>
 
             <div class="form-group">
-              <label class="col-sm-2 control-label" for="transfer_status_" plugin="">Status</label>
-              <div class="col-sm-9 label-only"><%= I18n.t("transfer.status_values.#{@transfer['status']}", @transfer['status']) %></div>
+              <label class="control-label col-sm-2"><%= I18n.t("transfer.status") %></label>
+              <div class="label-only col-sm-9"><%= status_label(@transfer['status']) %></div>
             </div>
 
             <div class="form-group">
-                <div class="control-label col-sm-2"><%= I18n.t("transfer_proposal._singular") %></div>
-                <div class="token-list">
-                    <%= render_token(:object => @transfer['transfer_proposal']['_resolved'],
-                                     :label => CGI::escapeHTML(@transfer['transfer_proposal']['_resolved']['title']),
-                                     :type => @transfer['transfer_proposal']['_resolved']['jsonmodel_type'],
-                                     :uri => @transfer['transfer_proposal']['ref'],
-                                     :placement => "top",
-                                     :inside_linker_browse => true) %>
+                <label class="control-label col-sm-2"><%= I18n.t("transfer_proposal._singular") %></label>
+                <div class="label-only col-sm-9">
+                  <div class="token-list">
+                      <%= render_token(:object => @transfer['transfer_proposal']['_resolved'],
+                                       :label => CGI::escapeHTML(@transfer['transfer_proposal']['_resolved']['title']),
+                                       :type => @transfer['transfer_proposal']['_resolved']['jsonmodel_type'],
+                                       :uri => @transfer['transfer_proposal']['ref'],
+                                       :placement => "top",
+                                       :inside_linker_browse => true) %>
+                  </div>
                 </div>
             </div>
 
@@ -57,15 +61,17 @@
                                     'completed' => 'finished',
                                     'failed' => 'finished' } %>
               <div class="form-group">
-                  <div class="control-label col-sm-2"><%= I18n.t("transfer.import_job") %></div>
-                  <div class="token-list">
-                      <%= render_token(:object => job,
-                                       :label => I18n.t("transfer._frontend.import_job_state.#{job['status']}") + ' ' + 
-                                                   job["time_#{state_time_map[job['status']]}"],
-                                       :type => job['jsonmodel_type'],
-                                       :uri => @transfer['import_job']['ref'],
-                                       :placement => "top",
-                                       :inside_linker_browse => true) %>
+                  <label class="control-label col-sm-2"><%= I18n.t("transfer.import_job") %></label>
+                  <div class="label-only col-sm-9">
+                    <div class="token-list">
+                        <%= render_token(:object => job,
+                                         :label => I18n.t("transfer._frontend.import_job_state.#{job['status']}") + ' ' + 
+                                                     job["time_#{state_time_map[job['status']]}"],
+                                         :type => job['jsonmodel_type'],
+                                         :uri => @transfer['import_job']['ref'],
+                                         :placement => "top",
+                                         :inside_linker_browse => true) %>
+                    </div>
                   </div>
               </div>
             <% end %>

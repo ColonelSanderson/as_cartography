@@ -31,6 +31,15 @@ class IndexerCommon
         doc['transfer_proposal_agency_name_u_ssort'] = record['record']['agency']['_resolved']['display_name']['sort_name']
       end
 
+      if doc['primary_type'] == 'transfer'
+        doc['title'] = record['record']['display_string']
+        doc['transfer_title_u_ssort'] = record['record']['title']
+        doc['transfer_id_u_ssort'] = record['record']['identifier']
+        doc['transfer_status_u_ssort'] = record['record']['status']
+        doc['transfer_agency_id_u_ssort'] = record['record']['agency']['_resolved']['qsa_id']
+        doc['transfer_agency_name_u_ssort'] = record['record']['agency']['_resolved']['display_name']['sort_name']
+      end
+
       if doc['primary_type'] == 'file_issue_request'
         doc['file_issue_request_draft_u_sbool'] = record['record']['draft']
         doc['file_issue_request_urgent_u_ssort'] = record['record']['urgent'] ? 'z' : 'a'

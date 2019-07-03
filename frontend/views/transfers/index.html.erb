@@ -1,12 +1,49 @@
 <%= setup_context(:title => I18n.t("transfer._plural")) %>
 
 <%
-  @show_multiselect_column = false
-  add_column(I18n.t("transfer.agency"),
+  @no_title = true
+
+  add_column(I18n.t("transfer.id"),
+             proc {|record|
+               "<span class=\"map-browse-content map-browse-id\">#{record['transfer_id_u_ssort']}</span>".html_safe
+             }, :sortable => true, :sort_by => 'transfer_id_u_ssort')
+
+  add_column(I18n.t("transfer.agency_id"),
              proc {|record|
                    parsed = ASUtils.json_parse(record['json'])
-                   parsed.fetch('agency', {}).fetch('_resolved', {}).fetch('display_name', {}).fetch('sort_name', '')
-             })
+                   agency = parsed.fetch('agency', {}).fetch('_resolved', {})
+
+                   out = "<span class=\"map-browse-content map-browse-id\">"
+                   out += 'A' + agency.fetch('qsa_id', '').to_s
+                   out += "</span>"
+
+                   out.html_safe
+
+             }, :sortable => true, :sort_by => 'transfer_agency_id_u_ssort')
+
+  add_column(I18n.t("transfer.agency_details"),
+             proc {|record|
+                   parsed = ASUtils.json_parse(record['json'])
+                   agency = parsed.fetch('agency', {}).fetch('_resolved', {})
+                   out = agency.fetch('display_name', {}).fetch('sort_name', '')
+                   out += '<ul><li> Location: ' + parsed["agency_location_display_string"] + '</li>'
+                   out += '<li> Contact: ' + record["created_by"] + '</li></ul>'
+
+                   out.html_safe
+
+             }, :sortable => true, :sort_by => 'transfer_agency_name_u_ssort')
+
+
+  add_column(I18n.t("transfer.status"),
+             proc {|record|
+               parsed = ASUtils.json_parse(record['json'])
+
+               out = "<span class=\"map-browse-content\">#{status_label(record['transfer_status_u_ssort'])}</span>"
+
+               out.html_safe
+             }, :sortable => true, :sort_by => 'transfer_status_u_ssort')
+
+
 %>
 
 <div class="row">

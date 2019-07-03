@@ -105,7 +105,10 @@ en:
       back_button: Back
     _plural: Transfers
     _singular: Transfer
+    id: ID
     agency: Agency
+    agency_id: Agency
+    agency_details: Agency Details
     agency_location_display_string: Agency Location
     status: Status
     identifier: Transfer ID
@@ -254,6 +257,11 @@ en:
     transfer_proposal_id_u_ssort: Proposal ID
     transfer_proposal_agency_id_u_ssort: Agency ID
     transfer_proposal_agency_name_u_ssort: Agency Name
+    transfer_title_u_ssort: Title
+    transfer_status_u_ssort: Transfer Status
+    transfer_id_u_ssort: Transfer ID
+    transfer_agency_id_u_ssort: Agency ID
+    transfer_agency_name_u_ssort: Agency Name
 
   search_results:
     controlling_record:
