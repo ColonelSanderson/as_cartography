@@ -10,7 +10,7 @@ class TransfersController < ApplicationController
   def index
     respond_to do |format|
       format.html {
-        @search_data = Search.for_type(session[:repo_id], "transfer", {"sort" => "title_sort asc", "facet[]" => Plugins.search_facets_for_type(:transfer)}.merge(params_for_backend_search))
+        @search_data = Search.for_type(session[:repo_id], "transfer", {"sort" => "create_time desc", "facet[]" => Plugins.search_facets_for_type(:transfer)}.merge(params_for_backend_search))
       }
       format.csv {
         search_params = params_for_backend_search.merge({ "sort" => "title_sort asc",  "facet[]" => []})

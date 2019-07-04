@@ -9,8 +9,8 @@
 
 <script type="text/template" id="MAPTransferBrowseActions">
   <li class="divider"></li>
-  <li><%= link_to I18n.t("transfer_proposal._plural"), :controller => :transfer_proposals, :action => :index, :sort => 'create_time desc' %></li>
-  <li><%= link_to I18n.t("transfer._plural"), :controller => :transfers, :action => :index, :sort => 'create_time desc' %></li>
+  <li><%= link_to I18n.t("transfer_proposal._plural"), :controller => :transfer_proposals, :action => :index %></li>
+  <li><%= link_to I18n.t("transfer._plural"), :controller => :transfers, :action => :index %></li>
 </script>
 
 <script type="text/template" id="MAPFileIssueBrowseActions">
@@ -21,5 +21,5 @@
 
 <script type="text/template" id="MAPSearchRequestBrowseActions">
   <li class="divider"></li>
-  <li><%= link_to I18n.t("search_request._plural"), :controller => :search_requests, :action => :index, :sort => 'create_time desc'  %></li>
+  <li><%= link_to I18n.t("search_request._plural"), :controller => :search_requests, :action => :index %></li>
 </script>

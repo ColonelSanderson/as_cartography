@@ -8,7 +8,7 @@ class TransferProposalsController < ApplicationController
   def index
     respond_to do |format|
       format.html {
-        params = {"sort" => "title_sort asc", "facet[]" => Plugins.search_facets_for_type(:transfer_proposal)}.merge(params_for_backend_search)
+        params = {"sort" => "create_time desc", "facet[]" => Plugins.search_facets_for_type(:transfer_proposal)}.merge(params_for_backend_search)
 
         # Exclude inactive transfer proposals.
         raise "Unexpected pre-existing filter" if params['filter']
