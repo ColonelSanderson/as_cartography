@@ -23,16 +23,16 @@
           <%= hidden_field_tag "proposal_id", @transfer_proposal.id %>
           <button class="btn btn-primary btn-default btn-sm"><i class="fa fa-check"></i>&nbsp;<%= I18n.t("transfer_proposal._frontend.confirmation_button") %></button>
         <% end %>
-      <% end %>
 
-      <%= form_tag({:controller => "transfer_proposals",
-                    :action => "cancel"},
-                   :method => "post",
-                   :id => "cancel_transfer_proposal") do %>
-        <%= hidden_field_tag "proposal_id", @transfer_proposal.id %>
-        <button class="btn btn-cancel btn-default btn-sm"><%=  I18n.t("transfer_proposal._frontend.cancel_button") %></button>
-      <% end %>
-    </div>
+        <%= form_tag({:controller => "transfer_proposals",
+                      :action => "cancel"},
+                      :method => "post",
+                      :id => "cancel_transfer_proposal") do %>
+          <%= hidden_field_tag "proposal_id", @transfer_proposal.id %>
+          <button class="btn btn-cancel btn-default btn-sm"><%=  I18n.t("transfer_proposal._frontend.cancel_button") %></button>
+        <% end %>
+      </div>
+    <% end %>
   <% end %>
   <div class="clearfix"></div>
 </div>
