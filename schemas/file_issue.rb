@@ -82,6 +82,8 @@
           }
         }
       },
+
+      "lodged_by" => {"type" => "string"},
     },
   }
 }

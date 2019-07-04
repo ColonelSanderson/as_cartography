@@ -70,6 +70,7 @@ en:
       mime_type: File type
       view: View this file
       role: Role
+    lodged_by: Lodged By
 
   transfer:
     _frontend:
@@ -128,6 +129,7 @@ en:
       transfer_received: Transfer Received
       metadata_imported: Metadata Imported
       transfer_completed: Transfer Completed
+    lodged_by: Lodged By
 
     status_values:
       TRANSFER_PROCESS_INITIATED: 'Initiated'
@@ -234,6 +236,7 @@ en:
       number_of_units: No. of Units
       cost: Cost
       total: TOTAL
+    lodged_by: Lodged By
 
   requested_representations:
     request_type: Request Type
@@ -319,6 +322,7 @@ en:
         digital_file_missing: No digital file attached to representation
     _plural: File Issues
     _singular: File Issue
+    lodged_by: Lodged By
 
   search_request:
     agency: Agency
@@ -331,6 +335,7 @@ en:
     service_fee: Service Fee
     date_details: Date Details
     purpose: Purpose
+    lodged_by: Lodged By
     quote:
       unit_description: Unit description
       unit_cost: Unit cost

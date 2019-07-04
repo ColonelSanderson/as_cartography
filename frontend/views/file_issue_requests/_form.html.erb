@@ -49,6 +49,8 @@
 
             <%= form.label_and_boolean "preapprove_quotes" %>
 
+            <%= form.label_and_textfield "lodged_by" %>
+
             <% ["file_issue_digital", "file_issue_physical"].each do |issue| %>
 
               <% if @file_issue_request[issue] %>

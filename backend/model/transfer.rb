@@ -23,6 +23,7 @@ class Transfer < Sequel::Model
                   .insert(:agency_id => proposal.agency_id,
                           :agency_location_id => proposal.agency_location_id,
                           :title => proposal.title,
+                          :lodged_by => proposal.lodged_by,
                           :created_by => proposal[:created_by_orig],
                           :create_time => java.lang.System.currentTimeMillis,
                           :modified_by => RequestContext.get(:current_username),

@@ -53,6 +53,8 @@
                 </div>
             </div>
 
+            <%= form.label_and_textfield "lodged_by" %>
+
             <% if @transfer['import_job'] %>
               <% job = @transfer['import_job']['_resolved'] %>
               <% state_time_map = { 'queued' => 'submitted',

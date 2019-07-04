@@ -36,6 +36,7 @@
             <%= form.label_and_textfield "title", :required => true %>
             <%= form.label_and_textarea "description" %>
             <%= form.label_and_textfield "estimated_quantity" %>
+            <%= form.label_and_textfield "lodged_by", { :field_opts => { :readonly => true } } %>
 
             <div class="form-group">
               <label class="control-label col-sm-2"><%= I18n.t("transfer_proposal.status") %></label>
