@@ -3,6 +3,8 @@ require 'time'
 
 class AgencyTransferConverter < Converter
 
+  class TransferImportException < StandardError; end
+
   # Each row is a representation, physical or digital
   # It either includes or references an item
   # Its item references an existing series, and links to agencies
@@ -57,8 +59,6 @@ class AgencyTransferConverter < Converter
      {:label => "Sensititvity Label", :key => :sensitivity_label},
     ]
 
-
-
   def self.instance_for(type, input_file, opts = {})
     if type == "agency_transfer"
       self.new(input_file, opts)
@@ -95,10 +95,12 @@ class AgencyTransferConverter < Converter
     @items = []
     @representations = []
 
-    @transfer_id = opts[:transfer_id] or raise "No Transfer ID!!"
+    @transfer_id = opts[:transfer_id] or handle_error("No Transfer ID provided.")
 
     @series_uris = {}
     @agency_uris = {}
+
+    @current_row = 0
   end
 
 
@@ -108,13 +110,13 @@ class AgencyTransferConverter < Converter
     XLSXStreamingReader.new(@input_file).each.each_with_index do |row, idx|
       if idx == 0
         # Our header row.  Map this back to our column definitions.
-        ordered_column_keys = row.map do |r|
+        ordered_column_keys = row.compact.map do |r|
           column = @@columns.find {|c| c[:label] == r.strip}
 
           if column
             column[:key]
           else
-            raise "Unrecognised column: #{r.strip}"
+            handle_error(bad_column_label_error(r.strip))
           end
         end
 
@@ -125,7 +127,13 @@ class AgencyTransferConverter < Converter
 
       next if values.select{|v| !v.empty?}.compact.empty?
 
-      values_map = Hash[ordered_column_keys.zip(values)]
+      values_map = Hash[ordered_column_keys.zip(values)].merge(:ROW_INDEX => idx + 1)
+
+
+      if values_map[:sequence_ref].empty? && values_map[:sequence].empty?
+        @current_row = idx + 1
+        handle_error(unattached_row_error(values_map[:title]))
+      end
 
       if values_map[:sequence_ref].empty?
         # an item
@@ -140,7 +148,7 @@ class AgencyTransferConverter < Converter
       @records << format_item(item)
     end
 
-    raise "Unlinked representations!!" unless @representations.empty?
+    handle_error(unlinked_representations_error(@representations)) unless @representations.empty?
 
 
     # assign all records to the batch importer in reverse
@@ -155,6 +163,21 @@ class AgencyTransferConverter < Converter
 
 
   private
+
+
+  def handle_error(msg, col = false)
+    message = "\n\n  #{msg}\n    At: "
+    message += "column [#{column_label_for(col)}], " if col
+    message += "row #{@current_row}\n\n"
+
+    raise TransferImportException.new(message)
+  end
+
+
+  def column_label_for(key)
+    (@@columns.select{|c| c[:key] == key}.first || {})[:label]
+  end
+
 
   def row_values(row)
     # We want a value for every column, even if that value is an empty string.
@@ -175,12 +198,12 @@ class AgencyTransferConverter < Converter
 
 
   def series_uri_for(id)
-    @series_uris[id] ||= (Resource[:qsa_id => id] or raise "No Series for #{id}!!").uri
+    @series_uris[id] ||= (Resource[:qsa_id => id] or handle_error("No Series record found for id #{id}", :series)).uri
   end
 
 
-  def agency_uri_for(id)
-    @agency_uris[id] ||= (AgentCorporateEntity[:qsa_id => id] or raise "No Agency for #{id}!!").uri
+  def agency_uri_for(id, col = nil)
+    @agency_uris[id] ||= (AgentCorporateEntity[:qsa_id => id] or handle_error("No Agency record found for id #{id}", col)).uri
   end
 
 
@@ -228,6 +251,7 @@ class AgencyTransferConverter < Converter
 
 
   def format_item(item)
+    @current_row = item[:ROW_INDEX]
     item_hash = {
       :uri => "/repositories/12345/archival_objects/import_#{SecureRandom.hex}",
       :disposal_class => item[:disposal_class],
@@ -260,6 +284,7 @@ class AgencyTransferConverter < Converter
     reps.unshift(item)
 
     reps.each do |rep|
+      @current_row = rep[:ROW_INDEX]
       rep_key = rep[:representation_type].downcase.start_with?('p') ? :physical_representations : :digital_representations
 
       rep_hash = {
@@ -294,7 +319,7 @@ class AgencyTransferConverter < Converter
         :start_date => item[:start_date],
         :jsonmodel_type => 'series_system_agent_record_ownership_relationship',
         :relator => 'is_controlled_by',
-        :ref => agency_uri_for(item[:responsible_agency]),
+        :ref => agency_uri_for(item[:responsible_agency], :responsible_agency),
       }
     end
 
@@ -303,11 +328,42 @@ class AgencyTransferConverter < Converter
         :start_date => item[:start_date],
         :jsonmodel_type => 'series_system_agent_record_creation_relationship',
         :relator => 'established_by',
-        :ref => agency_uri_for(item[:creating_agency]),
+        :ref => agency_uri_for(item[:creating_agency], :creating_agency),
       }
     end
 
     JSONModel::JSONModel(:archival_object).from_hash(item_hash)
   end
 
+
+  def unattached_row_error(title)
+    <<~EOT
+      Unattached row:
+          #{title}
+
+          If a row has no value in column:
+            [#{column_label_for(:sequence_ref)}]
+          Then it must have a value in column:
+            [#{column_label_for(:sequence)}]
+    EOT
+  end
+
+
+  def unlinked_representations_error(reps)
+    <<~EOT
+      #{reps.length} unattached row#{reps.length == 1 ? '' : 's'}.
+
+            #{reps.map{|r| 'Row ' + r[:ROW_INDEX] + ':  ' + row[:title]}.join("\n      ")}
+    EOT
+  end
+
+
+  def bad_column_label_error(label)
+    <<~EOT
+      Unrecognised column heading: [#{label}]
+
+          The following columns are supported:
+            #{@@columns.map{|c| c[:label]}.join("\n      ")}
+    EOT
+  end
 end
