@@ -173,6 +173,12 @@ Transfers.prototype.updateJobStatus = function(status) {
 
     but.text(but.data('import_' + status));
 
+    if (status == 'running' || status == 'queued') {
+	but.attr('disabled', 'disabled');
+    } else {
+	but.removeAttr('disabled');
+    }
+
     var job = $('#transfer-import-job');
     var text = job.find('.token').text();
     newText = text.slice(0, text.lastIndexOf(':') + 2) + status;

@@ -12,7 +12,7 @@
 
   <button class="btn btn-sm btn-warning"
           id="transfer-import-button"
-          <%= 'disabled="disabled"' if ['running', 'completed'].include?(status) %>
+          <%= 'disabled="disabled"' if ['queued', 'running', 'completed'].include?(status) %>
           data-import_no_job="<%= I18n.t("transfer._frontend.import_button_label.no_job") %>"
           data-import_queued="<%= I18n.t("transfer._frontend.import_button_label.queued") %>"
           data-import_running="<%= I18n.t("transfer._frontend.import_button_label.running") %>"
