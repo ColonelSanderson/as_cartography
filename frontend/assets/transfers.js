@@ -5,6 +5,7 @@ function Transfers() {
     this.setupApprovalConfirmation();
     this.setupTransferReplaceFile();
     this.setupValidateMetadataButtons();
+    this.setupImportJobMonitor();
 };
 
 Transfers.prototype.setupValidateMetadataButtons = function() {
@@ -121,6 +122,61 @@ Transfers.prototype.setupNavigation = function() {
     var $browseActions = $($('#MAPTransferBrowseActions').html());
 
     $browseActions.appendTo('.repository-header .browse-container ul:first');
+};
+
+Transfers.prototype.setupImportJobMonitor = function() {
+    var job = $('#transfer-import-job');
+
+    if (!job.length) {
+	return;
+    }
+
+    var status = job.data('status');
+    // it's an API uri for the job, convert it to the frontend uri for the status
+    var statusUri = '/' + job.data('uri').split('/').slice(3,5).join('/') + '/status';
+
+    if (status == 'queued' || status == 'running') {
+     this.checkJobStatus(statusUri);
+    }
+};
+
+Transfers.prototype.checkJobStatus = function(uri) {
+    var self = this;
+
+    setTimeout(function() {
+        $.ajax({
+            url: AS.app_prefix(uri),
+            type: 'GET',
+            dataType: 'json',
+            data: {
+            },
+            success: function (result) {
+		    var status = result.status;
+
+		    self.updateJobStatus(status);
+
+		    if (status == 'queued' || status == 'running') {
+			self.checkJobStatus(uri);
+		    }
+            },
+            error: function () {
+		    console.log('Import job monitor failed.');
+            },
+	});
+
+        }, 3000);
+
+};
+
+Transfers.prototype.updateJobStatus = function(status) {
+    var but = $('#transfer-import-button');
+
+    but.text(but.data('import_' + status));
+
+    var job = $('#transfer-import-job');
+    var text = job.find('.token').text();
+    newText = text.slice(0, text.lastIndexOf(':') + 2) + status;
+    job.find('.token').text(newText);
 };
 
 Transfers.prototype.showConfirmation = function(form, templateId) {

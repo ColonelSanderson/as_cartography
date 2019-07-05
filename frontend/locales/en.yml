@@ -100,6 +100,7 @@ en:
         running: Transfer metadata importing ...
         completed: Transfer metadata successfully imported
         failed: Transfer metadata import failed - click to retry
+      import_job_current_status: Current status
       import_job_state:
         queued: Queued
         running: Running

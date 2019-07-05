@@ -3,7 +3,16 @@ class TransfersController < ApplicationController
   include ApplicationHelper
 
   # TODO: review access controls for these endpoints
-  set_access_control  "view_repository" => [:index, :show, :edit, :update, :conversation, :conversation_send, :replace_file, :import]
+  set_access_control  "view_repository" => [
+                                            :index,
+                                            :show,
+                                            :edit,
+                                            :update,
+                                            :conversation,
+                                            :conversation_send,
+                                            :replace_file,
+                                            :import,
+                                           ]
 
   RESOLVES = ['agency', 'transfer_proposal', 'import_job']
 

@@ -57,18 +57,13 @@
 
             <% if @transfer['import_job'] %>
               <% job = @transfer['import_job']['_resolved'] %>
-              <% state_time_map = { 'queued' => 'submitted',
-                                    'running' => 'started',
-                                    'canceled' => 'finished',
-                                    'completed' => 'finished',
-                                    'failed' => 'finished' } %>
-              <div class="form-group">
+              <div class="form-group" id="transfer-import-job" data-status="<%= job['status'] %>" data-uri="<%= @transfer['import_job']['ref'] %>">
                   <label class="control-label col-sm-2"><%= I18n.t("transfer.import_job") %></label>
                   <div class="label-only col-sm-9">
                     <div class="token-list">
+                        <% token_label = I18n.t("transfer._frontend.import_job_current_status") + ': ' + job['status'] %>
                         <%= render_token(:object => job,
-                                         :label => I18n.t("transfer._frontend.import_job_state.#{job['status']}") + ' ' + 
-                                                     job["time_#{state_time_map[job['status']]}"],
+                                         :label => token_label,
                                          :type => job['jsonmodel_type'],
                                          :uri => @transfer['import_job']['ref'],
                                          :placement => "top",

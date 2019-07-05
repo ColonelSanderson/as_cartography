@@ -11,13 +11,14 @@
              :id => @transfer.id) do %>
 
   <button class="btn btn-sm btn-warning"
+          id="transfer-import-button"
           <%= 'disabled="disabled"' if ['running', 'completed'].include?(status) %>
           data-import_no_job="<%= I18n.t("transfer._frontend.import_button_label.no_job") %>"
           data-import_queued="<%= I18n.t("transfer._frontend.import_button_label.queued") %>"
           data-import_running="<%= I18n.t("transfer._frontend.import_button_label.running") %>"
           data-import_canceled="<%= I18n.t("transfer._frontend.import_button_label.canceled") %>"
-          data_import_completed="<%= I18n.t("transfer._frontend.import_button_label.completed") %>"
-          data_import_failed="<%= I18n.t("transfer._frontend.import_button_label.failed") %>">
+          data-import_completed="<%= I18n.t("transfer._frontend.import_button_label.completed") %>"
+          data-import_failed="<%= I18n.t("transfer._frontend.import_button_label.failed") %>">
     <%= label %>
   </button>
 
