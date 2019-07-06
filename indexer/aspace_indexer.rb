@@ -55,15 +55,14 @@ class IndexerCommon
         doc['file_issue_status_u_ssort'] = record['record']['status']
         doc['file_issue_agency_name_u_ssort'] = record['record']['agency']['_resolved']['display_name']['sort_name']
       end
-    }
 
-    indexer.add_document_prepare_hook {|doc, record|
       if doc['primary_type'] == 'search_request'
         doc['title'] = record['record']['display_string']
-        doc['search_request_draft_u_sbool'] = record['record']['draft']
-        doc['search_request_status_u_sstr'] = record['record']['status']
+        doc['search_request_id_u_ssort'] = record['record']['display_string']
+        doc['search_request_agency_id_u_ssort'] = record['record']['agency']['_resolved']['qsa_id']
+        doc['search_request_status_u_ssort'] = record['record']['status']
+        doc['search_request_agency_name_u_ssort'] = record['record']['agency']['_resolved']['display_name']['sort_name']
       end
     }
-
   end
 end

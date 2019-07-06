@@ -192,4 +192,21 @@ class SearchRequestsController < ApplicationController
       "key" => json['key'],
     }, :status => '200'
   end
+
+
+  # FIXME: i've added one of these to each of the map controllers
+  #        there's probably a cleaner, more general way to do it
+  helper_method :status_label
+  def status_label(status)
+    @status_map ||= {
+      'INACTIVE' => 'info',
+      'SUBMITTED' => 'primary',
+      'OPEN' => 'warning',
+      'CLOSED' => 'success',
+      'CANCELLED_BY_QSA' => 'danger',
+      'CANCELLED_BY_AGENCY' => 'danger',
+    }
+
+    "<span class=\"label label-#{@status_map[status]}\">#{status}</span>".html_safe
+  end
 end

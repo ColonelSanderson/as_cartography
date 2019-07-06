@@ -21,6 +21,7 @@ ArchivesSpace::Application.routes.draw do
 
   match 'file_issues/:id' => 'file_issues#update', :via => [:post]
 
+  match 'map_search_requests' => 'search_requests#index', :via => [:get]
   match 'search_requests/:id' => 'search_requests#update', :via => [:post]
   match 'search_requests/:id/approve' => 'search_requests#approve', :via => [:post]
   match 'search_requests/:id/cancel' => 'search_requests#cancel', :via => [:post]

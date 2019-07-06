@@ -274,6 +274,11 @@ en:
     transfer_id_u_ssort: Transfer ID
     transfer_agency_id_u_ssort: Agency ID
     transfer_agency_name_u_ssort: Agency Name
+    search_request_title_u_ssort: Title
+    search_request_status_u_ssort: Request Status
+    search_request_id_u_ssort: Request ID
+    search_request_agency_id_u_ssort: Agency ID
+    search_request_agency_name_u_ssort: Agency Name
 
   search_results:
     controlling_record:
@@ -326,7 +331,10 @@ en:
     lodged_by: Lodged By
 
   search_request:
+    id: ID
     agency: Agency
+    agency_details: Agency Details
+    agency_id: Agency
     agency_location_display_string: Agency Location
     status: Status
     details: Details
