@@ -99,10 +99,13 @@ FileIssue.prototype.setupRepresentationListForm = function() {
             var returnedDate = $("#returned_date", $modal).val();
             var receivedBy= $("#received_by", $modal).val();
 
-            $table.find('tbody :checkbox:checked').each(function() {
+            $table.find('tbody :checkbox:checked[id$=_id_]').each(function() {
                 var $tr = $(this).closest('tr');
-                $tr.find(':input[name*=returned_date]').val(returnedDate).trigger('change');
-                $tr.find(':input[name*=received_by]').val(receivedBy).trigger('change');
+                // Only change those that haven't been marked as "Not returned"
+                if ($tr.find(':checkbox[name*=not_returned]').is(':not(:checked)')) {
+                    $tr.find(':input[name*=returned_date]').val(returnedDate).trigger('change');
+                    $tr.find(':input[name*=received_by]').val(receivedBy).trigger('change');
+                }
                 $modal.modal('hide');
             });
         });
