@@ -41,6 +41,11 @@ class FileIssue < Sequel::Model
     if json[:requested_representations].all?{|item| item['dispatch_date']}
       # all dispatched! so assume checklist_dispatched
       json[:checklist_dispatched] = true
+
+      # If we're digital and everything is dispatched, then we're done
+      if json[:issue_type] == ISSUE_TYPE_DIGITAL && status == STATUS_FILE_ISSUE_ACTIVE
+        json[:checklist_completed] = true
+      end
     end
 
     # Our status is determined by how many consecutive checklist items are
@@ -62,10 +67,6 @@ class FileIssue < Sequel::Model
                # If all checklist items are complete, you're done!
                STATUS_FILE_ISSUE_COMPLETE
              end
-
-    if json[:issue_type] == ISSUE_TYPE_DIGITAL && json[:checklist_summary_sent] && status == STATUS_FILE_ISSUE_ACTIVE
-      status = STATUS_FILE_ISSUE_COMPLETE
-    end
 
     json[:status] = status
 
