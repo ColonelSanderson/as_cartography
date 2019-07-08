@@ -111,7 +111,7 @@ FileIssue.prototype.setupRepresentationListForm = function() {
     function toggleNotReturnedFields($tr) {
         var $receivedDate = $tr.find(':input[id$=_returned_date_]');
         var $notReturned = $tr.find(':checkbox[id$=_not_returned_]');
-        if ($receivedDate.val().trim() != '') {
+        if ($receivedDate.val() && $receivedDate.val().trim() != '') {
             $tr.find('.not-returned-fields').hide();
             $tr.find('.not-returned-fields :input').prop('disabled', true);
         } else if ($notReturned.is(':checked')) {
