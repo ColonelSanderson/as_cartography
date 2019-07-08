@@ -43,7 +43,7 @@ class SearchRequestsController < ApplicationController
     # Fetch the current version
     updated = JSONModel(:search_request).find(params[:id], find_opts.merge('resolve[]' => RESOLVES))
 
-    updated.files = params[:search_request][:files].map {|file|
+    updated.files = Array(params[:search_request][:files]).map {|file|
       {
         'filename': file.fetch(:filename),
         'key': file.fetch(:key),
