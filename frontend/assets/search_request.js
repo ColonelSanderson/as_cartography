@@ -73,8 +73,12 @@ SearchRequest.prototype.setupFilesForm = function() {
 
         var fileInput = $('<input type="file" style="display: none;"></input>');
 
+        var formSubmit = button.closest('form').find(':submit:enabled');
+
         fileInput.on('change', function () {
             button.prop('disabled', true);
+            formSubmit.prop('disabled', true);
+
             button.text(uploadingLabel);
 
             var formData = new FormData();
@@ -94,10 +98,12 @@ SearchRequest.prototype.setupFilesForm = function() {
                 .done(function (data) {
                     index = index + 1;
                     button.prop('disabled', false).text(buttonLabel);
+                    formSubmit.prop('disabled', false);
                     $section.find('table tbody').append(AS.renderTemplate('search_request_file_template', {file: data, index: index}));
                 })
                 .fail(function () {
                     button.removeClass('btn-primary').addClass('btn-danger').text(errorLabel).prop('disabled', false);
+                    formSubmit.prop('disabled', false);
                 });
         });
 
