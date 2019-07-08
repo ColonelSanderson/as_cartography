@@ -382,7 +382,7 @@ en:
         approve_succeeded: Search Request approved
         approve_failed: Approval of search request failed
         confirm_close_title: Close Search Request
-        confirm_close_message: Are you sure you want to close this search request? Closing this request will issue a previously unissued Service Fee. 
+        confirm_close_message: Are you sure you want to close this search request? Closing this request will issue any previously unissued Service Fee. 
         close_succeeded: Search Request closed
         close_failed: Failed to close search request
         confirm_reopen_title: Reopen Search Request
