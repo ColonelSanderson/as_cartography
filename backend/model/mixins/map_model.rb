@@ -21,12 +21,12 @@ module MAPModel
 
   module ASModelCompat
     def [](key)
-      if key == :create_time
+      if key == :create_time || key == :modified_time
         # MAP uses ms since epoch, but we want a Ruby timestamp.  Map it!
         epoch_time = super
         Time.at(epoch_time / 1000)
       elsif key == :user_mtime
-        self[:create_time]
+        self[:modified_time]
       elsif key == :created_by
         value = super
         "MAP user: #{value}"
@@ -37,6 +37,18 @@ module MAPModel
       else
         super
       end
+    end
+
+    def last_modified_by
+      self[:last_modified_by]
+    end
+
+    def user_mtime
+      self[:user_mtime]
+    end
+
+    def system_mtime
+      self[:system_mtime]
     end
 
     def last_modified_by=(user)

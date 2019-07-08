@@ -9,7 +9,7 @@ begin
   ].each do |model|
     History.register_model(model)
     History.add_model_map(model, :last_modified_by => :modified_by,
-                                 :user_mtime => proc {|obj| Time.at(obj.modified_time/1000)})
+                                 :user_mtime => obj.modified_time)
   end
 rescue NameError
   Log.info("Unable to register Mandate and Function for history. Please install the as_history plugin")
