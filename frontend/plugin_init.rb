@@ -14,7 +14,7 @@ Rails.application.config.after_initialize do
     Plugins::PluginReadonlySearch.new(
       'as_cartography',
       'file_issues',
-      ['physical_representation', 'digital_representation'],
+      ['digital_representation'],
       {
         filter_term_proc: proc { |record| { "file_issue_item_uri_u_sstr" => record.uri }.to_json },
         heading_text: I18n.t("file_issue._plural"),
