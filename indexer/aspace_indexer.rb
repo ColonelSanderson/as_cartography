@@ -6,6 +6,17 @@ class IndexerCommon
   @@record_types << :search_request
   @@resolved_attributes << 'agency'
 
+
+  def skip_index_record?(record)
+    uri = record['uri']
+    reference = JSONModel.parse_reference(uri)
+    type = reference && reference[:type]
+
+    (type == 'transfer_proposal' && record['record']['status'] == 'INACTIVE') ||
+    (type == 'file_issue_request' && record['record']['draft'])
+  end
+
+
   add_indexer_initialize_hook do |indexer|
 
     indexer.add_document_prepare_hook {|doc, record|
