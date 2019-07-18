@@ -256,30 +256,20 @@ en:
     _plural: Requested Representations
 
   search_sorting:
+    map_id_u_sort: Identifier
+    map_agency_id_u_sort: Agency ID
+    map_agency_name_u_ssort: Agency Name
     file_issue_request_urgent_u_ssort: Urgency
     file_issue_request_title_u_ssort: Request ID
-    file_issue_request_agency_id_u_ssort: Agency ID
-    file_issue_request_agency_name_u_ssort: Agency Name
     file_issue_urgent_u_ssort: Urgency
     file_issue_title_u_ssort: Issue ID
     file_issue_status_u_ssort: Issue Status
-    file_issue_agency_id_u_ssort: Agency ID
-    file_issue_agency_name_u_ssort: Agency Name
     transfer_proposal_title_u_ssort: Title
     transfer_proposal_status_u_ssort: Proposal Status
-    transfer_proposal_id_u_ssort: Proposal ID
-    transfer_proposal_agency_id_u_ssort: Agency ID
-    transfer_proposal_agency_name_u_ssort: Agency Name
     transfer_title_u_ssort: Title
     transfer_status_u_ssort: Transfer Status
-    transfer_id_u_ssort: Transfer ID
-    transfer_agency_id_u_ssort: Agency ID
-    transfer_agency_name_u_ssort: Agency Name
     search_request_title_u_ssort: Title
     search_request_status_u_ssort: Request Status
-    search_request_id_u_ssort: Request ID
-    search_request_agency_id_u_ssort: Agency ID
-    search_request_agency_name_u_ssort: Agency Name
 
   search_results:
     controlling_record:

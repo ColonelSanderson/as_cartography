@@ -5,21 +5,18 @@
 
   add_column(I18n.t("search_request.id"),
              proc {|record|
-               "<span class=\"map-browse-content map-browse-id\">#{record['search_request_id_u_ssort']}</span>".html_safe
-             }, :sortable => true, :sort_by => 'search_request_id_u_ssort')
+               "<span class=\"map-browse-content map-browse-id\">#{record['map_id_u_ssort']}</span>".html_safe
+             }, :sortable => true, :sort_by => 'map_id_u_sort')
 
   add_column(I18n.t("search_request.agency_id"),
              proc {|record|
-                   parsed = ASUtils.json_parse(record['json'])
-                   agency = parsed.fetch('agency', {}).fetch('_resolved', {})
-
                    out = "<span class=\"map-browse-content map-browse-id\">"
-                   out += 'A' + agency.fetch('qsa_id', '').to_s
+                   out += 'A' + record['map_agency_id_u_ssort']
                    out += "</span>"
 
                    out.html_safe
 
-             }, :sortable => true, :sort_by => 'search_request_agency_id_u_ssort')
+             }, :sortable => true, :sort_by => 'map_agency_id_u_sort')
 
   add_column(I18n.t("search_request.agency_details"),
              proc {|record|
@@ -31,7 +28,7 @@
 
                    out.html_safe
 
-             }, :sortable => true, :sort_by => 'search_request_agency_name_u_ssort')
+             }, :sortable => true, :sort_by => 'map_agency_name_u_ssort')
 
 
   add_column(I18n.t("search_request.status"),

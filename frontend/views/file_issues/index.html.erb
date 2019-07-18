@@ -14,21 +14,18 @@
 
   add_column(I18n.t("file_issue.id"),
              proc {|record|
-               "<span class=\"map-browse-content map-browse-id\">#{record['title']}</span>".html_safe
-             }, :sortable => true, :sort_by => 'file_issue_title_u_ssort')
+               "<span class=\"map-browse-content map-browse-id\">#{record['map_id_u_ssort']}</span>".html_safe
+             }, :sortable => true, :sort_by => 'map_id_u_sort')
 
   add_column(I18n.t("file_issue.agency_id"),
              proc {|record|
-                   parsed = ASUtils.json_parse(record['json'])
-                   agency = parsed.fetch('agency', {}).fetch('_resolved', {})
-
                    out = "<span class=\"map-browse-content map-browse-id\">"
-                   out += 'A' + agency.fetch('qsa_id', '').to_s
+                   out += 'A' + record['map_agency_id_u_ssort']
                    out += "</span>"
 
                    out.html_safe
 
-             }, :sortable => true, :sort_by => 'file_issue_agency_id_u_ssort')
+             }, :sortable => true, :sort_by => 'map_agency_id_u_sort')
 
   add_column(I18n.t("file_issue.agency_details"),
              proc {|record|
@@ -40,7 +37,7 @@
 
                    out.html_safe
 
-             }, :sortable => true, :sort_by => 'file_issue_agency_name_u_ssort')
+             }, :sortable => true, :sort_by => 'map_agency_name_u_ssort')
 
   add_column(I18n.t("file_issue.status"),
              proc {|record|
