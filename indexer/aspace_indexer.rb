@@ -31,9 +31,11 @@ class IndexerCommon
 
         doc['title'] = record['record']['display_string'] || record['record']['title']
 
-        doc['map_id_u_sort'] = record['record']['identifier'].to_s.rjust(9, '0')
-        doc['map_id_u_ssort'] = record['record']['identifier']
-        doc['map_agency_id_u_sort'] = record['record']['agency']['_resolved']['qsa_id'].to_s.rjust(9, '0')
+        id_field = ['file_issue_request', 'file_issue'].include?(doc['primary_type']) ? 'title' : 'identifier'
+
+        doc['map_id_u_sort'] = record['record'][id_field].to_s.gsub(/\D+/,'').rjust(9, '0')
+        doc['map_id_u_ssort'] = record['record'][id_field]
+        doc['map_agency_id_u_sort'] = record['record']['agency']['_resolved']['qsa_id'].to_s.gsub(/\D+/,'').rjust(9, '0')
         doc['map_agency_id_u_ssort'] = record['record']['agency']['_resolved']['qsa_id']
         doc['map_agency_name_u_ssort'] = record['record']['agency']['_resolved']['display_name']['sort_name']
       end
@@ -50,18 +52,12 @@ class IndexerCommon
       end
 
       if doc['primary_type'] == 'file_issue_request'
-        # FIRs don't have identifier - sigh
-        doc['map_id_u_sort'] = record['record']['title'].to_s.rjust(9, '0')
-        doc['map_id_u_ssort'] = record['record']['title']
         doc['file_issue_request_draft_u_sbool'] = record['record']['draft']
         doc['file_issue_request_urgent_u_ssort'] = record['record']['urgent'] ? 'z' : 'a'
         doc['file_issue_request_title_u_ssort'] = record['record']['title']
       end
 
       if doc['primary_type'] == 'file_issue'
-        # FIs don't have identifier - sigh
-        doc['map_id_u_sort'] = record['record']['title'].to_s.rjust(9, '0')
-        doc['map_id_u_ssort'] = record['record']['title']
         doc['file_issue_urgent_u_ssort'] = record['record']['urgent'] ? 'z' : 'a'
         doc['file_issue_title_u_ssort'] = record['record']['title']
         doc['file_issue_status_u_ssort'] = record['record']['status']
