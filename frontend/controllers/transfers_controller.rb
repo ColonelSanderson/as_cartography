@@ -38,7 +38,7 @@ class TransfersController < ApplicationController
     updated = JSONModel(:transfer).find(params[:id], find_opts.merge('resolve[]' => RESOLVES))
 
     # Apply metadata changes
-    [:title, :date_scheduled, :date_received, :quantity_received, :lock_version].each do |prop|
+    [:title, :date_scheduled, :date_received, :quantity_received, :ark_references, :lock_version].each do |prop|
       updated[prop] = params[:transfer][prop]
     end
 

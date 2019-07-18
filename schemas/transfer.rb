@@ -53,6 +53,7 @@
       "date_scheduled" => {"type" => "string"},
       "date_received" => {"type" => "string"},
       "quantity_received" => {"type" => "string"},
+      "ark_references" => {"type" => "string"},
 
       "transfer_proposal" => {
         "readonly" => "true",

@@ -120,6 +120,7 @@ en:
     date_scheduled: Date Scheduled
     date_received: Date Received
     quantity_received: Quantity Received
+    ark_references: ARK References
     import_job: Import Job
     submitted: Submitted
     checklist:
