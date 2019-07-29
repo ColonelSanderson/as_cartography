@@ -128,10 +128,10 @@ class FileIssue < Sequel::Model
         .filter(id: item['id'])
         .filter(file_issue_id: self.id)
         .update(dispatch_date: item['dispatch_date'],
-                dispatched_by: item['dispatched_by'],
+                dispatched_by: (item['dispatched_by'] || {})['ref'],
                 expiry_date: item['expiry_date'],
                 returned_date: item['returned_date'],
-                received_by: item['received_by'],
+                received_by: (item['received_by'] || {})['ref'],
                 not_returned: item['not_returned'] ? 1 : 0,
                 not_returned_note: item['not_returned_note'])
     end
@@ -217,10 +217,10 @@ class FileIssue < Sequel::Model
             'request_type' => item[:request_type],
             'record_details' => item[:record_details],
             'dispatch_date' => item[:dispatch_date],
-            'dispatched_by' => item[:dispatched_by],
+            'dispatched_by' => {'ref' => item[:dispatched_by]},
             'expiry_date' => item[:expiry_date],
             'returned_date' => item[:returned_date],
-            'received_by' => item[:received_by],
+            'received_by' => {'ref' => item[:received_by]},
             'overdue' => item_is_overdue?(item),
             'not_returned' => item[:not_returned] == 1,
             'not_returned_note' => item[:not_returned_note],

@@ -1,6 +1,6 @@
 class FileIssuesController < ApplicationController
 
-  RESOLVES = ['agency', 'requested_representations', 'file_issue_request']
+  RESOLVES = ['agency', 'requested_representations', 'file_issue_request', 'dispatched_by', 'received_by']
 
   set_access_control  "view_repository" => [:index, :show, :edit, :update]
 
@@ -45,10 +45,10 @@ class FileIssuesController < ApplicationController
     # update the representations
     updated.requested_representations.zip(params[:file_issue][:requested_representations].map{|_, values| values}) do |requested_representation, form|
       requested_representation['dispatch_date'] = form['dispatch_date']
-      requested_representation['dispatched_by'] = form['dispatched_by']
+      requested_representation['dispatched_by'] = form['dispatched_by'] ? {'ref' => form['dispatched_by']['ref']} : nil
       requested_representation['expiry_date'] = form['expiry_date']
       requested_representation['returned_date'] = form['returned_date']
-      requested_representation['received_by'] = form['received_by']
+      requested_representation['received_by'] = form['received_by'] ? {'ref' => form['received_by']['ref']} : nil
       requested_representation['not_returned'] = form['not_returned'] == "1"
       requested_representation['not_returned_note'] = form['not_returned_note']
     end

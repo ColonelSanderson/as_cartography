@@ -74,13 +74,22 @@ FileIssue.prototype.setupRepresentationListForm = function() {
 
         $(".confirmButton", $modal).click(function() {
             var dispatchDate = $("#dispatch_date", $modal).val();
-            var dispatchedBy = $("#dispatched_by", $modal).val();
+            var dispatchedBy = JSON.parse($("input[name*=dispatched_by][name*=_resolved]", $modal).val());
             var expiryDate = $("#expiry_date", $modal).val();
 
-            $table.find('tbody :checkbox:checked').each(function() {
+            $table.find('tbody :checkbox:checked[id$=_id_]').each(function() {
                 var $tr = $(this).closest('tr');
                 $tr.find(':input[name*=dispatch_date]').val(dispatchDate).trigger('change');
-                $tr.find(':input[name*=dispatched_by]').val(dispatchedBy).trigger('change');
+		// FIXME: need to zap the current token to set the new one, but this doesn't work
+		//$tr.find(':input.linker[data-path*=dispatched_by]').clearTokens();
+		$tr.find(':input.linker[data-path*=dispatched_by]').tokenInput('add',
+									       {
+										   id: dispatchedBy['uri'],
+										   name: dispatchedBy['display_string'],
+										   json: dispatchedBy
+									       });
+
+
                 $tr.find(':input[name*=expiry_date]').val(expiryDate).trigger('change');
                 $modal.modal('hide');
             });
@@ -97,14 +106,19 @@ FileIssue.prototype.setupRepresentationListForm = function() {
 
         $(".confirmButton", $modal).click(function() {
             var returnedDate = $("#returned_date", $modal).val();
-            var receivedBy= $("#received_by", $modal).val();
+            var receivedBy = JSON.parse($("input[name*=received_by][name*=_resolved]", $modal).val());
 
             $table.find('tbody :checkbox:checked[id$=_id_]').each(function() {
                 var $tr = $(this).closest('tr');
                 // Only change those that haven't been marked as "Not returned"
                 if ($tr.find(':checkbox[name*=not_returned]').is(':not(:checked)')) {
                     $tr.find(':input[name*=returned_date]').val(returnedDate).trigger('change');
-                    $tr.find(':input[name*=received_by]').val(receivedBy).trigger('change');
+		    $tr.find(':input.linker[data-path*=received_by]').tokenInput('add',
+										 {
+									             id: receivedBy['uri'],
+									             name: receivedBy['display_string'],
+									             json: receivedBy
+									         });
                 }
                 $modal.modal('hide');
             });

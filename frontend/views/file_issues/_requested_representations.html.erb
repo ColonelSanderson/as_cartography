@@ -67,7 +67,16 @@
                 </td>
                 <td>
                   <div><%= form.label('dispatch_date', {}, ['text-muted']) %><br><%= form.textfield('dispatch_date', form.obj['dispatch_date'], placeholder: 'YYYY-MM-DD') %></div>
-                  <div><%= form.label('dispatched_by', {}, ['text-muted']) %><br><%= form.textfield('dispatched_by', form.obj['dispatched_by']) %></div>
+                  <div><%= form.label('dispatched_by', {}, ['text-muted']) %><br>
+
+                    <% if form.readonly? %>
+                      <% if form.obj["dispatched_by"] %>
+                        <%= render_aspace_partial :partial => "movements/user_token", locals: {user: form.obj["dispatched_by"]} %>
+                      <% end %>
+                    <% else %>
+                      <%= render_aspace_partial :partial => "movements/user_linker", locals: {form: form, no_default: true, field: "dispatched_by"} %>
+                    <% end %>
+                  </div>
                 </td>
                 <td>
                   <%= form.label('expiry_date', {}, ['text-muted']) %><br>
@@ -83,12 +92,18 @@
                         <% end %>
                       <% else %>
                         <div><%= form.label('returned_date', {}, ['text-muted']) %><br><%= form.textfield('returned_date', form.obj['returned_date'], placeholder: 'YYYY-MM-DD') %></div>
-                        <div><%= form.label('received_by', {}, ['text-muted']) %><br><%= form.textfield('received_by', form.obj['received_by']) %></div>
+                        <div><%= form.label('received_by', {}, ['text-muted']) %><br>
+                          <% if form.obj['received_by'] %>
+                            <%= render_aspace_partial :partial => "movements/user_token", locals: {user: form.obj['received_by']} %>
+                          <% end %>
+                        </div>
                       <% end %>
                     <% else %>
                     <div class="returned-fields">
                       <div><%= form.label('returned_date', {}, ['text-muted']) %><br><%= form.textfield('returned_date', form.obj['returned_date'], placeholder: 'YYYY-MM-DD') %></div>
-                      <div><%= form.label('received_by', {}, ['text-muted']) %><br><%= form.textfield('received_by', form.obj['received_by']) %></div>
+                      <div><%= form.label('received_by', {}, ['text-muted']) %><br>
+                        <%= render_aspace_partial :partial => "movements/user_linker", locals: {form: form, no_default: true, field: "received_by"} %>
+                      </div>
                     </div>
                     <div class="not-returned-fields">
                       <div><label class="text-muted"><%= form.checkbox('not_returned') %> <%= I18n.t('file_issue.not_returned') %></label></div>
@@ -119,7 +134,7 @@
         </div>
         <div>
           <label for="dispatched_by"><%= I18n.t('file_issue.dispatched_by') %></label><br>
-          <input id="dispatched_by" class="form-control" type="text" value="<%= @current_user.name %>"/>
+          <%= render_aspace_partial :partial => "movements/user_linker", locals: {form: form, field: "dispatched_by"} %>
         </div>
         <div>
           <label for="expiry_date"><%= I18n.t('file_issue.expiry_date') %></label><br>
@@ -142,7 +157,7 @@
         </div>
         <div>
           <label for="received_by"><%= I18n.t('file_issue.received_by') %></label><br>
-          <input id="received_by" class="form-control" type="text" value="<%= @current_user.name %>"/>
+          <%= render_aspace_partial :partial => "movements/user_linker", locals: {form: form, field: "received_by"} %>
         </div>
      </div>
      <div class="modal-footer">
@@ -151,3 +166,9 @@
      </div>
   --></div>
 <% end %>
+
+<script>
+ $(function() {
+     $(".linker:not(.initialised)").linker();
+ });
+</script>

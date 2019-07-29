@@ -53,10 +53,38 @@
             "id" => {"type" => "integer"},
             "record_details" => {"type" => "string"},
             "dispatch_date" => {"type" => "date"},
-            "dispatched_by" => {"type" => "string"},
+
+            "dispatched_by" => {
+              "type" => "object",
+              "subtype" => "ref",
+              "properties" => {
+                "ref" => {
+                  "type" => [{"type" => "JSONModel(:agent_person) uri"}],
+                },
+                "_resolved" => {
+                  "type" => "object",
+                  "readonly" => "true"
+                }
+              }
+            },
+
             "expiry_date" => {"type" => "date"},
             "returned_date" => {"type" => "date"},
-            "received_by" => {"type" => "string"},
+
+            "received_by" => {
+              "type" => "object",
+              "subtype" => "ref",
+              "properties" => {
+                "ref" => {
+                  "type" => [{"type" => "JSONModel(:agent_person) uri"}],
+                },
+                "_resolved" => {
+                  "type" => "object",
+                  "readonly" => "true"
+                }
+              }
+            },
+
             "overdue" => {"type" => "boolean", "readonly" => "true"},
             "not_returned" => {"type" => "boolean"},
             "not_returned_note" => {"type" => "string"},
