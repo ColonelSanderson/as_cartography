@@ -64,6 +64,16 @@ FileIssue.prototype.setupRepresentationListForm = function() {
         $table.closest('section').find('.btn-group .btn').removeClass('disabled');
     }
 
+    function clearTokens(linker) {
+	// BITEME: this method adapted from linker.js
+        var $tokenList = $(".token-input-list", linker.parent());
+        for (var i=0; i < linker.tokenInput("get").length; i++) {
+	    var id_to_remove = linker.tokenInput("get")[i].id.replace(/\//g,"_");
+	    $("#"+id_to_remove + " :input", $tokenList).remove();
+        }
+        linker.tokenInput("clear");
+    }
+
     function showDispatchModal() {
         var $modal = AS.openCustomModal("dispatchModal",
                         $('#requested_representations_dispatch_template').data("title"),
@@ -80,8 +90,7 @@ FileIssue.prototype.setupRepresentationListForm = function() {
             $table.find('tbody :checkbox:checked[id$=_id_]').each(function() {
                 var $tr = $(this).closest('tr');
                 $tr.find(':input[name*=dispatch_date]').val(dispatchDate).trigger('change');
-		// FIXME: need to zap the current token to set the new one, but this doesn't work
-		//$tr.find(':input.linker[data-path*=dispatched_by]').clearTokens();
+		clearTokens($tr.find(':input.linker[data-path*=dispatched_by]'));
 		$tr.find(':input.linker[data-path*=dispatched_by]').tokenInput('add',
 									       {
 										   id: dispatchedBy['uri'],
@@ -113,6 +122,7 @@ FileIssue.prototype.setupRepresentationListForm = function() {
                 // Only change those that haven't been marked as "Not returned"
                 if ($tr.find(':checkbox[name*=not_returned]').is(':not(:checked)')) {
                     $tr.find(':input[name*=returned_date]').val(returnedDate).trigger('change');
+		    clearTokens($tr.find(':input.linker[data-path*=received_by]'));
 		    $tr.find(':input.linker[data-path*=received_by]').tokenInput('add',
 										 {
 									             id: receivedBy['uri'],
