@@ -31,6 +31,7 @@ module DelegateContacts
           .filter(Sequel.|({ Sequel.qualify(:agency_user, :allow_set_and_change_raps) => 1 },
                            { Sequel.qualify(:agency_user, :allow_restricted_access) => 1 },
                            { Sequel.qualify(:agency_user, :role) => 'SENIOR_AGENCY_ADMIN' }))
+          .order(Sequel.function(:lower, Sequel.qualify(:user, :username)))
           .select(Sequel.qualify(:user, :username),
                   Sequel.qualify(:user, :name),
                   Sequel.qualify(:user, :email),
