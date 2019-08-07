@@ -392,3 +392,15 @@ en:
         no_files: No files attached.
     _plural: Search Requests
     _singular: Search Request
+
+  agency_delegates:
+    username: Username
+    name: Name
+    email: Email
+    role: Role
+    position: Position
+    permissions: Permissions/Delegations
+    _frontend:
+      messages:
+        none: There are no delegates currently set for this agency
+    _plural: Agency Delegates

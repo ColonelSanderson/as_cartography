@@ -1,0 +1,41 @@
+<section id="agency_delegates" class="subrecord-form-dummy">
+  <h3 class="subrecord-form-heading"><%= I18n.t('agency_delegates._plural') %></h3>
+  <div class="subrecord-form-container">
+    <% if ASUtils.wrap(record['delegates']).empty? %>
+      <div class="alert alert-info"><%= I18n.t('agency_delegates._frontend.messages.none') %></div>
+    <% else %>
+      <div class="subrecord-form-fields">
+        <table class="table table-bordered table-condensed table-striped">
+          <thead>
+            <tr>
+              <th><%= I18n.t('agency_delegates.username') %></th>
+              <th><%= I18n.t('agency_delegates.name') %></th>
+              <th><%= I18n.t('agency_delegates.email') %></th>
+              <th><%= I18n.t('agency_delegates.role') %></th>
+              <th><%= I18n.t('agency_delegates.position') %></th>
+              <th><%= I18n.t('agency_delegates.permissions') %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% ASUtils.wrap(record['delegates']).each do |delegate| %>
+              <tr>
+                <td><%= delegate['username'] %></td>
+                <td><%= delegate['name'] %></td>
+                <td><%= delegate['email'] %></td>
+                <td><%= delegate['role'] %></td>
+                <td><%= delegate['position'] %></td>
+                <td>
+                  <% ['allow_file_issue', 'allow_transfers', 'allow_set_and_change_raps', 'allow_restricted_access'].each do |permission| %>
+                    <% if delegate[permission] %>
+                      <div><%= permission %></div>
+                    <% end %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  </div>
+</section>
