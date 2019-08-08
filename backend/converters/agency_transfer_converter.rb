@@ -213,6 +213,11 @@ class AgencyTransferConverter < Converter
   end
 
 
+  def current_user_agent
+    @user_agent ||= User.to_jsonmodel(User.find(:username => Thread.current[:request_context][:current_username]))['agent_record']
+  end
+
+
   def container_for(series, transfer, box_number)
     @containers ||= {}
 
@@ -238,7 +243,7 @@ class AgencyTransferConverter < Converter
       'movements' =>
       [
          {
-           'user' => Thread.current[:request_context][:current_username],
+           'user' => current_user_agent,
            'move_date' => Time.now.getlocal.iso8601,
            'functional_location' => 'SORTRM',
            'move_context' => {'ref' => "/transfers/#{transfer}"}
@@ -303,7 +308,7 @@ class AgencyTransferConverter < Converter
         rep_hash['movements'] =
           [
            {
-             'user' => Thread.current[:request_context][:current_username],
+             'user' => current_user_agent,
              'move_date' => Time.now.getlocal.iso8601,
              'functional_location' => 'HOME',
              'move_context' => {'ref' => "/transfers/#{@transfer_id}"}
