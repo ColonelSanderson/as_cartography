@@ -32,7 +32,7 @@ module FileIssueHelpers
             .filter(:id => item_group.map {|item| item[:aspace_record_id]})
             .select(:id, :repo_id)
             .each do |row|
-            key = {:aspace_record_type => group_record_type, :aspace_record_id => row[:id]}
+            key = {:aspace_record_type => group_record_type, :aspace_record_id => row[:id].to_s}
             repo_id_by_aspace_record[key] = row[:repo_id]
           end
         end
@@ -41,7 +41,7 @@ module FileIssueHelpers
       # Finally, map our items back to the repositories containing them
       file_issue_request_items.map {|item|
         key = {:aspace_record_type => item[:aspace_record_type],
-               :aspace_record_id => item[:aspace_record_id]}
+               :aspace_record_id => item[:aspace_record_id].to_s}
 
         [item[:id], repo_id_by_aspace_record.fetch(key)]
       }.to_h
