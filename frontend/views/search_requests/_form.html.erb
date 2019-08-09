@@ -11,6 +11,8 @@
                                        :form => form,
                                        :record => @search_request) %>
 
+            <%= render_aspace_partial :partial => 'shared/qsa_id_form', :locals => {:form => form, :model => :search_request} %>
+
             <div class="form-group">
                 <label class="control-label col-sm-2"><%= I18n.t("search_request.agency") %></label>
                 <div class="label-only col-sm-9">

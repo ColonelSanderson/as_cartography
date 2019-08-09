@@ -14,6 +14,8 @@
                                        :form => form,
                                        :record => @file_issue_request) %>
 
+            <%= render_aspace_partial :partial => 'shared/qsa_id_form', :locals => {:form => form, :model => :file_issue_request} %>
+
             <div class="form-group">
                 <label class="control-label col-sm-2"><%= I18n.t("file_issue_request.agency") %></label>
                 <div class="label-only col-sm-9">

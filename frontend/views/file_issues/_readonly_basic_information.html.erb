@@ -9,6 +9,8 @@
                                        :form => form,
                                        :record => @file_issue) %>
 
+          <%= render_aspace_partial :partial => 'shared/qsa_id_form', :locals => {:form => form, :model => :file_issue} %>
+
           <%= form.label_and_readonly "issue_type" %>
           <%= form.label_and_readonly "status" %>
 

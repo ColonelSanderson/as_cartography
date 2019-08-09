@@ -11,7 +11,7 @@
                                        :form => form,
                                        :record => @transfer) %>
 
-            <%= readonly.label_and_textfield "identifier" %>
+            <%= render_aspace_partial :partial => 'shared/qsa_id_form', :locals => {:form => form, :model => :transfer} %>
 
             <div class="form-group">
                 <label class="control-label col-sm-2"><%= I18n.t("transfer.agency") %></label>

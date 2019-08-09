@@ -75,4 +75,7 @@ Rails.application.config.after_initialize do
       }
     )
   )
+
+  # register models for qsa_ids
+  require_relative '../common/qsa_id_registrations'
 end

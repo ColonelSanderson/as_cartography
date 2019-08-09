@@ -15,6 +15,9 @@ rescue NameError
   Log.info("Unable to register MAP models for history. Please install the as_history plugin")
 end
 
+# register models for qsa_ids
+require_relative '../common/qsa_id_registrations'
+
 MAPDB.connect
 
 require_relative 'index_feed/index_feed_thread'

@@ -13,7 +13,7 @@
                                        :form => form,
                                        :record => @transfer_proposal) %>
 
-            <%= readonly.label_and_textfield "identifier" %>
+            <%= render_aspace_partial :partial => 'shared/qsa_id_form', :locals => {:form => form, :model => :transfer_proposal} %>
 
             <% if @transfer_proposal['agency'] %>
             <div class="form-group">
