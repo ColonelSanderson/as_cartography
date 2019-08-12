@@ -50,7 +50,7 @@ FileIssue.prototype.setupRepresentationListForm = function() {
 
     function toggleAll(event) {
         var checked = $(event.currentTarget).is(':checked');
-        $table.find('tbody :checkbox').each(function() {
+        $table.find('tbody :checkbox[id$=_id_]').each(function() {
             $(this).prop('checked', checked);
             $(this).trigger('change');
         });
