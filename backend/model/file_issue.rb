@@ -70,6 +70,9 @@ class FileIssue < Sequel::Model
 
     json[:status] = status
 
+    # Set date_completed if the status is complete
+    json[:date_completed] = Time.now.getlocal.strftime('%Y-%m-%d') if status == STATUS_FILE_ISSUE_COMPLETE
+
     # Update the items table to reflect the latest types
     json[:requested_representations].each do |item|
       if item['dispatch_date'] && item['expiry_date'].nil?

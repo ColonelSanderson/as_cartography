@@ -40,6 +40,8 @@
       "checklist_dispatched" => {"type" => "boolean"},
       "checklist_completed" => {"type" => "boolean"},
 
+      "date_completed" => {"type" => "string"},
+
       "requested_representations" => {
         "type" => "array",
         "items" => {
