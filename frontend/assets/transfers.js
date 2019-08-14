@@ -1,7 +1,6 @@
 function Transfers() {
     var self = this;
 
-    this.setupNavigation();
     this.setupApprovalConfirmation();
     this.setupTransferReplaceFile();
     this.setupValidateMetadataButtons();
@@ -118,11 +117,6 @@ Transfers.prototype.setupTransferReplaceFile = function() {
     });
 };
 
-Transfers.prototype.setupNavigation = function() {
-    var $browseActions = $($('#MAPTransferBrowseActions').html());
-
-    $browseActions.appendTo('.repository-header .browse-container ul:first');
-};
 
 Transfers.prototype.setupImportJobMonitor = function() {
     var job = $('#transfer-import-job');

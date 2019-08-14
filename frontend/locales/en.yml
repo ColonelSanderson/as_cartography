@@ -1,4 +1,7 @@
 en:
+  browse_menu:
+    agency_services: Agency Services
+
   validation_errors:
     there_can_only_be_one_file_with_an_import_role: There can only be one file with an Import role
     cannot_check_metadata_received_until_an_import_file_has_been_attached: "Cannot check metadata received until an Import file has been attached"

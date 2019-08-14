@@ -1,16 +1,10 @@
 function SearchRequest() {
     var self = this;
 
-    this.setupNavigation();
     this.setupApprovalConfirmation();
     this.setupFilesForm();
 };
 
-
-SearchRequest.prototype.setupNavigation = function() {
-    var $browseActions = $($('#MAPSearchRequestBrowseActions').html());
-    $browseActions.appendTo('.repository-header .browse-container ul:first');
-};
 
 SearchRequest.prototype.setupApprovalConfirmation = function() {
     var self = this;

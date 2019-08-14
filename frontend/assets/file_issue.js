@@ -1,16 +1,10 @@
 function FileIssue() {
     var self = this;
 
-    this.setupNavigation();
     this.setupApprovalConfirmation();
     this.setupRepresentationListForm();
 };
 
-
-FileIssue.prototype.setupNavigation = function() {
-    var $browseActions = $($('#MAPFileIssueBrowseActions').html());
-    $browseActions.appendTo('.repository-header .browse-container ul:first');
-};
 
 FileIssue.prototype.setupApprovalConfirmation = function() {
     var self = this;
