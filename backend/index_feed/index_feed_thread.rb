@@ -110,6 +110,7 @@ class IndexFeedThread
               .this_repo
               .filter { system_mtime > last_index_time }
               .select(:id, :system_mtime).each_slice(INDEX_BATCH_SIZE) do |id_set|
+              start_time = Time.now
 
               # Other nodes might have got in first on some of these records.
               # And, actually, because we use MTIME_WINDOW_SECONDS to overlap
@@ -169,6 +170,14 @@ class IndexFeedThread
 
                 did_something = true
               end
+
+              end_time = Time.now
+
+              Log.info("Indexed %d records in %dms (records/second: %.2f)" % [
+                         records.count,
+                         ((end_time.to_f - start_time.to_f) * 1000).to_i,
+                         (records.count / (end_time.to_f - start_time.to_f))
+                       ])
 
               records_added += records.count
             end
@@ -232,17 +241,36 @@ class IndexFeedThread
     metadata_by_ao_id = {}
 
     archival_objects = ArchivalObject.filter(:id => sequel_records.map(&:archival_object_id)).all
-    resolved = URIResolver.resolve_references(ArchivalObject.sequel_to_jsonmodel(archival_objects),
-                                              ['resource'])
 
-    archival_objects.zip(resolved).each do |ao, resolved|
+    series_info_by_ao_id = {}
+
+    ArchivalObject
+      .join(Resource, Sequel.qualify(:archival_object, :root_record_id) => Sequel.qualify(:resource, :id))
+      .filter(Sequel.qualify(:archival_object, :id) => archival_objects.map(&:id))
+      .select(Sequel.as(Sequel.qualify(:resource, :id),
+                        :resource_id),
+              Sequel.qualify(:resource, :repo_id),
+              Sequel.qualify(:resource, :title),
+              Sequel.as(Sequel.qualify(:archival_object, :id),
+                        :ao_id))
+    .each do |row|
+      series_info_by_ao_id[row[:ao_id]] = {
+        :id => row[:resource_id],
+        :repo_id => row[:repo_id],
+        :title => row[:title],
+      }
+    end
+
+    archival_objects.zip(ArchivalObject.sequel_to_jsonmodel(archival_objects)).each do |ao, json|
+      series = series_info_by_ao_id.fetch(ao.id)
+
       metadata_by_ao_id[ao.id] = {
-        :containing_record_title => resolved['display_string'],
-        :containing_series_title => resolved['resource']['_resolved']['title'],
-        :containing_series_id => resolved['resource']['_resolved']['uri'],
-        :responsible_agency_uri => resolved['responsible_agency'] ? resolved['responsible_agency']['ref'] : nil,
-        :recent_responsible_agency_refs => resolved.fetch('recent_responsible_agencies', []),
-        :creating_agency_uri => resolved['creating_agency'] ? resolved['creating_agency']['ref'] : nil,
+        :containing_record_title => json['display_string'],
+        :containing_series_title => series.fetch(:title),
+        :containing_series_id => JSONModel::JSONModel(:resource).uri_for(series.fetch(:id), :repo_id => series.fetch(:repo_id)),
+        :responsible_agency_uri => json['responsible_agency'] ? json['responsible_agency']['ref'] : nil,
+        :recent_responsible_agency_refs => json['recent_responsible_agencies'] || [],
+        :creating_agency_uri => json['creating_agency'] ? json['creating_agency']['ref'] : nil,
       }
     end
 
