@@ -56,7 +56,7 @@ class AgencyTransferConverter < Converter
      {:label => "Series ID", :key => :series},
      {:label => "Responsible Agency", :key => :responsible_agency},
      {:label => "Creating Agency", :key => :creating_agency},
-     {:label => "Sensititvity Label", :key => :sensitivity_label},
+     {:label => "Sensitivity Label", :key => :sensitivity_label},
     ]
 
   def self.instance_for(type, input_file, opts = {})
