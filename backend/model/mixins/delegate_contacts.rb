@@ -24,7 +24,7 @@ module DelegateContacts
       MAPDB.open do |mapdb|
         mapdb[:agency]
           .join(:agency_location, Sequel.qualify(:agency_location, :agency_id) => Sequel.qualify(:agency, :id))
-          .join(:agency_user, Sequel.qualify(:agency_user, :agency_id) => Sequel.qualify(:agency, :id))
+          .join(:agency_user, Sequel.qualify(:agency_user, :agency_id) => Sequel.qualify(:agency, :id), Sequel.qualify(:agency_user, :agency_location_id) => Sequel.qualify(:agency_location, :id))
           .join(:user, Sequel.qualify(:user, :id) => Sequel.qualify(:agency_user, :user_id))
           .filter(Sequel.qualify(:agency_location, :top_level_location) => 1)
           .filter(Sequel.qualify(:agency, :aspace_agency_id) => aspace_agent_ids)
