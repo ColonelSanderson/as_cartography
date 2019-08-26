@@ -20,6 +20,6 @@ require_relative '../common/qsa_id_registrations'
 
 MAPDB.connect
 
-require_relative 'index_feed/index_feed_thread'
+require_relative 'index_feed/map_indexer_feed_profile'
 
-IndexFeedThread.start
+IndexFeedThread.new("plugin_qsauatmap", MAPIndexerFeedProfile.new).start
