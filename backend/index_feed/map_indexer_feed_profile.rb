@@ -208,13 +208,27 @@ class MAPIndexerFeedProfile < IndexerFeedProfile
       jsonmodels = URIResolver.resolve_references(jsonmodels, ['resource'])
     else
       jsonmodels = jsonmodels.map(&:to_hash)
+    jsonmodels = jsonmodels.map(&:to_hash)
+
+    resource_titles = {}
+
+    if sequel_records[0].is_a?(ArchivalObject)
+      # Pull resource titles
+      Resource
+        .join(:archival_object, Sequel.qualify(:archival_object, :root_record_id) => Sequel.qualify(:resource, :id))
+        .filter(Sequel.qualify(:archival_object, :id) => sequel_records.map(&:id))
+        .select(Sequel.as(Sequel.qualify(:archival_object, :id), :ao_id),
+                Sequel.as(Sequel.qualify(:resource, :title), :resource_title))
+        .each do |row|
+        resource_titles[row[:ao_id]] = row[:resource_title]
+      end
     end
 
-    jsonmodels.each do |json|
+    jsonmodels.zip(sequel_records).each do |json, record|
       if json.fetch('jsonmodel_type') == 'resource'
         result[json.fetch('uri')] = {:title => json.fetch('title'), :id => json.fetch('uri')}
       else
-        result[json.fetch('uri')] = {:title => json.fetch('resource').fetch('_resolved').fetch('title'), :id => json.fetch('resource').fetch('ref')}
+        result[json.fetch('uri')] = {:title => resource_titles.fetch(record.id), :id => json.fetch('resource').fetch('ref')}
       end
     end
 
