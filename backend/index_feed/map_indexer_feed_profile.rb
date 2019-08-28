@@ -203,11 +203,6 @@ class MAPIndexerFeedProfile < IndexerFeedProfile
 
     result = {}
 
-    if jsonmodels[0].class.record_type == 'archival_object'
-      # Need to resolve resource records
-      jsonmodels = URIResolver.resolve_references(jsonmodels, ['resource'])
-    else
-      jsonmodels = jsonmodels.map(&:to_hash)
     jsonmodels = jsonmodels.map(&:to_hash)
 
     resource_titles = {}
