@@ -22,4 +22,6 @@ MAPDB.connect
 
 require_relative 'index_feed/map_indexer_feed_profile'
 
-IndexFeedThread.new("plugin_qsauatmap", MAPIndexerFeedProfile.new).start
+ArchivesSpaceService.plugins_loaded_hook do
+  IndexFeedThread.new("plugin_qsauatmap", MAPIndexerFeedProfile.new).start
+end
