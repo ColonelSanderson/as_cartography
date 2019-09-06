@@ -45,7 +45,7 @@ class AgencyTransferConverter < Converter
      {:label => "Sequence Number", :key => :sequence},
      {:label => "Attachment Related to Sequence Number", :key => :sequence_ref},
      {:label => "Restricted Access Period", :key => :restricted_access_period},
-     {:label => "Publish Metadata?", :key => :publish},
+     {:label => "Publish Details?", :key => :publish},
      {:label => "Start Date (DD/MM/YYYY)", :type => :date, :key => :start_date},
      {:label => "Start Date Qualifier", :key => :start_date_qualifier},
      {:label => "End Date (DD/MM/YYYY)", :type => :date, :key => :end_date},
