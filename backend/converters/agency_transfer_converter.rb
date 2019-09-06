@@ -21,7 +21,9 @@ class AgencyTransferConverter < Converter
   #   restricted_access_period  75                             representation.access_category
   #   publish                   No                             NOT IMPORTED - IGNORE
   #   start_date                2018-10-01                     archival_object.dates.begin
+  #   start_date_qualifier      Approximate                    archival_object.dates.certainty
   #   end_date                  2019-01-01                     archival_object.dates.end
+  #   end_date_qualifier                                       archival_object.dates.certainty_end
   #   representation_type       Physical                       physical_representation or digital_representation
   #   format                    Magnetic Media, Cassette Tape  representation.format
   #   contained_within          Physical - Other               representation.contained_within
@@ -45,7 +47,9 @@ class AgencyTransferConverter < Converter
      {:label => "Restricted Access Period", :key => :restricted_access_period},
      {:label => "Publish Metadata?", :key => :publish},
      {:label => "Start Date (DD/MM/YYYY)", :type => :date, :key => :start_date},
+     {:label => "Start Date Qualifier", :key => :start_date_qualifier},
      {:label => "End Date (DD/MM/YYYY)", :type => :date, :key => :end_date},
+     {:label => "End Date Qualifier", :key => :end_date_qualifier},
      {:label => "Representation Type", :key => :representation_type},
      {:label => "Format", :key => :format},
      {:label => "Contained within", :key => :contained_within},
@@ -260,7 +264,9 @@ class AgencyTransferConverter < Converter
       :dates => [
                  {
                    :begin => item[:start_date],
+                   :certainty => item[:start_date_qualifier],
                    :end => item[:end_date],
+                   :certainty_end => item[:end_date_qualifier],
                    :label => 'existence',
                    :date_type => 'inclusive',
                  }
