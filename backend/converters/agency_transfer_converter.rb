@@ -18,8 +18,9 @@ class AgencyTransferConverter < Converter
   #   agency_control_number     90/5489/1                      archival_object.agency_assigned_id
   #   sequence                  4                              internal ref
   #   sequence_ref              3                              pointer to internal ref linking rep to ao
-  #   restricted_access_period  75                             representation.access_category
-  #   publish                   No                             NOT IMPORTED - IGNORE
+  #   access_category           All public records             rap_attached.access_category
+  #   restricted_access_period  75                             rap_attached.years
+  #   publish                   N                              rap_attached.open_access_metadata
   #   start_date                2018-10-01                     archival_object.dates.begin
   #   start_date_qualifier      Approximate                    archival_object.dates.certainty
   #   end_date                  2019-01-01                     archival_object.dates.end
@@ -28,7 +29,6 @@ class AgencyTransferConverter < Converter
   #   format                    Magnetic Media, Cassette Tape  representation.format
   #   contained_within          Physical - Other               representation.contained_within
   #   box_number                5                              create top_containers with indicator: SID-TID-B{box-number}
-  #                                                            when box_number == 0: SID-TID-B0-RID
   #   remarks                                                  NOT IMPORTED - IGNORE
   #   series                    123                            resource.qsa_id
   #   responsible_agency        456                            agent_corporate_entity.qsa_id control
@@ -41,24 +41,25 @@ class AgencyTransferConverter < Converter
      {:label => "Disposal Class", :key => :disposal_class},
      {:label => "Title", :key => :title},
      {:label => "Description", :key => :description},
-     {:label => "Agency Control number", :key => :agency_control_number},
      {:label => "Sequence Number", :key => :sequence},
      {:label => "Attachment Related to Sequence Number", :key => :sequence_ref},
-     {:label => "Restricted Access Period", :key => :restricted_access_period},
+     {:label => "Agency Control number", :key => :agency_control_number},
+     {:label => "Box Number", :key => :box_number},
      {:label => "Publish Details?", :key => :publish},
      {:label => "Start Date (DD/MM/YYYY)", :type => :date, :key => :start_date},
      {:label => "Start Date Qualifier", :key => :start_date_qualifier},
      {:label => "End Date (DD/MM/YYYY)", :type => :date, :key => :end_date},
      {:label => "End Date Qualifier", :key => :end_date_qualifier},
+     {:label => "Access Category", :key => :access_category},
+     {:label => "Restricted Access Period", :key => :restricted_access_period},
      {:label => "Representation Type", :key => :representation_type},
      {:label => "Format", :key => :format},
      {:label => "Contained within", :key => :contained_within},
-     {:label => "Box Number", :key => :box_number},
-     {:label => "Remarks", :key => :remarks},
      {:label => "Series ID", :key => :series},
      {:label => "Responsible Agency", :key => :responsible_agency},
      {:label => "Creating Agency", :key => :creating_agency},
      {:label => "Sensitivity Label", :key => :sensitivity_label},
+     {:label => "Remarks", :key => :remarks},
     ]
 
   def self.instance_for(type, input_file, opts = {})
@@ -191,7 +192,11 @@ class AgencyTransferConverter < Converter
         row[i].to_date.iso8601
       elsif column_definition[:type] == :date && !row[i].to_s.empty?
         # If we have a date string in DD/MM/YYYY, accept that too
-        Date.strptime(row[i].to_s, '%d/%m/%Y').iso8601
+        begin
+          Date.strptime(row[i].to_s, '%d/%m/%Y').iso8601
+        rescue ArgumentError
+          handle_error("Bad date for #{column_definition[:key]}: #{row[i]}")
+        end
       else
         row[i].to_s.strip
       end
@@ -212,6 +217,17 @@ class AgencyTransferConverter < Converter
   def format_sensitivity_label(label)
     # FIXME: might have to map back to enum value from translation ... sigh
     label
+  end
+
+
+  def format_rap_attached(row)
+    {
+      'open_access_metadata' => row[:publish] == 'Y' ? true : false,
+      'years' => row[:restricted_access_period],
+      'internal_reference' => "ARK Reference",
+      'access_status' => "Restricted Access",
+      'access_category' => row[:access_category],
+    }
   end
 
 
@@ -279,6 +295,10 @@ class AgencyTransferConverter < Converter
       :series_system_agent_relationships => [],
     }
 
+    if item[:access_category]
+      item_hash[:rap_attached] = format_rap_attached(item)
+    end
+
     # grab this item's representations
     reps = @representations.select{|rep| rep[:sequence_ref] == item[:sequence]}
     # and drop them ... must be a nice way to do this in one pass
@@ -293,13 +313,16 @@ class AgencyTransferConverter < Converter
 
       rep_hash = {
         :title => rep[:title].empty? ? item[:title] : rep[:title],
-        :access_category => rep[:restricted_access_period],
         :format => rep[:format].empty? ? item[:format] : rep[:format],
         :contained_within => rep[:contained_within],
         :current_location => 'HOME',
         :normal_location => 'HOME',
         :agency_assigned_id => rep[:agency_control_number],
       }
+
+      if rep[:access_category]
+        rep_hash[:rap_attached] = format_rap_attached(rep)
+      end
 
       if rep_key == :physical_representations
         rep_hash['container'] = {'ref' => container_for(item[:series], @transfer_id, rep[:box_number]).uri}
