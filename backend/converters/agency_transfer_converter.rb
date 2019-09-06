@@ -18,7 +18,6 @@ class AgencyTransferConverter < Converter
   #   agency_control_number     90/5489/1                      archival_object.agency_assigned_id
   #   sequence                  4                              internal ref
   #   sequence_ref              3                              pointer to internal ref linking rep to ao
-  #   attachment_notes          Audio tape                     NOT IMPORTED - IGNORE
   #   restricted_access_period  75                             representation.access_category
   #   publish                   No                             NOT IMPORTED - IGNORE
   #   start_date                2018-10-01                     archival_object.dates.begin
@@ -43,7 +42,6 @@ class AgencyTransferConverter < Converter
      {:label => "Agency Control number", :key => :agency_control_number},
      {:label => "Sequence Number", :key => :sequence},
      {:label => "Attachment Related to Sequence Number", :key => :sequence_ref},
-     {:label => "Attachment Notes", :key => :attachment_notes},
      {:label => "Restricted Access Period", :key => :restricted_access_period},
      {:label => "Publish Metadata?", :key => :publish},
      {:label => "Start Date (DD/MM/YYYY)", :type => :date, :key => :start_date},
