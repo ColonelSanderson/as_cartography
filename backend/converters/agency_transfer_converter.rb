@@ -219,16 +219,11 @@ class AgencyTransferConverter < Converter
   def container_for(series, transfer, box_number)
     @containers ||= {}
 
-    box = box_number.to_s
+    # Box number is required. Unboxed items will be given a unique
+    # box number manually by transfer staff
+    handle_error("No Box Number provided", :box_number) unless box_number
 
-    # when a representation is not contained its box_number will be zero
-    # we append the representation id to uniquify, but it doesn't exist yet
-    # so we prepopulate with a fakey, so be manually corrected by QSA
-    @fake_rep_no ||= 1
-    if box == '0'
-      box += "-Rep#{@fake_rep_no}"
-      @fake_rep_no += 1
-    end
+    box = box_number.to_s
 
     indicator = "S#{series}-T#{transfer}-B#{box}"
 
