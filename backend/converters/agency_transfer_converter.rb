@@ -295,7 +295,7 @@ class AgencyTransferConverter < Converter
       :series_system_agent_relationships => [],
     }
 
-    if item[:access_category]
+    unless item[:access_category].empty?
       item_hash[:rap_attached] = format_rap_attached(item)
     end
 
@@ -320,7 +320,7 @@ class AgencyTransferConverter < Converter
         :agency_assigned_id => rep[:agency_control_number],
       }
 
-      if rep[:access_category]
+      unless item[:access_category].empty?
         rep_hash[:rap_attached] = format_rap_attached(rep)
       end
 
