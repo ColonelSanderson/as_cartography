@@ -320,7 +320,7 @@ class AgencyTransferConverter < Converter
         :agency_assigned_id => rep[:agency_control_number],
       }
 
-      unless item[:access_category].empty?
+      unless rep[:access_category].empty?
         rep_hash[:rap_attached] = format_rap_attached(rep)
       end
 
