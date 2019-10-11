@@ -98,7 +98,7 @@ class FileIssue < Sequel::Model
 
           if item['dispatch_date']
             prep.move(:location => 'PER',
-                      :user => item['dispatched_by'],
+                      :user => item['dispatched_by']['ref'],
                       :context => self.uri,
                       :date => item['dispatch_date'],
                       :replace => true)
@@ -114,7 +114,7 @@ class FileIssue < Sequel::Model
 
           if item['returned_date']
             prep.move(:location => 'HOME',
-                      :user => item['received_by'],
+                      :user => item['received_by']['ref'],
                       :context => self.uri,
                       :date => item['returned_date'],
                       :replace => true)
