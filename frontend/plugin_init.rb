@@ -78,4 +78,7 @@ Rails.application.config.after_initialize do
 
   # register models for qsa_ids
   require_relative '../common/qsa_id_registrations'
+
+  # add new movement context models
+  require_relative '../common/movement_contexts'
 end
