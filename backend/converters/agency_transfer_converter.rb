@@ -320,7 +320,8 @@ class AgencyTransferConverter < Converter
         :agency_assigned_id => rep[:agency_control_number],
       }
 
-      unless rep[:access_category].empty?
+      # attach a rap only if we have rap data and this is not an item row
+      if !rep[:access_category].empty? && !rep[:sequence_ref].empty?
         rep_hash[:rap_attached] = format_rap_attached(rep)
       end
 
