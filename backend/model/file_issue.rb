@@ -8,6 +8,8 @@ class FileIssue < Sequel::Model
 
   include FileIssueHelpers
 
+  include ItemUses
+
   # We'll spawn these from file issue requests, so skip over any attributes that
   # we don't have.
   self.strict_param_setting = false
@@ -310,6 +312,26 @@ class FileIssue < Sequel::Model
     return false if item[:not_returned]
 
     item[:expiry_date] < Date.today
+  end
+
+
+  def self.to_item_uses(json)
+    return [] if json['issue_type'] == 'DIGITAL'
+
+    qsa_id = QSAId.prefixed_id_for(ReadingRoomRequest,
+                                   JSONModel.parse_reference(json['uri'])[:id])
+
+    json['requested_representations'].map do |rep|
+      JSONModel(:item_use).from_hash({
+                                     'physical_representation' => {'ref' => rep['ref']},
+                                     'item_use_type' => 'file_issue',
+                                     'use_identifier' => qsa_id,
+                                     'status' => json['status'],
+                                     'used_by' => json['lodged_by'],
+                                     'start_date' => rep['dispatch_date'],
+                                     'end_date' => rep['returned_date'],
+                                   })
+    end
   end
 
 end
