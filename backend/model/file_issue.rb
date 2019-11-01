@@ -321,17 +321,19 @@ class FileIssue < Sequel::Model
     qsa_id = QSAId.prefixed_id_for(ReadingRoomRequest,
                                    JSONModel.parse_reference(json['uri'])[:id])
 
-    json['requested_representations'].map do |rep|
-      JSONModel(:item_use).from_hash({
-                                     'physical_representation' => {'ref' => rep['ref']},
-                                     'item_use_type' => 'file_issue',
-                                     'use_identifier' => qsa_id,
-                                     'status' => json['status'],
-                                     'used_by' => json['lodged_by'],
-                                     'start_date' => rep['dispatch_date'],
-                                     'end_date' => rep['returned_date'],
-                                   })
-    end
+    json['requested_representations'].map{|rep|
+      if rep['dispatch_date'] && JSONModel.parse_reference(rep['ref'])[:type] == 'physical_representation'
+        JSONModel(:item_use).from_hash({
+                                         'physical_representation' => {'ref' => rep['ref']},
+                                         'item_use_type' => 'file_issue',
+                                         'use_identifier' => qsa_id,
+                                         'status' => json['status'],
+                                         'used_by' => json['lodged_by'] || json['created_by'],
+                                         'start_date' => rep['dispatch_date'].strftime('%Y-%m-%d'),
+                                         'end_date' => rep['returned_date'] ? rep['returned_date'].strftime('%Y-%m-%d') : nil,
+                                       })
+      end
+    }.compact
   end
 
 end
