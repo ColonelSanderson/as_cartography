@@ -318,7 +318,7 @@ class FileIssue < Sequel::Model
   def self.to_item_uses(json)
     return [] if json['issue_type'] == 'DIGITAL'
 
-    qsa_id = QSAId.prefixed_id_for(ReadingRoomRequest,
+    qsa_id = QSAId.prefixed_id_for(FileIssue,
                                    JSONModel.parse_reference(json['uri'])[:id])
 
     json['requested_representations'].map{|rep|
