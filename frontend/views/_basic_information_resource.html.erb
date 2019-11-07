@@ -1,0 +1,16 @@
+<% if form.readonly? %>
+  <% unless form['transfers'].empty?  %>
+    <div class="form-group">
+      <div class="control-label col-sm-2"><%= I18n.t("resource.transfers") %></div>
+      <div class="controls token-list col-sm-10 label-only">
+        <% ASUtils.wrap(form['transfers']).each do |record| %>
+          <%= render_token :object => record['_resolved'],
+                           :label => record['_resolved']['display_string'],
+                           :type => record['_resolved']['jsonmodel_type'],
+                           :uri => record['ref'],
+                           :placement => "top" %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+<% end %>

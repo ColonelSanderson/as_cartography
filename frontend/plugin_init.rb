@@ -1,6 +1,9 @@
 ArchivesSpace::Application.extend_aspace_routes(File.join(File.dirname(__FILE__), "routes.rb"))
 
 Rails.application.config.after_initialize do
+
+  Plugins.add_resolve_field(['transfers'])
+
   Plugins.add_facet_group_i18n("controlling_record_u_sstr",
                                proc {|facet| "search_results.controlling_record.current" })
 

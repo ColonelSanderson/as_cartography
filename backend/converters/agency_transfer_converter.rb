@@ -44,9 +44,9 @@ class AgencyTransferConverter < Converter
   #   - support incomplete dates
   #   - ensure boxes from different series are rendered as separate boxes
   #   - set container location to HOME not SORTRM
+  #   - show transfers summary on series (highly desirable)
   #
   #  Waiting
-  #   - show transfers summary on series (highly desirable)
   #   - publish details defaults to inherit - AWAITING CLARIFICATION
   #
   # Validation changes

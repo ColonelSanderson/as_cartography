@@ -152,6 +152,9 @@ en:
   transfer_checklist:
     _plural: Transfer Checklist
 
+  resource:
+    transfers: Transfers
+
   conversation:
     _plural: Comments/Discussion
 
