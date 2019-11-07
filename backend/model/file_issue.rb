@@ -99,13 +99,13 @@ class FileIssue < Sequel::Model
           prep = PhysicalRepresentation[prep_ref[:id]]
 
           if item['dispatch_date']
-            prep.move(:location => 'PER',
+            prep.move(:location => 'FIL',
                       :user => item['dispatched_by']['ref'],
                       :context => self.uri,
                       :date => item['dispatch_date'],
                       :replace => true)
           else
-            prep.move(:location => 'PER',
+            prep.move(:location => 'FIL',
                       :context => self.uri,
                       :remove => true)
           end
