@@ -35,6 +35,31 @@ class AgencyTransferConverter < Converter
   #   creating_agency           789                            agent_corporate_entity.qsa_id creation
   #   sensitivity_label         Cultural Sensitivity Warning   archival_object.user_defined.user_defined_enum_2
 
+  # The latest, 'final', round of changes from piv##169243505
+  #
+  #  Done
+  #   - map description to reps as well as aos
+  #   - fix handling of dates prior to 1900
+  #   - include transfer qsa_id on token in ao ... did transfer_proposal in transfer too
+  #   - support incomplete dates
+  #   - ensure boxes from different series are rendered as separate boxes
+  #   - set container location to HOME not SORTRM
+  #
+  #  Waiting
+  #   - show transfers summary on series (highly desirable)
+  #   - publish details defaults to inherit - AWAITING CLARIFICATION
+  #
+  # Validation changes
+  #   - sync up enum validation with vocabs in spreadsheet - sigh
+  #   - validate pre-1900 dates
+  #   - validate incomplete dates
+  #   - validate title Map+AS
+  #   - validate box number AS
+  #   - validate start and end date on items only - MAP+AS
+  #   - validate representation type MAP+AS
+  #   - validate format MAP+AS
+  #   - validate contained within MAP+AS
+  #   - validate series id AS
 
   @@columns =
     [
@@ -192,11 +217,8 @@ class AgencyTransferConverter < Converter
         row[i].to_date.iso8601
       elsif column_definition[:type] == :date && !row[i].to_s.empty?
         # If we have a date string in DD/MM/YYYY, accept that too
-        begin
-          Date.strptime(row[i].to_s, '%d/%m/%Y').iso8601
-        rescue ArgumentError
-          handle_error("Bad date for #{column_definition[:key]}: #{row[i]}")
-        end
+        # ... and now MM/YYYY and YYYY as well - fun times
+        row[i].to_s.split(/\D+/).reverse.join('-')
       else
         row[i].to_s.strip
       end
@@ -247,24 +269,24 @@ class AgencyTransferConverter < Converter
 
     indicator = "S#{series}-T#{transfer}-B#{box}"
 
-    return @containers[box] if @containers[box]
+    return @containers[indicator] if @containers[indicator]
 
     hash = {
       'indicator' => indicator,
       'type' => 'box',
-      'current_location' => 'SORTRM',
+      'current_location' => 'HOME',
       'movements' =>
       [
          {
            'user' => current_user_agent,
            'move_date' => Time.now.getlocal.iso8601,
-           'functional_location' => 'SORTRM',
+           'functional_location' => 'HOME',
            'move_context' => {'ref' => "/transfers/#{transfer}"}
          }
       ]
     }
 
-    @containers[box] = TopContainer.create_from_json(JSONModel::JSONModel(:top_container).from_hash(hash))
+    @containers[indicator] = TopContainer.create_from_json(JSONModel::JSONModel(:top_container).from_hash(hash))
   end
 
 
@@ -313,6 +335,7 @@ class AgencyTransferConverter < Converter
 
       rep_hash = {
         :title => rep[:title].empty? ? item[:title] : rep[:title],
+        :description => rep[:description].empty? ? item[:description] : rep[:description],
         :format => rep[:format].empty? ? item[:format] : rep[:format],
         :contained_within => rep[:contained_within],
         :current_location => 'HOME',
