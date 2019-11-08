@@ -46,7 +46,7 @@ class AgencyTransferConverter < Converter
   #   - set container location to HOME not SORTRM
   #   - show transfers summary on series (highly desirable)
   #
-  #  Waiting
+  #  No action required: handle in validation
   #   - publish details defaults to inherit - AWAITING CLARIFICATION
   #
   # Validation changes
@@ -60,6 +60,7 @@ class AgencyTransferConverter < Converter
   #   - validate format MAP+AS
   #   - validate contained within MAP+AS
   #   - validate series id AS
+  #   - ensure :restricted_access_period and :publish are empty if :access_category is empty
 
   @@columns =
     [
