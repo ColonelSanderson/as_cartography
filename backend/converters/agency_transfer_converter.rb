@@ -405,7 +405,7 @@ class AgencyTransferConverter < Converter
     <<~EOT
       #{reps.length} unattached row#{reps.length == 1 ? '' : 's'}.
 
-            #{reps.map{|r| 'Row ' + r[:ROW_INDEX] + ':  ' + row[:title]}.join("\n      ")}
+            #{reps.map{|r| 'Row %d: %s' % [r[:ROW_INDEX], r[:title]]}.join("\n      ")}
     EOT
   end
 
