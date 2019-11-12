@@ -1,4 +1,4 @@
-module Transfers
+module ResourceTransfers
   def self.included(base)
     base.extend(ClassMethods)
   end

@@ -1,1 +1,1 @@
-Resource.include(Transfers)
+Resource.include(ResourceTransfers)
