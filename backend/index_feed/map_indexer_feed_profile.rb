@@ -46,6 +46,7 @@ class MAPIndexerFeedProfile < IndexerFeedProfile
         'types' => [jsonmodel['jsonmodel_type']],
         'title' => jsonmodel['display_string'] || jsonmodel['title'],
         'qsa_id' => jsonmodel['qsa_id'].to_s,
+        'qsa_id_prefixed' => jsonmodel['qsa_id_prefixed'],
         'qsaid_sort' => sprintf('%10s', jsonmodel['qsa_id']).gsub(' ', '0'),
         'start_date' => record_dates.fetch(jsonmodel.id).start_date,
         'end_date' => record_dates.fetch(jsonmodel.id).end_date,
