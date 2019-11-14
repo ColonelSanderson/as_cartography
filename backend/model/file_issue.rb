@@ -100,7 +100,7 @@ class FileIssue < Sequel::Model
 
           if item['dispatch_date']
             prep.move(:location => 'FIL',
-                      :user => item['dispatched_by']['ref'],
+                      :user => item['dispatched_by'] ? item['dispatched_by']['ref'] : nil,
                       :context => self.uri,
                       :date => item['dispatch_date'],
                       :replace => true)
@@ -116,7 +116,7 @@ class FileIssue < Sequel::Model
 
           if item['returned_date']
             prep.move(:location => 'HOME',
-                      :user => item['received_by']['ref'],
+                      :user => item['received_by'] ? item['received_by']['ref'] : nil,
                       :context => self.uri,
                       :date => item['returned_date'],
                       :replace => true)
@@ -329,8 +329,8 @@ class FileIssue < Sequel::Model
                                          'use_identifier' => qsa_id,
                                          'status' => json['status'],
                                          'used_by' => json['lodged_by'] || json['created_by'],
-                                         'start_date' => rep['dispatch_date'].strftime('%Y-%m-%d'),
-                                         'end_date' => rep['returned_date'] ? rep['returned_date'].strftime('%Y-%m-%d') : nil,
+                                         'start_date' => rep['dispatch_date'],
+                                         'end_date' => rep['returned_date'] ? rep['returned_date'] : nil,
                                        })
       end
     }.compact
