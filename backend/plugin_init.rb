@@ -26,5 +26,10 @@ MAPDB.connect
 require_relative 'index_feed/map_indexer_feed_profile'
 
 ArchivesSpaceService.plugins_loaded_hook do
-  IndexFeedThread.new("plugin_qsauatmap", MAPIndexerFeedProfile.new).start
+  if AppConfig.has_key?(:map_index_feed_enabled) && AppConfig[:map_index_feed_enabled] == false
+    Log.info("MAP indexer thread will not be started as AppConfig[:map_index_feed_enabled] is false")
+  else
+    Log.info("Starting MAP indexer...")
+    IndexFeedThread.new("plugin_qsauatmap", MAPIndexerFeedProfile.new).start
+  end
 end
