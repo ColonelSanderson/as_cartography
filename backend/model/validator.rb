@@ -1,7 +1,7 @@
 class Validator
 
   def initialize
-    @validator = MapValidator.new
+    @validator = MapValidator.new(BackendEnumSource)
   end
 
   def self.validate(path, repo_id)
