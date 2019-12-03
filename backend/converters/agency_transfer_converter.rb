@@ -303,9 +303,9 @@ class AgencyTransferConverter < Converter
       :dates => [
                  {
                    :begin => item[:start_date],
-                   :certainty => item[:start_date_qualifier],
+                   :certainty => (item[:start_date_qualifier] && item[:start_date_qualifier].downcase),
                    :end => item[:end_date],
-                   :certainty_end => item[:end_date_qualifier],
+                   :certainty_end => (item[:end_date_qualifier] && item[:end_date_qualifier].downcase),
                    :label => 'existence',
                    :date_type => 'inclusive',
                  }
