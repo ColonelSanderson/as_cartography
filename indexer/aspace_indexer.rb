@@ -33,10 +33,8 @@ class IndexerCommon
 
         doc['title'] = record['record']['display_string'] || record['record']['title']
 
-        id_field = ['file_issue_request', 'file_issue'].include?(doc['primary_type']) ? 'title' : 'identifier'
-
-        doc['map_id_u_sort'] = record['record'][id_field].to_s.gsub(/\D+/,'').rjust(9, '0')
-        doc['map_id_u_ssort'] = record['record'][id_field]
+        doc['qsa_id_u_sort'] = IndexerCommon.sort_value_for_qsa_id(record['record']['qsa_id_prefixed'])
+        doc['qsa_id_u_ssort'] = record['record']['qsa_id_prefixed']
         doc['map_agency_id_u_sort'] = record['record']['agency']['_resolved']['qsa_id'].to_s.gsub(/\D+/,'').rjust(9, '0')
         doc['map_agency_id_u_ssort'] = record['record']['agency']['_resolved']['qsa_id']
         doc['map_agency_name_u_ssort'] = record['record']['agency']['_resolved']['display_name']['sort_name']

@@ -262,7 +262,6 @@ en:
     _plural: Requested Representations
 
   search_sorting:
-    map_id_u_sort: Identifier
     map_agency_id_u_sort: Agency ID
     map_agency_name_u_ssort: Agency Name
     file_issue_request_urgent_u_ssort: Urgency

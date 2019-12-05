@@ -62,7 +62,7 @@
                     <div class="token-list">
                       <% fi = @file_issue_request[issue] %>
                       <%= render_token(:object => fi['_resolved'],
-                                       :label => CGI::escapeHTML(fi['_resolved']['title']),
+                                       :label => CGI::escapeHTML(fi['_resolved']['qsa_id_prefixed']),
                                        :type => fi['_resolved']['jsonmodel_type'],
                                        :uri => fi['ref'],
                                        :placement => "top",

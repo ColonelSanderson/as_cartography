@@ -5,8 +5,8 @@
 
   add_column(I18n.t("transfer.id"),
              proc {|record|
-               "<span class=\"map-browse-content map-browse-id\">#{record['map_id_u_ssort']}</span>".html_safe
-             }, :sortable => true, :sort_by => 'map_id_u_sort')
+               "<span class=\"map-browse-content map-browse-id\">#{record['qsa_id_u_ssort']}</span>".html_safe
+             }, :sortable => true, :sort_by => 'qsa_id_u_sort')
 
   add_column(I18n.t("transfer.agency_id"),
              proc {|record|

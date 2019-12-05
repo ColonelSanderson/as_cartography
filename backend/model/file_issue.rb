@@ -234,7 +234,7 @@ class FileIssue < Sequel::Model
 
         json['file_issue_request'] = {'ref' => JSONModel(:file_issue_request).uri_for(obj.file_issue_request_id)}
 
-        json['title'] = QSAId.prefixed_id_for(FileIssueRequest, obj.id)
+        json['title'] = QSAId.prefixed_id_for(FileIssue, obj.id)
       end
     end
 
