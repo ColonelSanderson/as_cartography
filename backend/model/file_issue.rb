@@ -234,11 +234,19 @@ class FileIssue < Sequel::Model
 
         json['file_issue_request'] = {'ref' => JSONModel(:file_issue_request).uri_for(obj.file_issue_request_id)}
 
-        json['title'] = QSAId.prefixed_id_for(FileIssue, obj.id)
+        json['title'] = obj.qsa_id_prefixed
+        json['qsa_id_prefixed'] = obj.qsa_id_prefixed
       end
     end
 
     jsons
+  end
+
+  def qsa_id_prefixed
+    # File issues QSA IDs aren't your average QSA ID
+    # as it requires the first letter of the issue type
+    # jammed in the middle of it all
+    [QSAId.prefix_for(self.class), issue_type[0].upcase, id].join
   end
 
   def validate
