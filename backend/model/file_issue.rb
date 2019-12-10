@@ -329,6 +329,14 @@ class FileIssue < Sequel::Model
     qsa_id = QSAId.prefixed_id_for(FileIssue,
                                    JSONModel.parse_reference(json['uri'])[:id])
 
+    agency_qsa_id = if json['agency']['_resolved']
+                      json['agency']['_resolved']['qsa_id_prefixed']
+                    else
+                      agency_ref = JSONModel.parse_reference(json['agency']['ref'])
+                      QSAId.prefixed_id_for(AgentCorporateEntity,
+                                            AgentCorporateEntity[agency_ref[:id]].qsa_id)
+                    end
+
     json['requested_representations'].map{|rep|
       if rep['dispatch_date'] && JSONModel.parse_reference(rep['ref'])[:type] == 'physical_representation'
         JSONModel(:item_use).from_hash({
@@ -336,7 +344,7 @@ class FileIssue < Sequel::Model
                                          'item_use_type' => 'file_issue',
                                          'use_identifier' => qsa_id,
                                          'status' => json['status'],
-                                         'used_by' => json['lodged_by'] || json['created_by'],
+                                         'used_by' => agency_qsa_id,
                                          'start_date' => rep['dispatch_date'],
                                          'end_date' => rep['returned_date'] ? rep['returned_date'] : nil,
                                        })
