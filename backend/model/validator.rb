@@ -74,14 +74,18 @@ class Validator
     }
 
     validations[:'Responsible Agency'] = lambda {|notifications, meta, col|
-      if !meta[:row_fields][meta[:headers].index("Sequence Number")].to_s.empty?
-        # This is an item record
-        if col.to_s.strip.empty?
-          notifications.add_notification(:ERROR, "Responsible agency must be set",
+      if meta[:row_fields][meta[:headers].index("Sequence Number")].to_s.empty?
+        # Representation
+        unless col.to_s.strip.empty?
+          notifications.add_notification(:ERROR, "Representation cannot have a responsible agency",
                                          @validator.formatSource(meta))
-          return
         end
+
+        return
       end
+
+      # This is an item record and it is optional
+      return if col.to_s.strip.empty?
 
       begin
         agency_id = Integer(col)
@@ -90,7 +94,7 @@ class Validator
           notifications.add_notification(:ERROR, "Responsible agency references a non-existent agency: #{agency_id}",
                                          @validator.formatSource(meta))
         end
-      rescue ArgumentError
+      rescue ArgumentError, TypeError
         notifications.add_notification(:ERROR, "Responsible Agency should contain the QSA ID of an agency (e.g. a number like 123)",
                                        @validator.formatSource(meta))
       end
