@@ -33,6 +33,19 @@ class ArchivesSpaceService < Sinatra::Base
     json_response(resolve_references(json, params[:resolve]))
   end
 
+  Endpoint.post('/transfers/:id/cancel')
+    .description("Cancel a transfer")
+    .params(["id", :id])
+    .permissions([])
+    .returns([200, "(:transfer)"]) \
+  do
+    MAPDB.transaction do
+      Transfer[params[:id]].cancel!
+
+      json_response('status' => 'cancelled')
+    end
+  end
+
   Endpoint.post('/transfers/:id/import')
     .description("Import a transfer's Import file")
     .permissions([])

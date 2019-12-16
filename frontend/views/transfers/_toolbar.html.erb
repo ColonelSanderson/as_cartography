@@ -9,6 +9,17 @@
                   <% if @transfer['checklist_metadata_approved'] %>
                     <%= render_aspace_partial :partial => "transfers/import_button" %>
                   <% end %>
+
+                  <% if active %>
+                    <%= form_tag({:controller => "transfers",
+                                  :action => "cancel"},
+                                  :method => "post",
+                                  :id => "cancel_transfer") do %>
+                      <%= hidden_field_tag "transfer_id", @transfer.id %>
+                      <button class="btn btn-cancel btn-default btn-sm"><%=  I18n.t("transfer._frontend.cancel_button") %></button>
+                    <% end %>
+                  <% end %>
+
                 </div>
             <% end %>
 
@@ -22,3 +33,14 @@
         </div>
     </div>
 </div>
+
+<div id="transfer_confirm_cancel_template"
+     data-title="<%= I18n.t("transfer._frontend.messages.confirm_cancel_title") %>"><!--
+   <div class="modal-body">
+      <p><%= I18n.t('transfer._frontend.messages.confirm_cancel_message') %></p>
+   </div>
+   <div class="modal-footer">
+      <button class="btn btn-primary confirmButton"><%= I18n.t('transfer._frontend.cancel_button') %></button>
+      <button class="btn btn-cancel btn-default" data-dismiss="modal"><%= I18n.t "transfer._frontend.back_button" %></button>
+   </div>
+--></div>

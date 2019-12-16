@@ -26,8 +26,8 @@ en:
         cancel_failed: Failed to cancel transfer
       messages:
         updated: Transfer Proposal updated
-        approve_succeeded: New transfer created
-        cancel_succeeded: Transfer cancelled
+        approve_succeeded: New Transfer created
+        cancel_succeeded: Transfer Proposal cancelled
         confirm_approve_title: Approving Transfer Proposal
         confirm_approve_message: Are you sure you want to approve this transfer proposal?
         confirm_cancel_title: Cancelling Transfer Proposal
@@ -91,6 +91,9 @@ en:
         replace_file_title: "Replacing file"
         replace_file_message: "Please choose a replacement for %{filename} (%{role}) using the button below."
         updated: Transfer updated
+        confirm_cancel_title: Cancelling Transfer
+        confirm_cancel_message: Are you sure you want cancel this transfer?
+        cancel_succeeded: Transfer cancelled
         import_success: "The transfer metadata was successfully submitted for import."
         import_fail: "The transfer metadata could not be submitted for import: %{error}"
         metadata_valid: Valid
@@ -110,6 +113,7 @@ en:
         completed: Completed
         failed: Failed
       back_button: Back
+      cancel_button: Cancel Transfer
     _plural: Transfers
     _singular: Transfer
     id: ID

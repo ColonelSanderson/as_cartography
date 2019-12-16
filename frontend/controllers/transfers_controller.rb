@@ -8,6 +8,7 @@ class TransfersController < ApplicationController
                                             :show,
                                             :edit,
                                             :update,
+                                            :cancel,
                                             :conversation,
                                             :conversation_send,
                                             :replace_file,
@@ -78,6 +79,18 @@ class TransfersController < ApplicationController
     @transfer = JSONModel(:transfer).find(params[:id], find_opts.merge('resolve[]' => RESOLVES))
   end
 
+  def cancel
+    response = JSONModel::HTTP.post_form(JSONModel(:transfer).uri_for("#{params[:transfer_id]}/cancel"))
+
+    if response.code == '200'
+      flash[:info] = I18n.t('transfer._frontend.messages.cancel_succeeded')
+    else
+      flash[:error] = I18n.t('transfer._frontend.errors.cancel_failed')
+    end
+
+    redirect_to(:controller => :transfers, :action => :show, :id => params[:transfer_id])
+  end
+
   def conversation
     render :json => JSONModel::HTTP.get_json("/transfer_conversation",
                                              :handle_id => params[:handle_id])
@@ -131,13 +144,25 @@ class TransfersController < ApplicationController
   end
 
 
+  helper_method :active
+  def active
+    [
+     'TRANSFER_PROCESS_INITIATED',
+     'TRANSFER_PROCESS_PENDING',
+     'TRANSFER_PROCESS_IN_PROGRESS'
+    ].include?(current_record.status)
+  end
+
+
   helper_method :status_label
   def status_label(status)
     @status_map ||= {
       'TRANSFER_PROCESS_INITIATED' => 'info',
-      'TRANSFER_PROCESS_PENDING' => 'danger',
-      'TRANSFER_PROCESS_IN_PROGRESS' => 'warning',
+      'TRANSFER_PROCESS_PENDING' => 'warning',
+      'TRANSFER_PROCESS_IN_PROGRESS' => 'primary',
       'TRANSFER_PROCESS_COMPLETE' => 'success',
+      'TRANSFER_PROCESS_CANCELLED_BY_AGENCY' => 'danger',
+      'TRANSFER_PROCESS_CANCELLED_BY_QSA' => 'danger',
     }
 
     "<span class=\"label label-#{@status_map[status]}\">#{status}</span>".html_safe

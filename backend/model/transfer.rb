@@ -6,6 +6,8 @@ class Transfer < Sequel::Model
   TRANSFER_PROCESS_PENDING = 'TRANSFER_PROCESS_PENDING'
   TRANSFER_PROCESS_IN_PROGRESS = 'TRANSFER_PROCESS_IN_PROGRESS'
   TRANSFER_PROCESS_COMPLETE = 'TRANSFER_PROCESS_COMPLETE'
+  TRANSFER_PROCESS_CANCELLED_BY_AGENCY = 'TRANSFER_PROCESS_CANCELLED_BY_AGENCY'
+  TRANSFER_PROCESS_CANCELLED_BY_QSA = 'TRANSFER_PROCESS_CANCELLED_BY_QSA'
 
 
   include ASModel
@@ -189,6 +191,13 @@ class Transfer < Sequel::Model
                 Sequel.as(Sequel.qualify(:transfer_file, :filename), :filename))
         .first
     end
+  end
+
+  def cancel!
+    self.status = TRANSFER_PROCESS_CANCELLED_BY_QSA
+    self.modified_by = RequestContext.get(:current_username)
+    self.modified_time = java.lang.System.currentTimeMillis
+    self.save
   end
 
 end
