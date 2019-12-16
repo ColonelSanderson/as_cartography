@@ -237,6 +237,7 @@ en:
     representations: Representations
     file_issue_digital: Digital File Issue
     file_issue_physical: Physical File Issue
+    request_type: Request Type
     quote:
       unit_description: Unit description
       unit_cost: Unit cost
@@ -308,6 +309,7 @@ en:
     not_returned: Not Returned?
     not_returned_note: Not Returned Note
     file_issue_request: File Issue Request
+    request_type: Request Type
     _frontend:
       action:
         save: Save File Issue

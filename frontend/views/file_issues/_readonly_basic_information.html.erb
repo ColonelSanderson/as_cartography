@@ -9,8 +9,16 @@
                                        :form => form,
                                        :record => @file_issue) %>
 
-          <%= render_aspace_partial :partial => 'shared/qsa_id_form', :locals => {:form => form, :model => :file_issue} %>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="file_issue_identifier">
+              <%= I18n.t('as_runcorn.qsa_id') %>
+            </label>
+            <div id="file_issue_identifier" class="col-sm-9 label-only">
+              <span class="as-runcorn-qsa-id"><%= form.obj['qsa_id_prefixed'] %></span>
+            </div>
+          </div>
 
+          <%= form.label_and_readonly "request_type" %>
           <%= form.label_and_readonly "issue_type" %>
           <%= form.label_and_readonly "status" %>
 
