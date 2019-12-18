@@ -57,10 +57,25 @@ class AgencyReadingRoomRequest < Sequel::Model
   def self.sequel_to_jsonmodel(objs, opts = {})
     jsons = super
 
-    jsons.zip(objs).each do |json, obj|
-      json['title'] = "Reading Room Request #{obj.id}"
-      json['requested_item'] = {'ref' => json['item_uri']}
-      json['requesting_agency'] = "FIXME" #obj.created_by #FIXME show the agency and location here too?
+    MAPDB.open do |mapdb|
+      aspace_agents =
+        mapdb[:agency]
+          .filter(:id => objs.map(&:agency_id))
+          .map {|row| [row[:id], row[:aspace_agency_id]]}
+          .to_h
+
+      agency_locations =
+        mapdb[:agency_location].filter(:agency_id => objs.map(&:agency_id)).map {|row| [row[:id], row[:name]]}.to_h
+
+
+      jsons.zip(objs).each do |json, obj|
+        json['title'] = "Reading Room Request #{obj.id}"
+        json['requested_item'] = {'ref' => json['item_uri']}
+        json['requesting_agency'] = {
+          'ref' => JSONModel(:agent_corporate_entity).uri_for(aspace_agents.fetch(obj.agency_id)),
+          'location_name' => agency_locations.fetch(obj.agency_location_id),
+        }
+      end
     end
 
     jsons

@@ -6,6 +6,7 @@ class IndexerCommon
   @@record_types << :search_request
   @@record_types << :agency_reading_room_request
   @@resolved_attributes << 'agency'
+  @@resolved_attributes << 'requesting_agency'
 
 
   def skip_index_record?(record)
@@ -37,7 +38,8 @@ class IndexerCommon
         doc['rrr_requested_item_qsa_id_u_ssort'] = item['qsa_id_prefixed']
         doc['rrr_requested_item_qsa_id_u_sort'] = IndexerCommon.sort_value_for_qsa_id(item['qsa_id_prefixed'])
         doc['rrr_requested_item_availability_u_ssort'] = item['calculated_availability']
-        doc['rrr_requesting_user_u_ssort'] = record['record']['requesting_agency']
+        requested_by = "%s - %s" % [record['record'].dig('requesting_agency','_resolved','display_string'), record['record'].dig('requesting_agency','location_name')]
+        doc['rrr_requesting_user_u_ssort'] = requested_by
       end
     }
 

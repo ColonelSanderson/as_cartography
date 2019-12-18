@@ -1,6 +1,6 @@
 class AgencyReadingRoomRequestsController < ApplicationController
 
-  RESOLVES = ['requested_item']
+  RESOLVES = ['requested_item', 'requesting_agency']
 
   include ApplicationHelper
 

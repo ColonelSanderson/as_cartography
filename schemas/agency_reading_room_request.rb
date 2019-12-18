@@ -30,7 +30,22 @@
         }
       },
 
-      "requesting_agency" => {"type" => "string"},
+      "requesting_agency" => {
+        "readonly" => "true",
+        "type" => "object",
+        "subtype" => "ref",
+        "readonly" => "true",
+        "properties" => {
+          "location_name" => {"type" => "string"},
+          "ref" => {
+            "type" => "JSONModel(:agent_corporate_entity) uri",
+          },
+          "_resolved" => {
+            "type" => "object",
+            "readonly" => "true"
+          }
+        }
+      },
 
       "created_by" => {"type" => "string"},
       "modified_by" => {"type" => "string"},
