@@ -67,6 +67,11 @@ class AgencyReadingRoomRequest < Sequel::Model
       agency_locations =
         mapdb[:agency_location].filter(:agency_id => objs.map(&:agency_id)).map {|row| [row[:id], row[:name]]}.to_h
 
+      handles =
+        mapdb[:handle]
+          .filter(:reading_room_request_id => objs.map(&:id))
+          .map {|row| [row[:reading_room_request_id], row[:id]]}
+          .to_h
 
       jsons.zip(objs).each do |json, obj|
         json['title'] = "Reading Room Request #{obj.id}"
@@ -75,6 +80,7 @@ class AgencyReadingRoomRequest < Sequel::Model
           'ref' => JSONModel(:agent_corporate_entity).uri_for(aspace_agents.fetch(obj.agency_id)),
           'location_name' => agency_locations.fetch(obj.agency_location_id),
         }
+        json['handle_id'] = handles.fetch(obj.id)
       end
     end
 

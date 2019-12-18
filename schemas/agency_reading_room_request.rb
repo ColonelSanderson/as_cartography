@@ -47,6 +47,8 @@
         }
       },
 
+      "handle_id" => {"type" => "string", "readonly" => "true"},
+
       "created_by" => {"type" => "string"},
       "modified_by" => {"type" => "string"},
       "create_time" => {"type" => "integer"},
