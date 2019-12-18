@@ -173,16 +173,36 @@ class AgencyReadingRoomRequest < Sequel::Model
     # only supported on physical representation
     return [] unless JSONModel.parse_reference(json['item_uri'])[:type] == 'physical_representation'
 
-    used_by = json['requesting_agency']
+    reading_room_request_id = JSONModel.parse_reference(json['uri'])[:id]
+
+    aspace_agency_id = nil
+    location_name = 'Unknown Location'
+
+    MAPDB.open do |mapdb|
+      request = mapdb[:reading_room_request][:id => reading_room_request_id]
+      agency_id = request[:agency_id]
+      location_id = request[:agency_location_id]
+      aspace_agency_id = mapdb[:agency][:id => agency_id][:aspace_agency_id]
+      location_name = mapdb[:agency_location][:id => location_id][:name]
+    end
+
+    agency_label = if aspace_agency_id
+                      agency = AgentCorporateEntity.to_jsonmodel(aspace_agency_id)
+                      agency.title
+                   else
+                      'Unknown Agency'
+                   end
+
+    used_by = "%s - %s" % [agency_label, location_name]
 
     qsa_id = QSAId.prefixed_id_for(AgencyReadingRoomRequest,
-                                   JSONModel.parse_reference(json['uri'])[:id])
+                                   reading_room_request_id)
 
     start_date = Time.at(json['date_required']/1000).strftime('%Y-%m-%d')
 
     JSONModel(:item_use).from_hash({
       'physical_representation' => {'ref' => json['item_uri']},
-      'item_use_type' => 'reading_room_request',
+      'item_use_type' => 'agency_reading_room_request',
       'use_identifier' => qsa_id,
       'status' => json['status'],
       'used_by' => used_by,
