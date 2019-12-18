@@ -415,3 +415,7 @@ en:
       messages:
         none: There are no delegates currently set for this agency
     _plural: Agency Delegates
+
+  agency_reading_room_request:
+    _plural: Agency Reading Room Requests
+    _singular: Agency Reading Room Request

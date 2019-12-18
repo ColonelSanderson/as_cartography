@@ -4,7 +4,9 @@ class IndexerCommon
   @@record_types << :file_issue_request
   @@record_types << :file_issue
   @@record_types << :search_request
+  @@record_types << :agency_reading_room_request
   @@resolved_attributes << 'agency'
+  @@resolved_attributes << 'requesting_agency'
 
 
   def skip_index_record?(record)
@@ -20,6 +22,26 @@ class IndexerCommon
   add_indexer_initialize_hook do |indexer|
     QSAId.mode(:indexer)
     require_relative '../common/qsa_id_registrations'
+
+    indexer.add_document_prepare_hook {|doc, record|
+      if doc['primary_type'] == 'agency_reading_room_request'
+        doc['types'] = ['reading_room_request', 'agency_reading_room_request']
+
+        doc['rrr_date_required_u_ssortdate'] = "%sT00:00:00Z" % [Time.at(record['record']['date_required'] / 1000).to_date.iso8601]
+        doc['rrr_time_required_u_ssort'] = record['record']['time_required']
+
+        doc['rrr_date_created_u_ssortdate'] = record['record']['create_time']
+        doc['rrr_status_u_ssort'] = record['record']['status']
+
+        item = record['record']['requested_item']['_resolved']
+
+        doc['rrr_requested_item_qsa_id_u_ssort'] = item['qsa_id_prefixed']
+        doc['rrr_requested_item_qsa_id_u_sort'] = IndexerCommon.sort_value_for_qsa_id(item['qsa_id_prefixed'])
+        doc['rrr_requested_item_availability_u_ssort'] = item['calculated_availability']
+        requested_by = "%s - %s" % [record['record'].dig('requesting_agency','_resolved','display_string'), record['record'].dig('requesting_agency','location_name')]
+        doc['rrr_requesting_user_u_ssort'] = requested_by
+      end
+    }
 
     indexer.add_document_prepare_hook {|doc, record|
       if doc['primary_type'] == 'file_issue'
