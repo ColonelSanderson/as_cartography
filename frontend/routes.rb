@@ -34,7 +34,6 @@ ArchivesSpace::Application.routes.draw do
   match('search_requests/:id/download/:key' => 'search_requests#download_file', :via => [:get])
   match('search_requests/:id/upload' => 'search_requests#upload_file', :via => [:post])
 
-  match 'agency_reading_room_requests' => 'reading_room_requests#index', :via => [:get]
   match 'agency_reading_room_requests/:id' => 'agency_reading_room_requests#show', :via => [:get]
 
   resources :transfer_proposals
