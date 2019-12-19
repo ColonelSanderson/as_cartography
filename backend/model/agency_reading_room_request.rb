@@ -67,7 +67,8 @@ class AgencyReadingRoomRequest < Sequel::Model
           'ref' => JSONModel(:agent_corporate_entity).uri_for(aspace_agents.fetch(obj.agency_id)),
           'location_name' => agency_locations.fetch(obj.agency_location_id),
         }
-        json['handle_id'] = handles.fetch(obj.id)
+        json['handle_id'] = handles.fetch(obj.id, nil)
+        json['handle_id'] = json['handle_id'].to_s if json['handle_id']
       end
     end
 
